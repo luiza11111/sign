@@ -10,7 +10,7 @@ const port = process.env.PORT || 4000;
 
 // Middleware
 app.use(cors({
-  origin: ['http://localhost:5173', 'http://localhost:5174'],
+  origin: ['https://sign-0urr.onrender.com'],
   credentials: true
 }));
 app.use(express.json());
@@ -275,5 +275,5 @@ app.delete('/api/users/:id', authenticateToken, async (req, res) => {
 
 // ========== СЕРВЕРДІ ІСКЕ ҚОСУ ==========
 app.listen(port, () => {
-    console.log(`🚀 Сервер http://localhost:${port} портында жұмыс істейді`);
+    console.log(`🚀 Сервер https://sign-0urr.onrender.com портында жұмыс істейді`);
 });
