@@ -10,8 +10,9 @@ const port = process.env.PORT || 4000;
 
 // Middleware
 app.use(cors({
-  origin: ['https://sign-0urr.onrender.com', 'https://rad-babka-7a1351.netlify.app', 
-    'http://localhost:5173', 'http://localhost:5174'],
+  origin: ['*'],
+  methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
+  allowedHeaders: ['Content-Type', 'Authorization'],
   credentials: true
 }));
 app.use(express.json());
