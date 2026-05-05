@@ -6,8 +6,8 @@ const apiClient = axios.create({
   baseURL: API_BASE_URL,
   headers: {
     'Content-Type': 'application/json'
-  },
-  withCredentials: true
+  }
+  // withCredentials: true - Бұл жолды өшірдік
 })
 
 // Добавить токен к заголовкам если он существует
