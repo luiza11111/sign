@@ -4,6 +4,8 @@ const cors = require('cors');
 const bcrypt = require('bcrypt');
 const jwt = require('jsonwebtoken');
 const { Pool } = require('pg');
+const fs = require('fs');
+const path = require('path');
 
 const app = express();
 const port = process.env.PORT || 4000;
@@ -267,6 +269,51 @@ app.delete('/api/users/:id', authenticateToken, async (req, res) => {
         res.json({ message: 'Өшірілді' })
     } catch (err) {
         res.status(500).json({ error: err.message })
+    }
+});
+
+// ========== БЕЛГІ ВИДЕОЛАРЫН АЛУ (барлығына ортақ) ==========
+app.get('/api/sign-videos', (req, res) => {
+    try {
+        const videoFile = path.join(__dirname, 'video_links.json');
+        
+        // Файл бар ма тексеру
+        if (!fs.existsSync(videoFile)) {
+            return res.status(404).json({ error: 'Видео файлы табылмады' });
+        }
+        
+        const videoData = JSON.parse(fs.readFileSync(videoFile, 'utf-8'));
+        res.json(videoData);
+    } catch (err) {
+        res.status(500).json({ error: err.message });
+    }
+});
+
+// ========== БЕЛГІ ВИДЕОСЫН СӨЗБЕН АЛУ ==========
+app.get('/api/sign-videos/:word', (req, res) => {
+    try {
+        const word = req.params.word.toLowerCase();
+        const videoFile = path.join(__dirname, 'video_links.json');
+        
+        if (!fs.existsSync(videoFile)) {
+            return res.status(404).json({ error: 'Видео файлы табылмады' });
+        }
+        
+        const videoData = JSON.parse(fs.readFileSync(videoFile, 'utf-8'));
+        
+        // Қазақша немесе орысша сөзбен іздеу
+        const found = videoData.find(v => 
+            v.kazakh.toLowerCase() === word || 
+            v.russian.toLowerCase() === word
+        );
+        
+        if (!found) {
+            return res.status(404).json({ error: 'Сөз табылмады' });
+        }
+        
+        res.json(found);
+    } catch (err) {
+        res.status(500).json({ error: err.message });
     }
 });
 
