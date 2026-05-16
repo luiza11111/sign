@@ -852,4 +852,97 @@ watch(inputText, (newValue) => {
     align-items: flex-start;
   }
 }
+
+/* ========== ТЁМНЫЙ РЕЖИМ ========== */
+:root.dark-theme .translate-container {
+  background: var(--bg-secondary);
+  color: var(--text-primary);
+}
+
+:root.dark-theme .page-header {
+  color: var(--text-primary);
+}
+
+:root.dark-theme .input-card,
+:root.dark-theme .output-card,
+:root.dark-theme .suggestions-card,
+:root.dark-theme .recent-card {
+  background: var(--card-bg);
+  border-color: var(--border-color);
+  color: var(--text-primary);
+}
+
+:root.dark-theme .card-header h3 {
+  color: var(--text-primary);
+}
+
+:root.dark-theme .styled-textarea {
+  background: #2a2a3e;
+  color: var(--text-primary);
+  border-color: var(--border-color);
+}
+
+:root.dark-theme .styled-textarea::placeholder {
+  color: var(--text-secondary);
+}
+
+:root.dark-theme .result-box {
+  background: #2a2a3e;
+  color: var(--text-primary);
+  border-color: var(--border-color);
+}
+
+:root.dark-theme .empty-state {
+  color: var(--text-primary);
+}
+
+:root.dark-theme .empty-state small {
+  color: var(--text-secondary);
+}
+
+:root.dark-theme .action-btn {
+  background: rgba(99, 102, 241, 0.1);
+  color: var(--text-primary);
+}
+
+:root.dark-theme .suggestion-chip {
+  background: rgba(99, 102, 241, 0.1);
+  color: var(--text-primary);
+  border-color: var(--border-color);
+}
+
+:root.dark-theme .recent-item {
+  border-bottom-color: var(--border-color);
+  color: var(--text-primary);
+}
+
+:root.dark-theme .recent-item:hover {
+  background: rgba(99, 102, 241, 0.1);
+}
+
+:root.dark-theme .recent-date {
+  color: var(--text-secondary);
+}
+
+:root.dark-theme .refresh-btn,
+:root.dark-theme .clear-btn {
+  background: rgba(99, 102, 241, 0.1);
+  color: var(--text-primary);
+}
+
+:root.dark-theme .refresh-btn:hover,
+:root.dark-theme .clear-btn:hover {
+  background: rgba(99, 102, 241, 0.2);
+}
+
+:root.dark-theme .ai-badge {
+  background: rgba(99, 102, 241, 0.1);
+  color: #8b5cf6;
+}
+
+:root.dark-theme .stat-badge {
+  background: var(--card-bg);
+  border-color: var(--border-color);
+  color: var(--text-secondary);
+}
 </style>

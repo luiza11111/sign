@@ -1,5 +1,8 @@
 <template>
   <div id="app">
+    <!-- Компонент уведомлений -->
+    <NotificationsContainer />
+
     <!-- Егер қолданушы кірген болса, Sidebar және мазмұн көрсетіледі -->
     <div v-if="isLoggedIn" class="app-layout">
       <Sidebar />
@@ -92,15 +95,26 @@
 </template>
 
 <script setup>
-import { ref, computed } from 'vue'
+import { ref, computed, onMounted } from 'vue'
 import { useAuthStore } from './stores/auth'
+import { useSettingsStore } from './stores/settings'
+import { useNotificationsStore } from './stores/notifications'
 import Sidebar from './components/Sidebar.vue'
+import NotificationsContainer from './components/NotificationsContainer.vue'
 
 const authStore = useAuthStore()
+const settingsStore = useSettingsStore()
+const notificationsStore = useNotificationsStore()
 const isLoggedIn = computed(() => authStore.isLoggedIn)
 
 // Модальды терезе
 const showResourcesModal = ref(false)
+
+// Инициализировать настройки при загрузке
+onMounted(() => {
+  settingsStore.initSettings()
+  notificationsStore.initNotifications()
+})
 </script>
 
 <style>
@@ -152,6 +166,8 @@ const showResourcesModal = ref(false)
   cursor: pointer;
   box-shadow: 0 8px 24px rgba(99, 102, 241, 0.35);
   transition: all 0.3s ease;
+  color: white;
+  font-weight: 600;
 }
 
 .float-btn:hover {
@@ -205,6 +221,12 @@ const showResourcesModal = ref(false)
   box-shadow: 0 32px 64px -24px rgba(0, 0, 0, 0.25);
 }
 
+:root.dark-theme .modal-content {
+  background: #1e1e30;
+  color: var(--text-primary);
+  border: 1px solid #2a2a3e;
+}
+
 @keyframes slideUp {
   from {
     transform: translateY(30px);
@@ -223,6 +245,11 @@ const showResourcesModal = ref(false)
   justify-content: space-between;
   align-items: center;
   border-bottom: 1px solid #eef2f6;
+}
+
+:root.dark-theme .modal-header {
+  background: rgba(99, 102, 241, 0.1);
+  border-bottom-color: var(--border-color);
 }
 
 .modal-title {
@@ -273,9 +300,17 @@ const showResourcesModal = ref(false)
   border-radius: 4px;
 }
 
+:root.dark-theme .modal-body::-webkit-scrollbar-track {
+  background: var(--bg-secondary);
+}
+
 .modal-body::-webkit-scrollbar-thumb {
   background: #cbd5e1;
   border-radius: 4px;
+}
+
+:root.dark-theme .modal-body::-webkit-scrollbar-thumb {
+  background: var(--border-color);
 }
 
 .modal-item {
@@ -286,10 +321,20 @@ const showResourcesModal = ref(false)
   text-decoration: none;
   transition: all 0.2s;
   border-bottom: 1px solid #f0f2f5;
+  color: #1e293b;
+}
+
+:root.dark-theme .modal-item {
+  border-bottom-color: var(--border-color);
+  color: var(--text-primary);
 }
 
 .modal-item:hover {
   background: #f8fafc;
+}
+
+:root.dark-theme .modal-item:hover {
+  background: rgba(99, 102, 241, 0.1);
 }
 
 .modal-item-icon {
@@ -307,9 +352,17 @@ const showResourcesModal = ref(false)
   margin-bottom: 4px;
 }
 
+:root.dark-theme .modal-item-info strong {
+  color: var(--text-primary);
+}
+
 .modal-item-info small {
   font-size: 11px;
   color: #64748b;
+}
+
+:root.dark-theme .modal-item-info small {
+  color: var(--text-secondary);
 }
 
 .modal-item-arrow {
@@ -330,6 +383,10 @@ const showResourcesModal = ref(false)
   justify-content: center;
 }
 
+:root.dark-theme .modal-footer {
+  border-top-color: var(--border-color);
+}
+
 .footer-btn {
   background: #f1f5f9;
   border: none;
@@ -345,6 +402,15 @@ const showResourcesModal = ref(false)
 .footer-btn:hover {
   background: #e2e8f0;
   color: #6366f1;
+}
+
+:root.dark-theme .footer-btn {
+  background: rgba(99, 102, 241, 0.1);
+  color: var(--text-primary);
+}
+
+:root.dark-theme .footer-btn:hover {
+  background: rgba(99, 102, 241, 0.2);
 }
 
 /* Мобильді бейімдеу */
@@ -403,5 +469,46 @@ const showResourcesModal = ref(false)
 ::selection {
   background: #6366f1;
   color: white;
+}
+
+/* ========== ТЁМНЫЙ РЕЖИМ ========== */
+:root {
+  --bg-primary: #ffffff;
+  --bg-secondary: #f0f2f5;
+  --text-primary: #1e293b;
+  --text-secondary: #64748b;
+  --border-color: #eef2f6;
+  --sidebar-bg: #ffffff;
+  --input-bg: #ffffff;
+  --card-bg: #ffffff;
+}
+
+:root.dark-theme {
+  --bg-primary: #1a1a2e;
+  --bg-secondary: #0f0f1e;
+  --text-primary: #e8e8f0;
+  --text-secondary: #a8a8b8;
+  --border-color: #2a2a3e;
+  --sidebar-bg: #2a2a3e;
+  --input-bg: #3a3a4e;
+  --card-bg: #252535;
+}
+
+body.dark-theme {
+  background-color: var(--bg-secondary);
+  color: var(--text-primary);
+}
+
+body.dark-theme #app {
+  background: var(--bg-secondary);
+  color: var(--text-primary);
+}
+
+body.dark-theme .app-layout {
+  background: var(--bg-secondary);
+}
+
+body.dark-theme .main-content {
+  background: var(--bg-secondary);
 }
 </style>

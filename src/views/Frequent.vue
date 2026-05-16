@@ -833,4 +833,81 @@ onMounted(() => {
     right: 12px;
   }
 }
+
+/* ========== ТЁМНЫЙ РЕЖИМ ========== */
+:root.dark-theme .frequent-container {
+  background: var(--bg-secondary);
+  color: var(--text-primary);
+}
+
+:root.dark-theme .card {
+  background: var(--card-bg);
+  border-color: var(--border-color);
+}
+
+:root.dark-theme .card-header {
+  color: var(--text-primary);
+}
+
+:root.dark-theme .card-header h3,
+:root.dark-theme .header-left {
+  color: var(--text-primary);
+}
+
+:root.dark-theme .word-card {
+  background: var(--card-bg);
+  border-color: var(--border-color);
+}
+
+:root.dark-theme .word-title {
+  color: var(--text-primary);
+}
+
+:root.dark-theme .word-example {
+  color: var(--text-secondary);
+}
+
+:root.dark-theme .usage-bar {
+  background: rgba(99, 102, 241, 0.1);
+}
+
+:root.dark-theme .stat-mini-card {
+  background: var(--card-bg);
+  border-color: var(--border-color);
+}
+
+:root.dark-theme .stat-badge {
+  background: var(--card-bg);
+  border-color: var(--border-color);
+  color: var(--text-secondary);
+}
+
+:root.dark-theme .input-icon input {
+  background: #2a2a3e;
+  color: var(--text-primary);
+  border-color: var(--border-color);
+}
+
+:root.dark-theme .input-icon input::placeholder {
+  color: var(--text-secondary);
+}
+
+:root.dark-theme .sort-btn,
+:root.dark-theme .export-btn {
+  background: rgba(99, 102, 241, 0.1);
+  color: var(--text-primary);
+}
+
+:root.dark-theme .sort-btn:hover,
+:root.dark-theme .export-btn:hover {
+  background: rgba(99, 102, 241, 0.2);
+}
+
+:root.dark-theme .empty-state p {
+  color: var(--text-primary);
+}
+
+:root.dark-theme .empty-state small {
+  color: var(--text-secondary);
+}
 </style>

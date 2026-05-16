@@ -252,6 +252,7 @@
 import { ref, computed, onMounted, watch } from 'vue'
 import { useRouter } from 'vue-router'
 import { useAuthStore } from '../stores/auth'
+import { useSettingsStore } from '../stores/settings'
 
 // Lucide иконкаларын импорттау
 import { 
@@ -262,6 +263,7 @@ import {
 
 const router = useRouter()
 const authStore = useAuthStore()
+const settingsStore = useSettingsStore()
 
 // Пайдаланушы деректері
 const userName = computed(() => authStore.user?.name || 'Қолданушы')
@@ -280,10 +282,27 @@ const voiceCount = ref(0)
 const favoriteWordsCount = ref(0)
 const streakDays = ref(7)
 
-// Параметрлер
-const notifications = ref(true)
-const darkMode = ref(false)
-const language = ref('kk')
+// Параметрлер - привязаны к store
+const notifications = computed({
+  get: () => settingsStore.notifications,
+  set: (val) => {
+    settingsStore.notifications = val
+    settingsStore.toggleNotifications()
+  }
+})
+
+const darkMode = computed({
+  get: () => settingsStore.darkMode,
+  set: (val) => {
+    settingsStore.darkMode = val
+    settingsStore.toggleDarkMode()
+  }
+})
+
+const language = computed({
+  get: () => settingsStore.language,
+  set: (val) => settingsStore.setLanguage(val)
+})
 
 // Басқа деректер
 const registeredDate = ref('2024-01-15')
@@ -329,30 +348,12 @@ const handleLogout = () => {
   router.push('/login')
 }
 
-// Қараңғы режимді қолдану
-const applyDarkMode = () => {
-  if (darkMode.value) {
-    document.body.classList.add('dark-theme')
-  } else {
-    document.body.classList.remove('dark-theme')
-  }
-}
-
-// Бақылау
-watch(darkMode, (newVal) => {
-  localStorage.setItem('darkMode', newVal)
-  applyDarkMode()
-})
-
 onMounted(() => {
   loadStats()
   editedName.value = userName.value
   editedEmail.value = userEmail.value
-  
-  const savedDarkMode = localStorage.getItem('darkMode') === 'true'
-  darkMode.value = savedDarkMode
-  applyDarkMode()
 })
+
 </script>
 
 <style scoped>
@@ -507,6 +508,21 @@ onMounted(() => {
 
 .profile-card:hover, .info-card:hover, .settings-card:hover, .security-card:hover {
   box-shadow: 0 20px 40px -12px rgba(0, 0, 0, 0.1);
+}
+
+:root.dark-theme .profile-card, 
+:root.dark-theme .info-card, 
+:root.dark-theme .settings-card, 
+:root.dark-theme .security-card {
+  background: #1e1e30;
+  border-color: #2a2a3e;
+}
+
+:root.dark-theme .profile-card:hover, 
+:root.dark-theme .info-card:hover, 
+:root.dark-theme .settings-card:hover, 
+:root.dark-theme .security-card:hover {
+  box-shadow: 0 20px 40px -12px rgba(0, 0, 0, 0.5);
 }
 
 .card-gradient {
@@ -928,5 +944,85 @@ input:checked + .slider:before {
   .security-btn {
     justify-content: center;
   }
+}
+
+/* ========== ТЁМНЫЙ РЕЖИМ ========== */
+:root.dark-theme .profile-container {
+  background: var(--bg-secondary);
+  color: var(--text-primary);
+}
+
+:root.dark-theme .page-header {
+  color: var(--text-primary);
+}
+
+:root.dark-theme .header-content h1 {
+  color: var(--text-primary);
+}
+
+:root.dark-theme .header-content p {
+  color: var(--text-secondary);
+}
+
+:root.dark-theme .stat-badge {
+  background: var(--card-bg);
+  border-color: var(--border-color);
+  color: var(--text-secondary);
+}
+
+:root.dark-theme .profile-card,
+:root.dark-theme .info-card,
+:root.dark-theme .settings-card,
+:root.dark-theme .security-card {
+  background: #1e1e30;
+  border: 1px solid #2a2a3e;
+  color: var(--text-primary);
+}
+
+:root.dark-theme .card-header {
+  background: rgba(99, 102, 241, 0.1);
+  border-bottom-color: var(--border-color);
+}
+
+:root.dark-theme .card-header h3 {
+  color: var(--text-primary);
+}
+
+:root.dark-theme .info-label,
+:root.dark-theme .setting-title {
+  color: var(--text-primary);
+}
+
+:root.dark-theme .setting-desc {
+  color: var(--text-secondary);
+}
+
+:root.dark-theme .info-value {
+  color: var(--text-secondary);
+}
+
+:root.dark-theme .language-select {
+  background: var(--input-bg);
+  color: var(--text-primary);
+  border-color: var(--border-color);
+}
+
+:root.dark-theme .switch input:checked + .slider {
+  background: #8b5cf6;
+}
+
+:root.dark-theme .security-btn {
+  background: rgba(99, 102, 241, 0.1);
+  color: var(--text-primary);
+  border-color: var(--border-color);
+}
+
+:root.dark-theme .security-btn:hover {
+  background: rgba(99, 102, 241, 0.2);
+}
+
+:root.dark-theme .save-btn,
+:root.dark-theme .edit-profile-btn {
+  background: linear-gradient(135deg, #8b5cf6, #6366f1);
 }
 </style>

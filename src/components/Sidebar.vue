@@ -102,7 +102,7 @@ const handleLogout = () => {
 <style scoped>
 .sidebar {
   width: 280px;
-  background: white;
+  background: var(--sidebar-bg, white);
   border-radius: 28px;
   margin: 16px 0 16px 16px;
   display: flex;
@@ -112,8 +112,9 @@ const handleLogout = () => {
   height: calc(100vh - 32px);
   overflow-y: auto;
   box-shadow: 0 4px 20px rgba(0, 0, 0, 0.02);
-  border: 1px solid #eef2f6;
+  border: 1px solid var(--border-color, #eef2f6);
   z-index: 100;
+  transition: background-color 0.3s ease, border-color 0.3s ease;
 }
 
 .sidebar::-webkit-scrollbar {
@@ -186,6 +187,24 @@ const handleLogout = () => {
   font-weight: 600;
 }
 
+:root.dark-theme .nav-menu li a {
+  color: var(--text-secondary);
+}
+
+:root.dark-theme .nav-menu li a:hover {
+  background: rgba(99, 102, 241, 0.1);
+  color: #8b5cf6;
+}
+
+:root.dark-theme .nav-menu li.active a {
+  background: rgba(99, 102, 241, 0.2);
+  color: #8b5cf6;
+}
+
+:root.dark-theme .section-title {
+  color: var(--text-secondary);
+}
+
 .nav-icon {
   width: 18px;
   height: 18px;
@@ -197,7 +216,7 @@ const handleLogout = () => {
   gap: 12px;
   padding-top: 20px;
   margin-top: 16px;
-  border-top: 1px solid #eef2f6;
+  border-top: 1px solid var(--border-color, #eef2f6);
 }
 
 .avatar {
@@ -223,9 +242,17 @@ const handleLogout = () => {
   color: #1e293b;
 }
 
+:root.dark-theme .user-name {
+  color: var(--text-primary);
+}
+
 .user-role {
   font-size: 11px;
   color: #94a3b8;
+}
+
+:root.dark-theme .user-role {
+  color: var(--text-secondary);
 }
 
 .logout-icon {
@@ -244,6 +271,10 @@ const handleLogout = () => {
 .logout-icon:hover {
   opacity: 1;
   background: #f1f5f9;
+}
+
+:root.dark-theme .logout-icon:hover {
+  background: rgba(255, 255, 255, 0.1);
 }
 
 .logout-icon-symbol {

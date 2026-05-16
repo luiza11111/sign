@@ -260,6 +260,11 @@ if (rememberedEmail) {
   flex: 1;
   padding: 48px 40px;
   background: white;
+  transition: background 0.3s ease;
+}
+
+:root.dark-theme .form-section {
+  background: #0f0f1e;
 }
 
 .form-container {
@@ -284,6 +289,11 @@ if (rememberedEmail) {
   font-weight: 700;
   color: #1e293b;
   margin: 0;
+  transition: color 0.3s ease;
+}
+
+:root.dark-theme .form-container h2 {
+  color: #e8e8f0;
 }
 
 .login-form {
@@ -305,6 +315,11 @@ if (rememberedEmail) {
   display: flex;
   align-items: center;
   gap: 6px;
+  transition: color 0.3s ease;
+}
+
+:root.dark-theme .input-group label {
+  color: #a8a8b8;
 }
 
 .label-icon {
@@ -333,6 +348,14 @@ if (rememberedEmail) {
   transition: all 0.2s;
   outline: none;
   font-family: inherit;
+  background: white;
+  color: #1e293b;
+}
+
+:root.dark-theme .input-icon-wrapper input {
+  background: #1e1e30;
+  border-color: #2a2a3e;
+  color: #e8e8f0;
 }
 
 .input-icon-wrapper input:focus {
@@ -370,6 +393,10 @@ if (rememberedEmail) {
 
 .password-toggle:hover {
   background: #f1f5f9;
+}
+
+:root.dark-theme .password-toggle:hover {
+  background: rgba(255, 255, 255, 0.1);
 }
 
 .form-options {

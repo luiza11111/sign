@@ -976,4 +976,89 @@ textarea:focus {
     text-align: center;
   }
 }
+
+/* ========== ТЁМНЫЙ РЕЖИМ ========== */
+:root.dark-theme .home-container {
+  background: var(--bg-secondary);
+  color: var(--text-primary);
+}
+
+:root.dark-theme .welcome-section {
+  background: var(--card-bg);
+  border: 1px solid var(--border-color);
+  border-radius: 28px;
+  padding: 24px;
+}
+
+:root.dark-theme .welcome-icon {
+  background: rgba(99, 102, 241, 0.1);
+  color: #8b5cf6;
+}
+
+:root.dark-theme .stat-card {
+  background: var(--card-bg);
+  border-color: var(--border-color);
+  color: var(--text-primary);
+}
+
+:root.dark-theme .card {
+  background: var(--card-bg);
+  border-color: var(--border-color);
+  color: var(--text-primary);
+}
+
+:root.dark-theme .card-header h3 {
+  color: var(--text-primary);
+}
+
+:root.dark-theme textarea {
+  background: #2a2a3e;
+  color: var(--text-primary);
+  border-color: var(--border-color);
+}
+
+:root.dark-theme textarea:focus {
+  background: #3a3a4e;
+}
+
+:root.dark-theme .badge {
+  background: rgba(99, 102, 241, 0.1);
+  color: #8b5cf6;
+}
+
+:root.dark-theme .modal-content {
+  background: var(--card-bg);
+  border: 1px solid var(--border-color);
+}
+
+:root.dark-theme .modal-header {
+  background: rgba(99, 102, 241, 0.1);
+  border-bottom-color: var(--border-color);
+}
+
+:root.dark-theme .modal-title {
+  color: #8b5cf6;
+}
+
+:root.dark-theme .modal-item {
+  border-bottom-color: var(--border-color);
+  color: var(--text-primary);
+}
+
+:root.dark-theme .modal-item-info strong {
+  color: var(--text-primary);
+}
+
+:root.dark-theme .modal-item-info small {
+  color: var(--text-secondary);
+}
+
+:root.dark-theme .footer-btn {
+  background: rgba(99, 102, 241, 0.1);
+  color: var(--text-primary);
+}
+
+:root.dark-theme .footer-btn:hover {
+  background: rgba(99, 102, 241, 0.2);
+}
 </style>

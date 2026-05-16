@@ -1,0 +1,145 @@
+/* ========== ГЛОБАЛЬНЫЕ СТИЛИ ДЛЯ ТЁМНОГО РЕЖИМА ========== */
+
+/* Светлый режим - по умолчанию */
+:root {
+  --bg-primary: #ffffff;
+  --bg-secondary: #f0f2f5;
+  --text-primary: #1e293b;
+  --text-secondary: #64748b;
+  --border-color: #eef2f6;
+  --card-bg: #ffffff;
+  --input-bg: #ffffff;
+}
+
+/* Тёмный режим */
+:root.dark-theme {
+  --bg-primary: #0f0f1e;
+  --bg-secondary: #0f0f1e;
+  --text-primary: #e8e8f0;
+  --text-secondary: #a8a8b8;
+  --border-color: #2a2a3e;
+  --card-bg: #1e1e30;
+  --input-bg: #1e1e30;
+}
+
+/* Применить тёмный режим ко ВСЕМ элементам */
+:root.dark-theme {
+  background: var(--bg-secondary);
+  color: var(--text-primary);
+}
+
+:root.dark-theme body {
+  background: var(--bg-secondary);
+  color: var(--text-primary);
+}
+
+:root.dark-theme #app {
+  background: var(--bg-secondary);
+  color: var(--text-primary);
+}
+
+:root.dark-theme .app-layout {
+  background: var(--bg-secondary);
+}
+
+:root.dark-theme .main-content {
+  background: var(--bg-secondary);
+  color: var(--text-primary);
+}
+
+/* Карточки */
+:root.dark-theme .home-container,
+:root.dark-theme .translate-container,
+:root.dark-theme .history-container,
+:root.dark-theme .frequent-container,
+:root.dark-theme .help-container,
+:root.dark-theme .admin-container {
+  background: var(--bg-secondary);
+  color: var(--text-primary);
+}
+
+/* Статистика карточки */
+:root.dark-theme .stat-card,
+:root.dark-theme .welcome-section {
+  background: var(--card-bg);
+  border-color: var(--border-color);
+  color: var(--text-primary);
+}
+
+/* Заголовки и текст */
+:root.dark-theme h1,
+:root.dark-theme h2,
+:root.dark-theme h3,
+:root.dark-theme h4,
+:root.dark-theme h5,
+:root.dark-theme h6 {
+  color: var(--text-primary);
+}
+
+:root.dark-theme p,
+:root.dark-theme span,
+:root.dark-theme label {
+  color: var(--text-secondary);
+}
+
+/* Inputs и selects */
+:root.dark-theme input,
+:root.dark-theme textarea,
+:root.dark-theme select {
+  background: var(--input-bg);
+  color: var(--text-primary);
+  border-color: var(--border-color);
+}
+
+:root.dark-theme input::placeholder,
+:root.dark-theme textarea::placeholder {
+  color: var(--text-secondary);
+}
+
+/* Кнопки */
+:root.dark-theme button {
+  background: rgba(99, 102, 241, 0.1);
+  color: var(--text-primary);
+  border-color: var(--border-color);
+}
+
+:root.dark-theme button:hover {
+  background: rgba(99, 102, 241, 0.2);
+}
+
+/* Таблицы и списки */
+:root.dark-theme table,
+:root.dark-theme tr,
+:root.dark-theme td,
+:root.dark-theme th {
+  background: var(--card-bg);
+  border-color: var(--border-color);
+  color: var(--text-primary);
+}
+
+/* Scroller */
+:root.dark-theme ::-webkit-scrollbar {
+  background: var(--bg-secondary);
+}
+
+:root.dark-theme ::-webkit-scrollbar-track {
+  background: var(--bg-secondary);
+}
+
+:root.dark-theme ::-webkit-scrollbar-thumb {
+  background: #2a2a3e;
+}
+
+:root.dark-theme ::-webkit-scrollbar-thumb:hover {
+  background: #3a3a4e;
+}
+
+/* Модальные окна */
+:root.dark-theme .modal-overlay {
+  background: rgba(0, 0, 0, 0.7);
+}
+
+/* Переход для плавного переключения */
+* {
+  transition: background-color 0.3s ease, color 0.3s ease, border-color 0.3s ease;
+}

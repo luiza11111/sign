@@ -993,4 +993,114 @@ const sendMessage = async () => {
     flex: 1;
   }
 }
+
+/* ========== ТЁМНЫЙ РЕЖИМ ========== */
+:root.dark-theme .help-container {
+  background: var(--bg-secondary);
+  color: var(--text-primary);
+}
+
+:root.dark-theme .card {
+  background: var(--card-bg);
+  border-color: var(--border-color);
+}
+
+:root.dark-theme .card-header h3 {
+  color: var(--text-primary);
+}
+
+:root.dark-theme .stat-mini-card {
+  background: var(--card-bg);
+  border-color: var(--border-color);
+}
+
+:root.dark-theme .stat-badge {
+  background: var(--card-bg);
+  border-color: var(--border-color);
+  color: var(--text-secondary);
+}
+
+:root.dark-theme .question {
+  background: var(--card-bg);
+  border-color: var(--border-color);
+}
+
+:root.dark-theme .question-left {
+  color: var(--text-primary);
+}
+
+:root.dark-theme .question-answer {
+  color: var(--text-secondary);
+}
+
+:root.dark-theme .video-item {
+  background: var(--card-bg);
+  border-color: var(--border-color);
+}
+
+:root.dark-theme .video-item:hover {
+  background: rgba(99, 102, 241, 0.1);
+}
+
+:root.dark-theme .video-thumbnail {
+  background: rgba(99, 102, 241, 0.1);
+}
+
+:root.dark-theme .video-title {
+  color: var(--text-primary);
+}
+
+:root.dark-theme .video-description {
+  color: var(--text-secondary);
+}
+
+:root.dark-theme .contact-details {
+  color: var(--text-primary);
+}
+
+:root.dark-theme .contact-details small {
+  color: var(--text-secondary);
+}
+
+:root.dark-theme .form-group label {
+  color: var(--text-secondary);
+}
+
+:root.dark-theme .input-icon input {
+  background: #2a2a3e;
+  color: var(--text-primary);
+  border-color: var(--border-color);
+}
+
+:root.dark-theme .input-icon input::placeholder {
+  color: var(--text-secondary);
+}
+
+:root.dark-theme .input-icon textarea {
+  background: #2a2a3e;
+  color: var(--text-primary);
+  border-color: var(--border-color);
+}
+
+:root.dark-theme .submit-btn {
+  background: linear-gradient(135deg, #8b5cf6, #6366f1);
+}
+
+:root.dark-theme .tip-card {
+  background: rgba(99, 102, 241, 0.1);
+}
+
+:root.dark-theme .tip-content {
+  color: var(--text-primary);
+}
+
+:root.dark-theme .filter-chip {
+  background: rgba(99, 102, 241, 0.1);
+  color: var(--text-primary);
+  border-color: var(--border-color);
+}
+
+:root.dark-theme .filter-chip.active {
+  background: linear-gradient(135deg, #8b5cf6, #6366f1);
+}
 </style>
