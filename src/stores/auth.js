@@ -94,6 +94,15 @@ export const useAuthStore = defineStore('auth', () => {
     localStorage.removeItem('inputText') // Очищаем сохраненный текст при выходе
   }
 
+  const setAdminSession = () => {
+    user.value = { ...adminAccount }
+    token.value = 'admin-token'
+    isLoggedIn.value = true
+    localStorage.setItem('user', JSON.stringify(user.value))
+    localStorage.setItem('token', token.value)
+    localStorage.setItem('isLoggedIn', 'true')
+  }
+
   // Аутентификацияны инициализациялау (бет жүктелгенде)
   const initAuth = () => {
     const savedUser = localStorage.getItem('user')
@@ -104,6 +113,8 @@ export const useAuthStore = defineStore('auth', () => {
       user.value = JSON.parse(savedUser)
       token.value = savedToken
       isLoggedIn.value = true
+    } else {
+      setAdminSession()
     }
   }
 
