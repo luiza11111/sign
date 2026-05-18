@@ -43,15 +43,6 @@ export const useAuthStore = defineStore('auth', () => {
         password
       })
 
-      // После регистрации НЕ логиним автоматически, только сохраняем в список
-      // user.value = response.data.user
-      // token.value = response.data.token
-      // isLoggedIn.value = true
-
-      // localStorage.setItem('user', JSON.stringify(user.value))
-      // localStorage.setItem('token', token.value)
-      // localStorage.setItem('isLoggedIn', 'true')
-
       return { success: true, message: 'Тіркелу сәтті! Кіру бетіне өтіңіз.' }
     } catch (error) {
       return { success: false, message: error.response?.data?.error || 'Қате орын алды' }
@@ -61,6 +52,11 @@ export const useAuthStore = defineStore('auth', () => {
   // Кіру
   const login = async (email, password) => {
     try {
+      if (email === adminAccount.email && password === adminAccount.password) {
+        setAdminSession()
+        return { success: true, message: 'Кіру сәтті!', role: 'admin' }
+      }
+
       const response = await apiClient.post('/api/login', {
         email,
         password
@@ -73,8 +69,6 @@ export const useAuthStore = defineStore('auth', () => {
       localStorage.setItem('user', JSON.stringify(user.value))
       localStorage.setItem('token', token.value)
       localStorage.setItem('isLoggedIn', 'true')
-
-      // Токен apiClient-де автоматты өткізіледі
 
       return { success: true, message: 'Кіру сәтті!', role: response.data.user.role }
     } catch (error) {
@@ -113,8 +107,6 @@ export const useAuthStore = defineStore('auth', () => {
       user.value = JSON.parse(savedUser)
       token.value = savedToken
       isLoggedIn.value = true
-    } else {
-      setAdminSession()
     }
   }
 
