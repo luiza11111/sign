@@ -1,7 +1,8 @@
 <template>
   <aside class="sidebar">
     <div class="logo">
-      <Logo variant="monogram" size="md" :showTagline="false" />
+      <img src="/logo.png" alt="SignFlow Logo" class="logo-image" />
+      <h2 class="logo-text">SignFlow</h2>
     </div>
 
     <nav class="nav-menu">
@@ -84,8 +85,6 @@ import {
   Home, Languages, Clock, Star, 
   User, HelpCircle, Shield, LogOut 
 } from 'lucide-vue-next'
-// Логотип компоненті
-import Logo from './Logo.vue'
 
 const router = useRouter()
 const authStore = useAuthStore()
@@ -142,10 +141,36 @@ onMounted(() => {
   border-radius: 4px;
 }
 
+/* ========== ЛОГОТИП ========== */
 .logo {
-  margin-bottom: 32px;
   display: flex;
-  justify-content: center;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 32px;
+  padding-left: 8px;
+}
+
+.logo-image {
+  width: 40px;
+  height: 40px;
+  border-radius: 10px;
+  object-fit: cover;
+}
+
+.logo-text {
+  font-size: 22px;
+  font-weight: 700;
+  background: linear-gradient(135deg, #6366f1, #8b5cf6);
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+}
+
+/* Қараңғы режимдегі логотип */
+:root.dark-theme .logo-text {
+  background: linear-gradient(135deg, #a78bfa, #c084fc);
+  -webkit-background-clip: text;
+  background-clip: text;
 }
 
 .nav-menu {
@@ -300,10 +325,21 @@ onMounted(() => {
     padding: 24px 12px;
   }
   
+  .sidebar .logo-text,
   .sidebar .section-title,
   .sidebar .nav-menu li a span:last-child,
   .sidebar .user-details {
     display: none;
+  }
+  
+  .sidebar .logo {
+    justify-content: center;
+    padding-left: 0;
+  }
+  
+  .sidebar .logo-image {
+    width: 48px;
+    height: 48px;
   }
   
   .sidebar .nav-menu li a {
@@ -313,10 +349,6 @@ onMounted(() => {
   
   .sidebar .user-info {
     justify-content: center;
-  }
-  
-  .logo {
-    margin-bottom: 24px;
   }
 }
 </style>

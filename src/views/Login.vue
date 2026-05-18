@@ -5,7 +5,7 @@
       <div class="welcome-section">
         <div class="welcome-content">
           <div class="logo-badge">
-            <Hand class="logo-hand" :size="56" :stroke-width="1.5" />
+            <img src="/logo.png" alt="SignFlow Logo" class="logo-image-large" />
           </div>
           <h1 data-i18n="welcome_title">Қош келдіңіз!</h1>
           <p class="welcome-text" data-i18n="welcome_text">
@@ -222,15 +222,24 @@ onMounted(() => {
 
 .welcome-content {
   color: white;
+  text-align: center;
 }
 
 .logo-badge {
   margin-bottom: 24px;
 }
 
-.logo-hand {
-  stroke: white;
-  stroke-width: 1.5;
+.logo-image-large {
+  width: 120px;
+  height: 120px;
+  border-radius: 28px;
+  object-fit: cover;
+  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.25);
+  transition: transform 0.3s ease;
+}
+
+.logo-image-large:hover {
+  transform: scale(1.02);
 }
 
 .welcome-section h1 {
@@ -650,6 +659,11 @@ onMounted(() => {
   .features {
     display: none;
   }
+  
+  .logo-image-large {
+    width: 90px;
+    height: 90px;
+  }
 }
 
 @media (max-width: 480px) {
@@ -667,6 +681,11 @@ onMounted(() => {
   
   .form-container h2 {
     font-size: 24px;
+  }
+  
+  .logo-image-large {
+    width: 70px;
+    height: 70px;
   }
 }
 

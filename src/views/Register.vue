@@ -5,7 +5,7 @@
       <div class="welcome-section">
         <div class="welcome-content">
           <div class="logo-badge">
-            <UserPlus class="logo-icon" :size="56" :stroke-width="1.5" />
+            <img src="/logo.png" alt="SignFlow Logo" class="logo-image-large" />
           </div>
           <h1>Тіркеліңіз!</h1>
           <p class="welcome-text">
@@ -178,9 +178,10 @@
 </template>
 
 <script setup>
-import { ref, computed } from 'vue'
+import { ref, computed, onMounted } from 'vue'
 import { useRouter } from 'vue-router'
 import { useAuthStore } from '../stores/auth'
+import { loadLanguage, translatePage } from '../i18n'
 
 // Lucide иконкаларын импорттау
 import { 
@@ -247,6 +248,15 @@ const handleRegister = async () => {
   }
   loading.value = false
 }
+
+onMounted(() => {
+  loadLanguage()
+  translatePage()
+  
+  window.addEventListener('languageChanged', () => {
+    translatePage()
+  })
+})
 </script>
 
 <style scoped>
@@ -288,15 +298,24 @@ const handleRegister = async () => {
 
 .welcome-content {
   color: white;
+  text-align: center;
 }
 
 .logo-badge {
   margin-bottom: 24px;
 }
 
-.logo-icon {
-  stroke: white;
-  stroke-width: 1.5;
+.logo-image-large {
+  width: 120px;
+  height: 120px;
+  border-radius: 28px;
+  object-fit: cover;
+  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.25);
+  transition: transform 0.3s ease;
+}
+
+.logo-image-large:hover {
+  transform: scale(1.02);
 }
 
 .welcome-section h1 {
@@ -674,6 +693,11 @@ const handleRegister = async () => {
   .features {
     display: none;
   }
+  
+  .logo-image-large {
+    width: 90px;
+    height: 90px;
+  }
 }
 
 @media (max-width: 480px) {
@@ -692,5 +716,59 @@ const handleRegister = async () => {
   .form-container h2 {
     font-size: 24px;
   }
+  
+  .logo-image-large {
+    width: 70px;
+    height: 70px;
+  }
+}
+
+/* ========== ҚАРАҢҒЫ РЕЖИМ ========== */
+:root.dark-theme .register-wrapper {
+  background: #0f172a;
+}
+
+:root.dark-theme .register-container {
+  background: #1e293b;
+}
+
+:root.dark-theme .welcome-section {
+  background: linear-gradient(135deg, #4c1d95, #5b21b6);
+}
+
+:root.dark-theme .form-section {
+  background: #0f0f1e;
+}
+
+:root.dark-theme .form-container h2 {
+  color: #e8e8f0;
+}
+
+:root.dark-theme .input-group label {
+  color: #a8a8b8;
+}
+
+:root.dark-theme .input-icon-wrapper input {
+  background: #1e1e30;
+  border-color: #2a2a3e;
+  color: #e8e8f0;
+}
+
+:root.dark-theme .divider span {
+  background: #0f0f1e;
+}
+
+:root.dark-theme .google-btn {
+  background: #1e1e30;
+  border-color: #2a2a3e;
+  color: #a8a8b8;
+}
+
+:root.dark-theme .google-btn:hover {
+  background: #2a2a3e;
+}
+
+:root.dark-theme .demo-info {
+  background: #1e1e30;
 }
 </style>
