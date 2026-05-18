@@ -31,6 +31,20 @@ npm install
 npm run dev
 ```
 
+### Backend / PostgreSQL
+
+The backend lives in the `server` folder. To run it locally:
+
+```sh
+cd server
+npm install
+cp .env.example .env
+# fill .env with your PostgreSQL settings and JWT_SECRET
+npm run dev
+```
+
+Use `DATABASE_URL` when deploying to Render, or set `DB_USER`, `DB_PASSWORD`, `DB_HOST`, `DB_PORT`, and `DB_NAME` for local Postgres.
+
 ### Compile and Minify for Production
 
 ```sh

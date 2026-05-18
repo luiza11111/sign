@@ -58,6 +58,56 @@ const authenticateToken = (req, res, next) => {
     });
 };
 
+// ДБ кестелерін құру және админді дайындау
+const initializeDatabase = async () => {
+    try {
+        await db.query(`
+            CREATE TABLE IF NOT EXISTS users (
+                id SERIAL PRIMARY KEY,
+                name TEXT NOT NULL,
+                email TEXT UNIQUE NOT NULL,
+                password_hash TEXT NOT NULL,
+                role TEXT NOT NULL DEFAULT 'user',
+                created_at TIMESTAMPTZ NOT NULL DEFAULT NOW()
+            )
+        `);
+
+        await db.query(`
+            CREATE TABLE IF NOT EXISTS translation_history (
+                id SERIAL PRIMARY KEY,
+                user_id INTEGER NOT NULL REFERENCES users(id) ON DELETE CASCADE,
+                text TEXT NOT NULL,
+                translation TEXT NOT NULL,
+                created_at TIMESTAMPTZ NOT NULL DEFAULT NOW()
+            )
+        `);
+
+        await db.query(`
+            CREATE TABLE IF NOT EXISTS dictionary (
+                id SERIAL PRIMARY KEY,
+                text TEXT NOT NULL,
+                video_url TEXT,
+                category TEXT,
+                created_at TIMESTAMPTZ NOT NULL DEFAULT NOW()
+            )
+        `);
+
+        const adminCheck = await db.query('SELECT id FROM users WHERE email = $1', [adminAccount.email]);
+        if (adminCheck.rows.length === 0) {
+            const hashedPassword = await bcrypt.hash(adminAccount.password, 10);
+            await db.query(
+                'INSERT INTO users (name, email, password_hash, role) VALUES ($1, $2, $3, $4)',
+                [adminAccount.name, adminAccount.email, hashedPassword, adminAccount.role]
+            );
+            console.log('✅ Admin user created:', adminAccount.email);
+        }
+    } catch (err) {
+        console.error('❌ Database initialization error:', err.message);
+    }
+};
+
+initializeDatabase();
+
 // ========== ТІРКЕЛУ (name, email, password) ==========
 app.post('/api/register', async (req, res) => {
     const { name, email, password } = req.body;
