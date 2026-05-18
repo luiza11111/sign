@@ -1,81 +1,634 @@
 import { ref } from 'vue'
 
-const currentLanguage = ref('kk')
+// Қазіргі тіл (экспортталған!)
+export const currentLanguage = ref('kk')
 
-const messages = {
+// ========== БАРЛЫҚ АУДАРМАЛАР ==========
+const translations = {
   kk: {
-    nav: {
-      home: 'Басты бет',
-      translate: 'Аударма',
-      history: 'Тарих',
-      frequent: 'Жиі сөздер',
-      profile: 'Профиль',
-      help: 'Көмек',
-      admin: 'Админ панель'
-    },
-    profile: {
-      title: 'Профиль',
-      subtitle: 'Жеке ақпаратыңыз және параметрлеріңіз',
-      notifications: 'Хабарландырулар',
-      darkMode: 'Қараңғы режим',
-      language: 'Тіл',
-      save: 'Сақтау'
-    }
+    // === ЖАЛПЫ / НАВИГАЦИЯ ===
+    'menu': 'МЕНЮ',
+    'additional': 'ҚОСЫМША',
+    'home': 'Басты бет',
+    'translate': 'Аударма',
+    'history': 'Тарих',
+    'frequent': 'Жиі сөздер',
+    'profile': 'Профиль',
+    'help': 'Көмек',
+    'admin': 'Админ панель',
+    'logout': 'Шығу',
+    'language': 'Тіл',
+    'settings': 'Параметрлер',
+    'security': 'Қауіпсіздік',
+    'close': 'Жабу',
+    'save': 'Сақтау',
+    'cancel': 'Болдырмау',
+    'edit': 'Өңдеу',
+    'delete': 'Өшіру',
+    'search': 'Іздеу',
+    'all': 'Барлығы',
+    'today': 'Бүгін',
+    'week': 'Апта',
+    'export': 'Экспорт',
+    'add': 'Қосу',
+    'clear': 'Тазалау',
+    'loading': 'Жүктелуде...',
+
+    // === HOME (БАСТЫ БЕТ) ===
+    'welcome': 'Қош келдіңіз',
+    'what_translate': 'Бүгін не аударамыз?',
+    'translated_words': 'Аударылған сөз',
+    'voice_requests': 'Дауыстық сұрау',
+    'popular_words': 'Жиі қолданылатын',
+    'today_activity_home': 'Бүгінгі белсенділік',
+    'enter_text_home': 'Мәтін енгізіңіз',
+    'translate_button': 'Аудару',
+    'speak_button': 'Дауыспен сөйлеңіз',
+    'or_type_home': 'немесе мәтінді жазыңыз',
+    'translation_result': 'Аударма нәтижесі',
+    'ai_badge': 'AI ым тілі',
+    'copy': 'Көшіру',
+    'read': 'Оқу',
+    'share': 'Бөлісу',
+    'click_to_add': 'Сөзді басыңыз - мәтінге қосылады',
+    'more_words': 'Көбірек',
+    'streak_days': 'күндік серия',
+    'day_streak': 'Күндік серия',
+
+    // === PROFILE (ПРОФИЛЬ БЕТІ) ===
+    'profile_title': 'Профиль',
+    'profile_subtitle': 'Жеке ақпаратыңыз және параметрлеріңіз',
+    'full_name': 'Аты-жөні',
+    'email': 'Email',
+    'role': 'Рөл',
+    'registered_date': 'Тіркелген күн',
+    'last_login': 'Соңғы кіру',
+    'admin_role': 'Админ',
+    'user_role': 'Қолданушы',
+    'personal_info': 'Жеке ақпарат',
+    'notifications': 'Хабарландырулар',
+    'notifications_desc': 'Жаңа функциялар туралы хабарландырулар алу',
+    'dark_mode': 'Қараңғы режим',
+    'dark_mode_desc': 'Интерфейстің түс схемасын өзгерту',
+    'language_desc': 'Интерфейс тілін өзгерту',
+    'change_password': 'Құпия сөзді өзгерту',
+    'stat_translations': 'Аудармалар',
+    'stat_voice': 'Дауыстық сұрау',
+    'stat_frequent': 'Жиі сөздер',
+    'stat_streak': 'Күндік серия',
+    'avatar_change': 'Аватарды өзгерту',
+
+    // === TRANSLATE (АУДАРМА БЕТІ) ===
+    'translate_title': 'Аударма',
+    'translate_subtitle': 'Мәтінді қазақ ым тіліне аударыңыз',
+    'enter_text': 'Мәтін енгізіңіз',
+    'translate_btn': 'Аудару',
+    'voice_btn': 'Дауыспен сөйлеңіз',
+    'or_type': 'немесе мәтінді жазыңыз',
+    'result': 'Аударма нәтижесі',
+    'suggested_words': 'Ұсынылатын сөздер',
+    'recent_translations': 'Соңғы аудармалар',
+    'clear_recent': 'Тазалау',
+    'no_result': 'Мәтін енгізіп, аударыңыз',
+    'translated': 'Қазақ ым тіліне сәтті аударылды',
+
+    // === HISTORY (ТАРИХ БЕТІ) ===
+    'history_title': 'Тарих',
+    'history_subtitle': 'Барлық аудармаларыңыздың тарихы',
+    'history_list': 'Аударма тарихы',
+    'no_history': 'Әзірге аударма тарихы жоқ',
+    'total_translations': 'Барлық аудармалар',
+    'repeat': 'Қайталау',
+    'copy_text': 'Көшіру',
+    'clear_all': 'Барлығын өшіру',
+    'filter_all': 'Барлығы',
+    'filter_today': 'Бүгін',
+    'filter_week': 'Апта',
+
+    // === FREQUENT (ЖИІ СӨЗДЕР БЕТІ) ===
+    'frequent_title': 'Жиі сөздер',
+    'frequent_subtitle': 'Ең көп қолданылатын сөздер тізімі',
+    'frequent_words': 'Жиі қолданылатын сөздер',
+    'all_words': 'Барлық сөздер',
+    'total_usage': 'Барлық қолдану',
+    'most_used': 'Ең көп қолданылған',
+    'today_added': 'Бүгін қосылған',
+    'sort_by_usage': 'Қолдану бойынша',
+    'sort_by_alphabet': 'Әліпби бойынша',
+    'new_word': 'Жаңа сөз қосу',
+    'word_placeholder': 'Сөз (қазақша)',
+    'example_placeholder': 'Мысал сөйлем',
+    'video_placeholder': 'Видео файлының аты',
+    'add_word': 'Қосу',
+    'times': 'рет қолданылған',
+    'click_to_copy': 'Сөзді басыңыз - көшіру үшін',
+
+    // === HELP (КӨМЕК БЕТІ) ===
+    'help_title': 'Көмек',
+    'help_subtitle': 'Жиі қойылатын сұрақтар және көмек',
+    'faq': 'Жиі қойылатын сұрақтар',
+    'popular': 'Танымал',
+    'videos': 'Нұсқаулық бейнелер',
+    'contact': 'Бізбен байланысыңыз',
+    'online': 'Онлайн',
+    'phone': 'Телефон',
+    'address': 'Мекенжай',
+    'send': 'Жіберу',
+    'your_name': 'Ваше имя',
+    'your_email': 'Email для ответа',
+    'subject': 'Тема обращения',
+    'message': 'Подробное описание',
+    'sending': 'Жіберілуде...',
+    'support_24_7': '24/7 онлайн',
+    'working_hours': '09:00 - 18:00, Дс-Жм',
+    'response_time': 'Жауап беру уақыты: 1-2 сағат',
+    'tip_help': 'Сұрағыңызға жауап таба алмасаңыз, бізге хабарласыңыз. Біз 24/7 онлайн режимінде көмектесуге дайынбыз!',
+
+    // === ADMIN (АДМИН ПАНЕЛІ) ===
+    'admin_title': 'Админ панелі',
+    'admin_subtitle': 'Сөздікті басқару және статистика',
+    'dictionary_words_stat': 'Сөздіктегі сөздер',
+    'registered_users': 'Тіркелген пайдаланушы',
+    'today_translations_stat': 'Бүгінгі аударма',
+    'total_translations_stat': 'Барлық аударма',
+    'dictionary_tab': 'Сөздік',
+    'users_tab': 'Пайдаланушылар',
+    'statistics_tab': 'Статистика',
+    'settings_tab': 'Параметрлер',
+    'word_list': 'Сөздер тізімі',
+    'user_list': 'Пайдаланушылар тізімі',
+    'search_word': 'Сөз іздеу',
+    'search_user': 'Пайдаланушы іздеу',
+    'backup_data': 'Деректерді сақтау',
+    'restore_data': 'Деректерді қалпына келтіру',
+    'clear_all_data': 'Барлық деректерді тазалау',
+
+    // === АПТА КҮНДЕРІ ===
+    'mon': 'Дс', 'tue': 'Сс', 'wed': 'Ср', 'thu': 'Бс',
+    'fri': 'Жм', 'sat': 'Сн', 'sun': 'Жс',
+
+    // === ХАБАРЛАМАЛАР ===
+    'copied': 'Көшірілді!',
+    'saved': 'Сақталды!',
+    'deleted': 'Өшірілді!',
+    'added': 'Қосылды!',
+    'confirm_delete': 'Өшіргіңіз келеді ме?',
+    'confirm_clear_all': 'БАРЛЫҚ деректерді өшіргіңіз келеді ме? Бұл әрекетті қайтару мүмкін емес!',
+    'error_fill_fields': 'Барлық өрістерді толтырыңыз!',
+    'error_login_failed': 'Email немесе пароль қате!',
+    'password_changed': 'Құпия сөз сәтті өзгертілді!',
+    'password_too_short': 'Құпия сөз кемінде 6 символ болуы керек!',
+    'enter_new_password': 'Жаңа құпия сөзді енгізіңіз:',
+    'profile_saved': 'Профиль сақталды!',
+    'avatar_change_msg': 'Аватарды өзгерту мүмкіндігі кейінгі нұсқада қосылады',
+
+    // === РЕСУРСТАР ===
+    'resources': 'Ресурсы',
+    'resources_title': 'Вспомогательные ресурсы',
+    'resource_1_title': 'Қазақ ым тілінің негіздері',
+    'resource_1_desc': 'Әліппе мен негізгі сөздер',
+    'resource_2_title': 'Бейне сабақтар',
+    'resource_2_desc': 'Видео нұсқаулықтар жинағы',
+    'resource_3_title': 'Мобильді қосымша',
+    'resource_3_desc': 'Android және iOS нұсқалары',
+    'resource_4_title': 'Telegram бот',
+    'resource_4_desc': 'Күнделікті жаттығулар',
+    'resource_5_title': 'Қауымдастық форум',
+    'resource_5_desc': 'Пікірлер мен сұрақтар',
+    'resource_6_title': 'PDF нұсқаулық',
+    'resource_6_desc': 'Жүктеп алуға арналған'
   },
+
+  // ========== ОРЫСША АУДАРМА ==========
   ru: {
-    nav: {
-      home: 'Главная',
-      translate: 'Перевод',
-      history: 'История',
-      frequent: 'Частые слова',
-      profile: 'Профиль',
-      help: 'Помощь',
-      admin: 'Панель администратора'
-    },
-    profile: {
-      title: 'Профиль',
-      subtitle: 'Ваша личная информация и параметры',
-      notifications: 'Уведомления',
-      darkMode: 'Тёмный режим',
-      language: 'Язык',
-      save: 'Сохранить'
-    }
+    'menu': 'МЕНЮ',
+    'additional': 'ДОПОЛНИТЕЛЬНО',
+    'home': 'Главная',
+    'translate': 'Перевод',
+    'history': 'История',
+    'frequent': 'Частые слова',
+    'profile': 'Профиль',
+    'help': 'Помощь',
+    'admin': 'Админ панель',
+    'logout': 'Выход',
+    'language': 'Язык',
+    'settings': 'Настройки',
+    'security': 'Безопасность',
+    'close': 'Закрыть',
+    'save': 'Сохранить',
+    'cancel': 'Отмена',
+    'edit': 'Редактировать',
+    'delete': 'Удалить',
+    'search': 'Поиск',
+    'all': 'Все',
+    'today': 'Сегодня',
+    'week': 'Неделя',
+    'export': 'Экспорт',
+    'add': 'Добавить',
+    'clear': 'Очистить',
+    'loading': 'Загрузка...',
+
+    'welcome': 'Добро пожаловать',
+    'what_translate': 'Что переводим сегодня?',
+    'translated_words': 'Переведено слов',
+    'voice_requests': 'Голосовых запросов',
+    'popular_words': 'Часто используемые',
+    'today_activity_home': 'Активность сегодня',
+    'enter_text_home': 'Введите текст',
+    'translate_button': 'Перевести',
+    'speak_button': 'Говорите голосом',
+    'or_type_home': 'или напишите текст',
+    'translation_result': 'Результат перевода',
+    'ai_badge': 'AI язык жестов',
+    'copy': 'Копировать',
+    'read': 'Читать',
+    'share': 'Поделиться',
+    'click_to_add': 'Нажмите на слово - оно добавится в текст',
+    'more_words': 'Ещё',
+    'streak_days': 'дневная серия',
+    'day_streak': 'Дневная серия',
+
+    'profile_title': 'Профиль',
+    'profile_subtitle': 'Ваша личная информация и настройки',
+    'full_name': 'ФИО',
+    'email': 'Email',
+    'role': 'Роль',
+    'registered_date': 'Дата регистрации',
+    'last_login': 'Последний вход',
+    'admin_role': 'Админ',
+    'user_role': 'Пользователь',
+    'personal_info': 'Личная информация',
+    'notifications': 'Уведомления',
+    'notifications_desc': 'Получать уведомления о новых функциях',
+    'dark_mode': 'Тёмный режим',
+    'dark_mode_desc': 'Изменить цветовую схему интерфейса',
+    'language_desc': 'Изменить язык интерфейса',
+    'change_password': 'Изменить пароль',
+    'stat_translations': 'Переводы',
+    'stat_voice': 'Голосовые запросы',
+    'stat_frequent': 'Частые слова',
+    'stat_streak': 'Дневная серия',
+    'avatar_change': 'Изменить аватар',
+
+    'translate_title': 'Перевод',
+    'translate_subtitle': 'Переведите текст на казахский язык жестов',
+    'enter_text': 'Введите текст',
+    'translate_btn': 'Перевести',
+    'voice_btn': 'Говорите голосом',
+    'or_type': 'или напишите текст',
+    'result': 'Результат перевода',
+    'suggested_words': 'Рекомендуемые слова',
+    'recent_translations': 'Последние переводы',
+    'clear_recent': 'Очистить',
+    'no_result': 'Введите текст для перевода',
+    'translated': 'Успешно переведено на казахский язык жестов',
+
+    'history_title': 'История',
+    'history_subtitle': 'История всех ваших переводов',
+    'history_list': 'История переводов',
+    'no_history': 'История переводов пуста',
+    'total_translations': 'Всего переводов',
+    'repeat': 'Повторить',
+    'copy_text': 'Копировать',
+    'clear_all': 'Очистить всё',
+    'filter_all': 'Все',
+    'filter_today': 'Сегодня',
+    'filter_week': 'Неделя',
+
+    'frequent_title': 'Частые слова',
+    'frequent_subtitle': 'Список самых используемых слов',
+    'frequent_words': 'Часто используемые слова',
+    'all_words': 'Все слова',
+    'total_usage': 'Всего использований',
+    'most_used': 'Самое частое слово',
+    'today_added': 'Добавлено сегодня',
+    'sort_by_usage': 'По использованию',
+    'sort_by_alphabet': 'По алфавиту',
+    'new_word': 'Добавить новое слово',
+    'word_placeholder': 'Слово (на казахском)',
+    'example_placeholder': 'Пример предложения',
+    'video_placeholder': 'Название видео файла',
+    'add_word': 'Добавить',
+    'times': 'раз использовано',
+    'click_to_copy': 'Нажмите на слово - чтобы скопировать',
+
+    'help_title': 'Помощь',
+    'help_subtitle': 'Часто задаваемые вопросы и помощь',
+    'faq': 'Часто задаваемые вопросы',
+    'popular': 'Популярные',
+    'videos': 'Видеоуроки',
+    'contact': 'Свяжитесь с нами',
+    'online': 'Онлайн',
+    'phone': 'Телефон',
+    'address': 'Адрес',
+    'send': 'Отправить',
+    'your_name': 'Ваше имя',
+    'your_email': 'Email для ответа',
+    'subject': 'Тема обращения',
+    'message': 'Подробное описание',
+    'sending': 'Отправка...',
+    'support_24_7': '24/7 онлайн',
+    'working_hours': '09:00 - 18:00, Пн-Пт',
+    'response_time': 'Время ответа: 1-2 часа',
+    'tip_help': 'Если не нашли ответ на свой вопрос, свяжитесь с нами. Мы готовы помочь 24/7!',
+
+    'admin_title': 'Админ панель',
+    'admin_subtitle': 'Управление словарём и статистика',
+    'dictionary_words_stat': 'Слов в словаре',
+    'registered_users': 'Зарегистрированных пользователей',
+    'today_translations_stat': 'Переводов сегодня',
+    'total_translations_stat': 'Всего переводов',
+    'dictionary_tab': 'Словарь',
+    'users_tab': 'Пользователи',
+    'statistics_tab': 'Статистика',
+    'settings_tab': 'Настройки',
+    'word_list': 'Список слов',
+    'user_list': 'Список пользователей',
+    'search_word': 'Поиск слова',
+    'search_user': 'Поиск пользователя',
+    'backup_data': 'Архивировать данные',
+    'restore_data': 'Восстановить данные',
+    'clear_all_data': 'Очистить все данные',
+
+    'mon': 'Пн', 'tue': 'Вт', 'wed': 'Ср', 'thu': 'Чт',
+    'fri': 'Пт', 'sat': 'Сб', 'sun': 'Вс',
+
+    'copied': 'Скопировано!',
+    'saved': 'Сохранено!',
+    'deleted': 'Удалено!',
+    'added': 'Добавлено!',
+    'confirm_delete': 'Вы уверены, что хотите удалить?',
+    'confirm_clear_all': 'Вы уверены, что хотите удалить ВСЕ данные? Это действие нельзя отменить!',
+    'error_fill_fields': 'Заполните все поля!',
+    'error_login_failed': 'Неверный email или пароль!',
+    'password_changed': 'Пароль успешно изменён!',
+    'password_too_short': 'Пароль должен быть не менее 6 символов!',
+    'enter_new_password': 'Введите новый пароль:',
+    'profile_saved': 'Профиль сохранён!',
+    'avatar_change_msg': 'Возможность изменения аватара будет добавлена в следующих версиях',
+
+    'resources': 'Ресурсы',
+    'resources_title': 'Вспомогательные ресурсы',
+    'resource_1_title': 'Основы казахского жестового языка',
+    'resource_1_desc': 'Азбука и основные слова',
+    'resource_2_title': 'Видеоуроки',
+    'resource_2_desc': 'Сборник видеоинструкций',
+    'resource_3_title': 'Мобильное приложение',
+    'resource_3_desc': 'Версии для Android и iOS',
+    'resource_4_title': 'Telegram бот',
+    'resource_4_desc': 'Ежедневные упражнения',
+    'resource_5_title': 'Сообщество форум',
+    'resource_5_desc': 'Отзывы и вопросы',
+    'resource_6_title': 'PDF руководство',
+    'resource_6_desc': 'Для скачивания'
   },
+
+  // ========== АҒЫЛШЫНША АУДАРМА ==========
   en: {
-    nav: {
-      home: 'Home',
-      translate: 'Translate',
-      history: 'History',
-      frequent: 'Frequent Words',
-      profile: 'Profile',
-      help: 'Help',
-      admin: 'Admin Panel'
-    },
-    profile: {
-      title: 'Profile',
-      subtitle: 'Your personal information and settings',
-      notifications: 'Notifications',
-      darkMode: 'Dark Mode',
-      language: 'Language',
-      save: 'Save'
-    }
+    'menu': 'MENU',
+    'additional': 'ADDITIONAL',
+    'home': 'Home',
+    'translate': 'Translate',
+    'history': 'History',
+    'frequent': 'Frequent Words',
+    'profile': 'Profile',
+    'help': 'Help',
+    'admin': 'Admin Panel',
+    'logout': 'Logout',
+    'language': 'Language',
+    'settings': 'Settings',
+    'security': 'Security',
+    'close': 'Close',
+    'save': 'Save',
+    'cancel': 'Cancel',
+    'edit': 'Edit',
+    'delete': 'Delete',
+    'search': 'Search',
+    'all': 'All',
+    'today': 'Today',
+    'week': 'Week',
+    'export': 'Export',
+    'add': 'Add',
+    'clear': 'Clear',
+    'loading': 'Loading...',
+
+    'welcome': 'Welcome',
+    'what_translate': 'What shall we translate today?',
+    'translated_words': 'Translated Words',
+    'voice_requests': 'Voice Requests',
+    'popular_words': 'Popular Words',
+    'today_activity_home': "Today's Activity",
+    'enter_text_home': 'Enter text',
+    'translate_button': 'Translate',
+    'speak_button': 'Speak',
+    'or_type_home': 'or type text',
+    'translation_result': 'Translation Result',
+    'ai_badge': 'AI Sign Language',
+    'copy': 'Copy',
+    'read': 'Read',
+    'share': 'Share',
+    'click_to_add': 'Click on word - it will be added to text',
+    'more_words': 'More',
+    'streak_days': 'day streak',
+    'day_streak': 'Day Streak',
+
+    'profile_title': 'Profile',
+    'profile_subtitle': 'Your personal information and settings',
+    'full_name': 'Full Name',
+    'email': 'Email',
+    'role': 'Role',
+    'registered_date': 'Registered Date',
+    'last_login': 'Last Login',
+    'admin_role': 'Admin',
+    'user_role': 'User',
+    'personal_info': 'Personal Information',
+    'notifications': 'Notifications',
+    'notifications_desc': 'Receive notifications about new features',
+    'dark_mode': 'Dark Mode',
+    'dark_mode_desc': 'Change the color scheme of the interface',
+    'language_desc': 'Change the interface language',
+    'change_password': 'Change Password',
+    'stat_translations': 'Translations',
+    'stat_voice': 'Voice Requests',
+    'stat_frequent': 'Frequent Words',
+    'stat_streak': 'Day Streak',
+    'avatar_change': 'Change Avatar',
+
+    'translate_title': 'Translate',
+    'translate_subtitle': 'Translate text to Kazakh Sign Language',
+    'enter_text': 'Enter text',
+    'translate_btn': 'Translate',
+    'voice_btn': 'Speak',
+    'or_type': 'or type text',
+    'result': 'Translation Result',
+    'suggested_words': 'Suggested Words',
+    'recent_translations': 'Recent Translations',
+    'clear_recent': 'Clear',
+    'no_result': 'Enter text to translate',
+    'translated': 'Successfully translated to Kazakh Sign Language',
+
+    'history_title': 'History',
+    'history_subtitle': 'History of all your translations',
+    'history_list': 'Translation History',
+    'no_history': 'No translation history yet',
+    'total_translations': 'Total Translations',
+    'repeat': 'Repeat',
+    'copy_text': 'Copy',
+    'clear_all': 'Clear All',
+    'filter_all': 'All',
+    'filter_today': 'Today',
+    'filter_week': 'Week',
+
+    'frequent_title': 'Frequent Words',
+    'frequent_subtitle': 'List of most used words',
+    'frequent_words': 'Frequently Used Words',
+    'all_words': 'All Words',
+    'total_usage': 'Total Usage',
+    'most_used': 'Most Used',
+    'today_added': 'Added Today',
+    'sort_by_usage': 'By Usage',
+    'sort_by_alphabet': 'Alphabetically',
+    'new_word': 'Add New Word',
+    'word_placeholder': 'Word (in Kazakh)',
+    'example_placeholder': 'Example sentence',
+    'video_placeholder': 'Video File Name',
+    'add_word': 'Add',
+    'times': 'times used',
+    'click_to_copy': 'Click on word to copy',
+
+    'help_title': 'Help',
+    'help_subtitle': 'Frequently Asked Questions and Help',
+    'faq': 'Frequently Asked Questions',
+    'popular': 'Popular',
+    'videos': 'Tutorial Videos',
+    'contact': 'Contact Us',
+    'online': 'Online',
+    'phone': 'Phone',
+    'address': 'Address',
+    'send': 'Send',
+    'your_name': 'Your Name',
+    'your_email': 'Email for response',
+    'subject': 'Subject',
+    'message': 'Detailed description',
+    'sending': 'Sending...',
+    'support_24_7': '24/7 online',
+    'working_hours': '09:00 - 18:00, Mon-Fri',
+    'response_time': 'Response time: 1-2 hours',
+    'tip_help': "If you can't find an answer to your question, contact us. We're available 24/7!",
+
+    'admin_title': 'Admin Panel',
+    'admin_subtitle': 'Dictionary management and statistics',
+    'dictionary_words_stat': 'Words in Dictionary',
+    'registered_users': 'Registered Users',
+    'today_translations_stat': "Today's Translations",
+    'total_translations_stat': 'Total Translations',
+    'dictionary_tab': 'Dictionary',
+    'users_tab': 'Users',
+    'statistics_tab': 'Statistics',
+    'settings_tab': 'Settings',
+    'word_list': 'Word List',
+    'user_list': 'User List',
+    'search_word': 'Search Word',
+    'search_user': 'Search User',
+    'backup_data': 'Backup Data',
+    'restore_data': 'Restore Data',
+    'clear_all_data': 'Clear All Data',
+
+    'mon': 'Mon', 'tue': 'Tue', 'wed': 'Wed', 'thu': 'Thu',
+    'fri': 'Fri', 'sat': 'Sat', 'sun': 'Sun',
+
+    'copied': 'Copied!',
+    'saved': 'Saved!',
+    'deleted': 'Deleted!',
+    'added': 'Added!',
+    'confirm_delete': 'Are you sure you want to delete?',
+    'confirm_clear_all': 'Are you sure you want to delete ALL data? This action cannot be undone!',
+    'error_fill_fields': 'Please fill in all fields!',
+    'error_login_failed': 'Invalid email or password!',
+    'password_changed': 'Password changed successfully!',
+    'password_too_short': 'Password must be at least 6 characters!',
+    'enter_new_password': 'Enter new password:',
+    'profile_saved': 'Profile saved!',
+    'avatar_change_msg': 'Avatar change feature will be added in future versions',
+
+    'resources': 'Resources',
+    'resources_title': 'Additional Resources',
+    'resource_1_title': 'Basics of Kazakh Sign Language',
+    'resource_1_desc': 'Alphabet and basic words',
+    'resource_2_title': 'Video Tutorials',
+    'resource_2_desc': 'Collection of video guides',
+    'resource_3_title': 'Mobile App',
+    'resource_3_desc': 'Android and iOS versions',
+    'resource_4_title': 'Telegram Bot',
+    'resource_4_desc': 'Daily exercises',
+    'resource_5_title': 'Community Forum',
+    'resource_5_desc': 'Feedback and questions',
+    'resource_6_title': 'PDF Guide',
+    'resource_6_desc': 'For download'
   }
 }
 
-export const setLanguage = (lang) => {
-  currentLanguage.value = lang
-  localStorage.setItem('appLanguage', lang)
+// ========== ТІЛДІ ЖҮКТЕУ ==========
+export const loadLanguage = () => {
+  const saved = localStorage.getItem('appLanguage')
+  if (saved && (saved === 'kk' || saved === 'ru' || saved === 'en')) {
+    currentLanguage.value = saved
+  } else {
+    currentLanguage.value = 'kk'
+  }
+  return currentLanguage.value
 }
 
+// ========== ТІЛДІ ОРНАТУ ==========
+export const setLanguage = (lang) => {
+  if (lang === 'kk' || lang === 'ru' || lang === 'en') {
+    currentLanguage.value = lang
+    localStorage.setItem('appLanguage', lang)
+    translatePage()
+    window.dispatchEvent(new CustomEvent('languageChanged', { detail: lang }))
+  }
+}
+
+// ========== ТІЛДІ АЛУ ==========
 export const getLanguage = () => currentLanguage.value
 
-export const t = (path) => {
-  const keys = path.split('.')
-  let value = messages[currentLanguage.value]
-  
-  for (const key of keys) {
-    value = value?.[key]
+// ========== АУДАРУ ФУНКЦИЯСЫ ==========
+export const t = (key) => {
+  const lang = currentLanguage.value
+  if (translations[lang] && translations[lang][key]) {
+    return translations[lang][key]
   }
+  if (translations.en && translations.en[key]) {
+    return translations.en[key]
+  }
+  return key
+}
+
+// ========== БЕТТІ АУДАРУ ==========
+export const translatePage = () => {
+  const lang = currentLanguage.value
+  const elements = document.querySelectorAll('[data-i18n]')
   
-  return value || path
+  elements.forEach(el => {
+    const key = el.getAttribute('data-i18n')
+    const translation = t(key)
+    
+    if (translation && translation !== key) {
+      if (el.tagName === 'INPUT' || el.tagName === 'TEXTAREA') {
+        if (el.placeholder !== undefined) {
+          el.placeholder = translation
+        }
+      } else {
+        el.textContent = translation
+      }
+    }
+  })
+  
+  document.documentElement.setAttribute('lang', lang === 'kk' ? 'kk' : lang === 'ru' ? 'ru' : 'en')
+  console.log('Бет аударылды:', lang)
+}
+
+// ========== БАСТАПҚЫ ЖҮКТЕУ ==========
+if (typeof window !== 'undefined') {
+  loadLanguage()
 }

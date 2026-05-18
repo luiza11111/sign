@@ -6,54 +6,54 @@
 
     <nav class="nav-menu">
       <div class="nav-section">
-        <p class="section-title">МЕНЮ</p>
+        <p class="section-title" data-i18n="menu">МЕНЮ</p>
         <ul>
           <li :class="{ active: $route.path === '/' }">
             <router-link to="/">
               <Home class="nav-icon" :size="18" />
-              <span>Басты бет</span>
+              <span data-i18n="home">Басты бет</span>
             </router-link>
           </li>
           <li :class="{ active: $route.path === '/translate' }">
             <router-link to="/translate">
               <Languages class="nav-icon" :size="18" />
-              <span>Аударма</span>
+              <span data-i18n="translate">Аударма</span>
             </router-link>
           </li>
           <li :class="{ active: $route.path === '/history' }">
             <router-link to="/history">
               <Clock class="nav-icon" :size="18" />
-              <span>Тарих</span>
+              <span data-i18n="history">Тарих</span>
             </router-link>
           </li>
           <li :class="{ active: $route.path === '/frequent' }">
             <router-link to="/frequent">
               <Star class="nav-icon" :size="18" />
-              <span>Жиі сөздер</span>
+              <span data-i18n="frequent">Жиі сөздер</span>
             </router-link>
           </li>
         </ul>
       </div>
 
       <div class="nav-section">
-        <p class="section-title">ҚОСЫМША</p>
+        <p class="section-title" data-i18n="additional">ҚОСЫМША</p>
         <ul>
           <li :class="{ active: $route.path === '/profile' }">
             <router-link to="/profile">
               <User class="nav-icon" :size="18" />
-              <span>Профиль</span>
+              <span data-i18n="profile">Профиль</span>
             </router-link>
           </li>
           <li :class="{ active: $route.path === '/help' }">
             <router-link to="/help">
               <HelpCircle class="nav-icon" :size="18" />
-              <span>Көмек</span>
+              <span data-i18n="help">Көмек</span>
             </router-link>
           </li>
           <li v-if="isAdmin" :class="{ active: $route.path === '/admin' }">
             <router-link to="/admin">
               <Shield class="nav-icon" :size="18" />
-              <span>Админ панель</span>
+              <span data-i18n="admin">Админ панель</span>
             </router-link>
           </li>
         </ul>
@@ -64,7 +64,7 @@
       <div class="avatar">{{ userInitials }}</div>
       <div class="user-details">
         <p class="user-name">{{ userName }}</p>
-        <p class="user-role">{{ userRole }}</p>
+        <p class="user-role" data-i18n="admin_role">{{ userRole }}</p>
       </div>
       <button class="logout-icon" @click="handleLogout">
         <LogOut class="logout-icon-symbol" :size="18" />
@@ -74,9 +74,11 @@
 </template>
 
 <script setup>
-import { computed } from 'vue'
+import { computed, onMounted } from 'vue'
 import { useRouter } from 'vue-router'
 import { useAuthStore } from '../stores/auth'
+import { loadLanguage, translatePage, t } from '../i18n'
+
 // Lucide иконкалары
 import { 
   Home, Languages, Clock, Star, 
@@ -88,8 +90,8 @@ import Logo from './Logo.vue'
 const router = useRouter()
 const authStore = useAuthStore()
 
-const userName = computed(() => authStore.user?.name || 'Қолданушы')
-const userRole = computed(() => authStore.user?.role === 'admin' ? 'Админ' : 'Қолданушы')
+const userName = computed(() => authStore.user?.name || t('user'))
+const userRole = computed(() => authStore.user?.role === 'admin' ? t('admin_role') : t('user_role'))
 const userInitials = computed(() => userName.value.charAt(0).toUpperCase())
 const isAdmin = computed(() => authStore.isAdmin())
 
@@ -97,6 +99,15 @@ const handleLogout = () => {
   authStore.logout()
   router.push('/login')
 }
+
+onMounted(() => {
+  loadLanguage()
+  translatePage()
+  
+  window.addEventListener('languageChanged', () => {
+    translatePage()
+  })
+})
 </script>
 
 <style scoped>

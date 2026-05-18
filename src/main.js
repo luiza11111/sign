@@ -4,24 +4,43 @@ import App from './App.vue'
 import router from './router'
 import { useAuthStore } from './stores/auth'
 
-// Импортировать глобальные стили
 import './theme.css'
 
-// Lucide иконкаларын тіркеу
+// i18n импорттау
+import { t, setLanguage, currentLanguage, translatePage, loadLanguage } from './i18n'
+
+// Lucide иконкалары
 import * as LucideIcons from 'lucide-vue-next'
 
+// APP құру
 const app = createApp(App)
 
-// Барлық иконкаларды глобалды түрде тіркеу
+// Глобальды функциялар
+app.config.globalProperties.$t = t
+app.config.globalProperties.$setLanguage = setLanguage
+app.config.globalProperties.$currentLanguage = currentLanguage
+
+// Иконкаларды тіркеу
 for (const [key, component] of Object.entries(LucideIcons)) {
   app.component(key, component)
 }
 
+// Плагиндер
 app.use(createPinia())
 app.use(router)
 
-// Инициализировать аутентификацию
+// Қосымшаны монтировкалау
+app.mount('#app')
+
+// Аутентификацияны инициализациялау
 const authStore = useAuthStore()
 authStore.initAuth()
 
-app.mount('#app')
+// Тілді жүктеу және бетті аудару
+loadLanguage()
+translatePage()
+
+// Тіл өзгергенде бетті аудару
+window.addEventListener('languageChanged', () => {
+  translatePage()
+})

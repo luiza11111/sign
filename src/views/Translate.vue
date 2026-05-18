@@ -7,18 +7,18 @@
           <Languages :size="32" :stroke-width="1.5" />
         </div>
         <div>
-          <h1>Аударма</h1>
-          <p>Мәтінді қазақ ым тіліне аударыңыз</p>
+          <h1 data-i18n="translate_title">Аударма</h1>
+          <p data-i18n="translate_subtitle">Мәтінді қазақ ым тіліне аударыңыз</p>
         </div>
       </div>
       <div class="header-stats">
         <div class="stat-badge">
           <BarChart3 :size="16" />
-          <span>Бүгін: {{ todayCount }} аударма</span>
+          <span><span data-i18n="today">Бүгін</span>: {{ todayCount }} <span data-i18n="stat_translations">аударма</span></span>
         </div>
         <div class="stat-badge">
           <Award :size="16" />
-          <span>7 күндік серия</span>
+          <span>7 <span data-i18n="day_streak">күндік серия</span></span>
         </div>
       </div>
     </div>
@@ -32,11 +32,11 @@
           <div class="card-header">
             <div class="header-left">
               <FileText :size="20" />
-              <h3>Мәтін енгізіңіз</h3>
+              <h3 data-i18n="enter_text">Мәтін енгізіңіз</h3>
             </div>
             <button class="translate-btn" @click="translateText">
               <Languages :size="16" />
-              <span>Аудару</span>
+              <span data-i18n="translate_btn">Аудару</span>
             </button>
           </div>
 
@@ -44,7 +44,7 @@
             <textarea 
               v-model="inputText" 
               rows="6" 
-              placeholder="Сәлем! Қалайсың? Мен бүгін университетке барамын..."
+              :placeholder="t('enter_text_placeholder')"
               class="styled-textarea"
             ></textarea>
           </div>
@@ -52,9 +52,9 @@
           <div class="voice-section">
             <button class="voice-btn" @click="startVoiceInput">
               <Mic :size="16" />
-              <span>Дауыспен сөйлеңіз</span>
+              <span data-i18n="voice_btn">Дауыспен сөйлеңіз</span>
             </button>
-            <span class="voice-hint">немесе мәтінді жазыңыз</span>
+            <span class="voice-hint" data-i18n="or_type">немесе мәтінді жазыңыз</span>
           </div>
         </div>
       </div>
@@ -66,11 +66,11 @@
           <div class="card-header">
             <div class="header-left">
               <Sparkles :size="20" />
-              <h3>Аударма нәтижесі</h3>
+              <h3 data-i18n="translation_result">Аударма нәтижесі</h3>
             </div>
             <div class="ai-badge">
               <Brain :size="14" />
-              <span>AI ым тілі</span>
+              <span data-i18n="ai_badge">AI ым тілі</span>
             </div>
           </div>
 
@@ -81,15 +81,15 @@
           <div class="action-buttons" v-if="showActions">
             <button class="action-btn copy" @click="copyResult">
               <Copy :size="14" />
-              <span>Көшіру</span>
+              <span data-i18n="copy">Көшіру</span>
             </button>
             <button class="action-btn speak" @click="speakResult">
               <Volume2 :size="14" />
-              <span>Оқу</span>
+              <span data-i18n="speak">Оқу</span>
             </button>
             <button class="action-btn share" @click="shareResult">
               <Share2 :size="14" />
-              <span>Бөлісу</span>
+              <span data-i18n="share">Бөлісу</span>
             </button>
           </div>
         </div>
@@ -102,7 +102,7 @@
       <div class="card-header">
         <div class="header-left">
           <Lightbulb :size="20" />
-          <h3>Ұсынылатын сөздер</h3>
+          <h3 data-i18n="suggested_words">Ұсынылатын сөздер</h3>
         </div>
         <button class="refresh-btn" @click="refreshSuggestions">
           <RefreshCw :size="16" />
@@ -123,7 +123,7 @@
       
       <div class="suggestions-note">
         <MousePointerClick :size="12" />
-        <span class="note-text">Сөзді басыңыз - мәтінге қосылады</span>
+        <span class="note-text" data-i18n="click_to_add">Сөзді басыңыз - мәтінге қосылады</span>
       </div>
     </div>
 
@@ -133,7 +133,7 @@
       <div class="card-header">
         <div class="header-left">
           <Clock :size="20" />
-          <h3>Соңғы аудармалар</h3>
+          <h3 data-i18n="recent_translations">Соңғы аудармалар</h3>
         </div>
         <button class="clear-btn" @click="clearRecent">
           <Trash2 :size="16" />
@@ -166,6 +166,7 @@ import { ref, computed, onMounted, watch } from 'vue'
 import axios from 'axios'
 import apiClient from '../api'
 import { useAuthStore } from '../stores/auth'
+import { t, loadLanguage, translatePage } from '../i18n'
 
 // Lucide иконкаларын импорттау
 import { 
@@ -176,7 +177,7 @@ import {
 
 // Деректер
 const inputText = ref(localStorage.getItem('inputText') || '')
-const translatedText = ref('Мәтін енгізіп, аударыңыз')
+const translatedText = ref(t('no_result'))
 const showActions = ref(false)
 const recentTranslations = ref([])
 const todayCount = ref(24)
@@ -223,8 +224,8 @@ const translateText = async () => {
     translatedText.value = `
       <div class="empty-state">
         <div class="empty-icon">📭</div>
-        <p>Мәтінді енгізіңіз</p>
-        <small>Дауыс немесе мәтін арқылы</small>
+        <p>${t('enter_text')}</p>
+        <small>${t('or_type')}</small>
       </div>
     `
     showActions.value = false
@@ -232,17 +233,15 @@ const translateText = async () => {
   }
   
   const authStore = useAuthStore()
-  const translation = `🧏‍♂️ "${inputText.value}" - Қазақ ым тіліне аударылды`
+  const translation = `🧏‍♂️ "${inputText.value}" - ${t('translated')}`
   
   if (authStore.isLoggedIn) {
     try {
-      // Сохранить в историю через API
       await apiClient.post('/api/history', {
         text: inputText.value,
         translation: translation
       })
       
-      // Обновить локальный список недавних переводов
       const response = await apiClient.get('/api/history')
       recentTranslations.value = response.data.slice(0, 5).map(item => ({
         text: item.text,
@@ -251,11 +250,9 @@ const translateText = async () => {
       }))
     } catch (error) {
       console.error('Error saving translation:', error)
-      // Fallback to localStorage
       saveToLocalStorage()
     }
   } else {
-    // Если не залогинен, использовать localStorage
     saveToLocalStorage()
   }
   
@@ -263,18 +260,17 @@ const translateText = async () => {
     <div class="result-content">
       <div class="result-icon">🧏‍♂️</div>
       <div class="result-text">“${inputText.value}”</div>
-      <div class="result-status">✅ Қазақ ым тіліне сәтті аударылды</div>
+      <div class="result-status">✅ ${t('translated')}</div>
     </div>
   `
   showActions.value = true
 }
 
-// Функция для сохранения в localStorage
 const saveToLocalStorage = () => {
   const history = JSON.parse(localStorage.getItem('translationHistory') || '[]')
   history.unshift({
     text: inputText.value,
-    translation: `🧏‍♂️ "${inputText.value}" - Қазақ ым тіліне аударылды`,
+    translation: `🧏‍♂️ "${inputText.value}" - ${t('translated')}`,
     date: new Date().toLocaleString()
   })
   localStorage.setItem('translationHistory', JSON.stringify(history.slice(0, 50)))
@@ -296,17 +292,17 @@ const startVoiceInput = () => {
     }
     
     recognition.onerror = () => {
-      alert('Дауысты тану мүмкін болмады')
+      alert(t('voice_error'))
     }
   } else {
-    alert('Сіздің браузеріңіз дауыстық енгізуді қолдамайды')
+    alert(t('voice_not_supported'))
   }
 }
 
 // Нәтижені көшіру
 const copyResult = () => {
   navigator.clipboard.writeText(inputText.value)
-  alert('Көшірілді!')
+  alert(t('copied'))
 }
 
 // Нәтижені оқу
@@ -320,11 +316,11 @@ const speakResult = () => {
 const shareResult = () => {
   if (navigator.share) {
     navigator.share({
-      title: 'Аударма нәтижесі',
+      title: t('share_title'),
       text: inputText.value,
     })
   } else {
-    alert('Бөлісу мүмкін емес')
+    alert(t('share_not_supported'))
   }
 }
 
@@ -361,7 +357,6 @@ const loadRecent = async () => {
       }))
     } catch (error) {
       console.error('Error loading recent:', error)
-      // Fallback to localStorage
       const history = JSON.parse(localStorage.getItem('translationHistory') || '[]')
       recentTranslations.value = history.slice(0, 5)
     }
@@ -373,9 +368,14 @@ const loadRecent = async () => {
 
 onMounted(() => {
   loadRecent()
+  loadLanguage()
+  translatePage()
+  
+  window.addEventListener('languageChanged', () => {
+    translatePage()
+  })
 })
 
-// Сохранять inputText в localStorage при изменении
 watch(inputText, (newValue) => {
   localStorage.setItem('inputText', newValue)
 })
@@ -855,94 +855,83 @@ watch(inputText, (newValue) => {
 
 /* ========== ТЁМНЫЙ РЕЖИМ ========== */
 :root.dark-theme .translate-container {
-  background: var(--bg-secondary);
-  color: var(--text-primary);
+  background: #0f172a;
 }
 
-:root.dark-theme .page-header {
-  color: var(--text-primary);
-}
-
+:root.dark-theme .stat-badge,
 :root.dark-theme .input-card,
 :root.dark-theme .output-card,
 :root.dark-theme .suggestions-card,
 :root.dark-theme .recent-card {
-  background: var(--card-bg);
-  border-color: var(--border-color);
-  color: var(--text-primary);
+  background: #1e293b !important;
+  border-color: #334155 !important;
 }
 
-:root.dark-theme .card-header h3 {
-  color: var(--text-primary);
+:root.dark-theme .header-content h1,
+:root.dark-theme .card-header h3,
+:root.dark-theme .result-text {
+  color: #f1f5f9 !important;
+}
+
+:root.dark-theme .header-content p,
+:root.dark-theme .voice-hint,
+:root.dark-theme .note-text,
+:root.dark-theme .recent-date {
+  color: #94a3b8 !important;
 }
 
 :root.dark-theme .styled-textarea {
-  background: #2a2a3e;
-  color: var(--text-primary);
-  border-color: var(--border-color);
+  background: #334155 !important;
+  border-color: #475569 !important;
+  color: #f1f5f9 !important;
 }
 
 :root.dark-theme .styled-textarea::placeholder {
-  color: var(--text-secondary);
+  color: #94a3b8 !important;
 }
 
 :root.dark-theme .result-box {
-  background: #2a2a3e;
-  color: var(--text-primary);
-  border-color: var(--border-color);
+  background: #1e293b !important;
 }
 
-:root.dark-theme .empty-state {
-  color: var(--text-primary);
+:root.dark-theme .action-btn,
+:root.dark-theme .voice-btn,
+:root.dark-theme .refresh-btn,
+:root.dark-theme .clear-btn {
+  background: #334155 !important;
+  color: #cbd5e1 !important;
 }
 
-:root.dark-theme .empty-state small {
-  color: var(--text-secondary);
+:root.dark-theme .action-btn:hover,
+:root.dark-theme .voice-btn:hover,
+:root.dark-theme .refresh-btn:hover,
+:root.dark-theme .clear-btn:hover {
+  background: #475569 !important;
+  color: #a78bfa !important;
 }
 
-:root.dark-theme .action-btn {
-  background: rgba(99, 102, 241, 0.1);
-  color: var(--text-primary);
+:root.dark-theme .ai-badge,
+:root.dark-theme .badge {
+  background: #334155 !important;
+  color: #a78bfa !important;
 }
 
 :root.dark-theme .suggestion-chip {
-  background: rgba(99, 102, 241, 0.1);
-  color: var(--text-primary);
-  border-color: var(--border-color);
+  background: #334155 !important;
+  border-color: #475569 !important;
+  color: #cbd5e1 !important;
+}
+
+:root.dark-theme .suggestion-chip:hover {
+  background: #475569 !important;
+  color: #a78bfa !important;
 }
 
 :root.dark-theme .recent-item {
-  border-bottom-color: var(--border-color);
-  color: var(--text-primary);
+  border-bottom-color: #334155 !important;
 }
 
 :root.dark-theme .recent-item:hover {
-  background: rgba(99, 102, 241, 0.1);
-}
-
-:root.dark-theme .recent-date {
-  color: var(--text-secondary);
-}
-
-:root.dark-theme .refresh-btn,
-:root.dark-theme .clear-btn {
-  background: rgba(99, 102, 241, 0.1);
-  color: var(--text-primary);
-}
-
-:root.dark-theme .refresh-btn:hover,
-:root.dark-theme .clear-btn:hover {
-  background: rgba(99, 102, 241, 0.2);
-}
-
-:root.dark-theme .ai-badge {
-  background: rgba(99, 102, 241, 0.1);
-  color: #8b5cf6;
-}
-
-:root.dark-theme .stat-badge {
-  background: var(--card-bg);
-  border-color: var(--border-color);
-  color: var(--text-secondary);
+  background: #334155 !important;
 }
 </style>

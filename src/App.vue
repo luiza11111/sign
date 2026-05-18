@@ -44,9 +44,9 @@
                 <span class="modal-item-arrow">→</span>
               </a>
 
-              <!-- 2. Бейне сабақтар - YouTube плейлист -->
+              <!-- 2. Бейне сабақтар - YouTube -->
               <a 
-                href="https://youtube.com/playlist?list=PLkqLHl8Jd5nQmDgXpJzLxWwYfVpQbLfG" 
+                href="https://youtu.be/h6ukdwq-D6o?si=GS9sxsavCmGL3bSI" 
                 class="modal-item"
                 target="_blank"
                 rel="noopener noreferrer"
@@ -59,7 +59,7 @@
                 <span class="modal-item-arrow">→</span>
               </a>
 
-              <!-- 3. Мобильді қосымша - Google Play сілтемесі -->
+              <!-- 3. Мобильді қосымша - Google Play -->
               <a 
                 href="https://play.google.com/store/apps/details?id=com.signflow.app" 
                 class="modal-item"
@@ -74,7 +74,7 @@
                 <span class="modal-item-arrow">→</span>
               </a>
 
-              <!-- 4. Telegram бот - Нақты Telegram сілтемесі -->
+              <!-- 4. Telegram бот -->
               <a 
                 href="https://t.me/QazaqSignBot" 
                 class="modal-item"
@@ -89,7 +89,7 @@
                 <span class="modal-item-arrow">→</span>
               </a>
 
-              <!-- 5. Қауымдастық форум - Discord сервері -->
+              <!-- 5. Қауымдастық форум - Discord -->
               <a 
                 href="https://discord.gg/signflow" 
                 class="modal-item"
@@ -104,7 +104,7 @@
                 <span class="modal-item-arrow">→</span>
               </a>
 
-              <!-- 6. PDF нұсқаулық - Оқулық PDF -->
+              <!-- 6. PDF нұсқаулық -->
               <a 
                 href="/resources/signflow-user-guide.pdf" 
                 class="modal-item"
@@ -163,7 +163,6 @@ const showResourcesModal = ref(false)
 // Ресурстарды ашу функциясы
 const openResource = (type, name) => {
   if (type === 'pdf') {
-    // PDF файлдар үшін демо-хабарлама (нақты PDF жоқ болса)
     alert(`"${name === 'kazakh-sign-language-basics' ? 'Қазақ ым тілінің негіздері' : 'SignFlow нұсқаулығы'} PDF файлы әзірлену үстінде. Жақын арада қолжетімді болады! 📄`)
   }
 }

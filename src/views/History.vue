@@ -7,14 +7,14 @@
           <History :size="32" :stroke-width="1.5" />
         </div>
         <div>
-          <h1>История</h1>
-          <p>История всех ваших переводов</p>
+          <h1 data-i18n="history_title">История</h1>
+          <p data-i18n="history_subtitle">История всех ваших переводов</p>
         </div>
       </div>
       <div class="header-stats">
         <div class="stat-badge">
           <BarChart3 :size="16" />
-          <span>{{ history.length }} переводов</span>
+          <span>{{ history.length }} <span data-i18n="translations_count">переводов</span></span>
         </div>
         <button 
           v-if="history.length > 0" 
@@ -22,7 +22,7 @@
           @click="clearAllHistory"
         >
           <Trash2 :size="14" />
-          <span>Очистить все</span>
+          <span data-i18n="clear_all">Очистить все</span>
         </button>
       </div>
     </div>
@@ -35,7 +35,7 @@
         </div>
         <div class="stat-mini-info">
           <div class="stat-mini-value">{{ history.length }}</div>
-          <div class="stat-mini-label">Всего переводов</div>
+          <div class="stat-mini-label" data-i18n="total_translations">Всего переводов</div>
         </div>
       </div>
       <div class="stat-mini-card">
@@ -44,7 +44,7 @@
         </div>
         <div class="stat-mini-info">
           <div class="stat-mini-value">{{ getTodayCount }}</div>
-          <div class="stat-mini-label">Сегодня</div>
+          <div class="stat-mini-label" data-i18n="today">Сегодня</div>
         </div>
       </div>
       <div class="stat-mini-card">
@@ -53,7 +53,7 @@
         </div>
         <div class="stat-mini-info">
           <div class="stat-mini-value">{{ getWeekCount }}</div>
-          <div class="stat-mini-label">За неделю</div>
+          <div class="stat-mini-label" data-i18n="week">За неделю</div>
         </div>
       </div>
       <div class="stat-mini-card">
@@ -62,7 +62,7 @@
         </div>
         <div class="stat-mini-info">
           <div class="stat-mini-value">{{ getMostUsedWord }}</div>
-          <div class="stat-mini-label">Частое слово</div>
+          <div class="stat-mini-label" data-i18n="most_used_word">Частое слово</div>
         </div>
       </div>
     </div>
@@ -74,7 +74,7 @@
         <div class="card-header">
           <div class="header-left">
             <List :size="20" />
-            <h3>История переводов</h3>
+            <h3 data-i18n="history_list">История переводов</h3>
           </div>
           <div class="header-filters" v-if="history.length > 0">
             <button 
@@ -82,21 +82,21 @@
               :class="{ active: filterType === 'all' }"
               @click="filterType = 'all'"
             >
-              Все
+              <span data-i18n="all">Все</span>
             </button>
             <button 
               class="filter-chip" 
               :class="{ active: filterType === 'today' }"
               @click="filterType = 'today'"
             >
-              Сегодня
+              <span data-i18n="today">Сегодня</span>
             </button>
             <button 
               class="filter-chip" 
               :class="{ active: filterType === 'week' }"
               @click="filterType = 'week'"
             >
-              Неделя
+              <span data-i18n="week">Неделя</span>
             </button>
           </div>
         </div>
@@ -106,11 +106,11 @@
           <div class="empty-icon">
             <Inbox :size="64" :stroke-width="1" />
           </div>
-          <p>История переводов пуста</p>
-          <small>Сделайте первый перевод на главной странице</small>
+          <p data-i18n="no_history">История переводов пуста</p>
+          <small data-i18n="make_first_translation">Сделайте первый перевод на главной странице</small>
           <router-link to="/" class="empty-btn">
             <Plus :size="16" />
-            <span>Перейти к переводу</span>
+            <span data-i18n="go_to_translate">Перейти к переводу</span>
           </router-link>
         </div>
 
@@ -126,7 +126,7 @@
                 <MessageSquare :size="16" />
                 <span>{{ item.text }}</span>
               </div>
-              <button class="delete-btn" @click="deleteItem(index)">
+              <button class="delete-btn" @click="deleteItem(index)" :title="t('delete')">
                 <XCircle :size="18" />
               </button>
             </div>
@@ -144,11 +144,11 @@
               <div class="history-actions">
                 <button class="history-action" @click="repeatTranslation(item.text)">
                   <Repeat :size="14" />
-                  <span>Повторить</span>
+                  <span data-i18n="repeat">Повторить</span>
                 </button>
                 <button class="history-action" @click="copyText(item.text)">
                   <Copy :size="14" />
-                  <span>Копировать</span>
+                  <span data-i18n="copy">Копировать</span>
                 </button>
               </div>
             </div>
@@ -159,11 +159,11 @@
         <div v-if="history.length > 0" class="card-footer">
           <div class="footer-info">
             <Database :size="14" />
-            <span>Всего: {{ history.length }} переводов</span>
+            <span data-i18n="total">Всего: {{ history.length }} переводов</span>
           </div>
           <button class="export-btn" @click="exportHistory">
             <Download :size="14" />
-            <span>Экспорт</span>
+            <span data-i18n="export">Экспорт</span>
           </button>
         </div>
       </div>
@@ -174,9 +174,8 @@
 <script setup>
 import { ref, computed, onMounted } from 'vue'
 import { useRouter } from 'vue-router'
-import axios from 'axios'
-import apiClient from '../api'
 import { useAuthStore } from '../stores/auth'
+import { t, loadLanguage, translatePage } from '../i18n'
 
 // Lucide иконкаларын импорттау
 import { 
@@ -234,27 +233,6 @@ const filteredHistory = computed(() => {
 })
 
 // Тарихты жүктеу
-const loadHistory = async () => {
-  const authStore = useAuthStore()
-  if (authStore.isLoggedIn) {
-    try {
-      const response = await apiClient.get('/api/history')
-      history.value = response.data.map(item => ({
-        id: item.id,
-        text: item.text,
-        translation: item.translation,
-        date: new Date(item.created_at).toLocaleString()
-      }))
-    } catch (error) {
-      console.error('Error loading history:', error)
-      loadFromLocalStorage()
-    }
-  } else {
-    loadFromLocalStorage()
-  }
-}
-
-// Загрузка из localStorage
 const loadFromLocalStorage = () => {
   const saved = localStorage.getItem('translationHistory')
   if (saved) {
@@ -269,44 +247,18 @@ const loadFromLocalStorage = () => {
 }
 
 // Барлығын өшіру
-const clearAllHistory = async () => {
-  if (confirm('Вы уверены, что хотите удалить всю историю переводов?')) {
-    const authStore = useAuthStore()
-    if (authStore.isLoggedIn) {
-      try {
-        for (const item of history.value) {
-          await apiClient.delete(`/api/history/${item.id}`)
-        }
-        history.value = []
-      } catch (error) {
-        console.error('Error clearing history:', error)
-        alert('Ошибка при удалении истории')
-      }
-    } else {
-      history.value = []
-      localStorage.setItem('translationHistory', JSON.stringify([]))
-    }
+const clearAllHistory = () => {
+  if (confirm(t('confirm_delete'))) {
+    history.value = []
+    localStorage.setItem('translationHistory', JSON.stringify([]))
   }
 }
 
 // Бір элементті өшіру
-const deleteItem = async (index) => {
-  const item = filteredHistory.value[index]
-  const authStore = useAuthStore()
-  if (authStore.isLoggedIn) {
-    try {
-      await apiClient.delete(`/api/history/${item.id}`)
-      const realIndex = history.value.findIndex(h => h.id === item.id)
-      if (realIndex !== -1) {
-        history.value.splice(realIndex, 1)
-      }
-    } catch (error) {
-      console.error('Error deleting item:', error)
-      alert('Ошибка при удалении элемента')
-    }
-  } else {
-    const realIndex = history.value.findIndex(h => h.text === item.text && h.translation === item.translation)
-    if (realIndex !== -1) {
+const deleteItem = (index) => {
+  const realIndex = history.value.findIndex(item => item === filteredHistory.value[index])
+  if (realIndex !== -1) {
+    if (confirm(t('confirm_delete'))) {
       history.value.splice(realIndex, 1)
       localStorage.setItem('translationHistory', JSON.stringify(history.value))
     }
@@ -322,7 +274,7 @@ const repeatTranslation = (text) => {
 // Көшіру
 const copyText = (text) => {
   navigator.clipboard.writeText(text)
-  alert('Текст скопирован!')
+  alert(t('copied'))
 }
 
 // Экспорт
@@ -338,7 +290,13 @@ const exportHistory = () => {
 }
 
 onMounted(() => {
-  loadHistory()
+  loadFromLocalStorage()
+  loadLanguage()
+  translatePage()
+  
+  window.addEventListener('languageChanged', () => {
+    translatePage()
+  })
 })
 </script>
 
@@ -801,97 +759,88 @@ onMounted(() => {
 
 /* ========== ТЁМНЫЙ РЕЖИМ ========== */
 :root.dark-theme .history-container {
-  background: var(--bg-secondary);
-  color: var(--text-primary);
+  background: #0f172a;
 }
 
-:root.dark-theme .card,
+:root.dark-theme .stat-badge,
+:root.dark-theme .stat-mini-card,
 :root.dark-theme .history-card {
-  background: var(--card-bg);
-  border-color: var(--border-color);
+  background: #1e293b !important;
+  border-color: #334155 !important;
 }
 
-:root.dark-theme .card-header h3 {
-  color: var(--text-primary);
+:root.dark-theme .header-content h1,
+:root.dark-theme .stat-mini-value,
+:root.dark-theme .card-header h3,
+:root.dark-theme .history-text {
+  color: #f1f5f9 !important;
 }
 
-:root.dark-theme .stat-badge {
-  background: var(--card-bg);
-  border-color: var(--border-color);
-  color: var(--text-secondary);
+:root.dark-theme .header-content p,
+:root.dark-theme .stat-mini-label,
+:root.dark-theme .history-translation,
+:root.dark-theme .history-date,
+:root.dark-theme .footer-info {
+  color: #94a3b8 !important;
 }
 
 :root.dark-theme .clear-all-btn {
-  background: rgba(239, 68, 68, 0.1);
-  color: #ff6b6b;
+  background: rgba(239, 68, 68, 0.15);
+  color: #f87171;
 }
 
 :root.dark-theme .clear-all-btn:hover {
-  background: rgba(239, 68, 68, 0.2);
+  background: rgba(239, 68, 68, 0.25);
 }
 
 :root.dark-theme .filter-chip {
-  background: rgba(99, 102, 241, 0.1);
-  color: var(--text-primary);
-  border-color: var(--border-color);
+  background: #334155 !important;
+  color: #cbd5e1 !important;
 }
 
-:root.dark-theme .filter-chip:hover {
-  background: rgba(99, 102, 241, 0.2);
-}
-
-:root.dark-theme .empty-state {
-  color: var(--text-primary);
-}
-
-:root.dark-theme .empty-state p {
-  color: var(--text-primary);
-}
-
-:root.dark-theme .empty-state small {
-  color: var(--text-secondary);
+:root.dark-theme .filter-chip.active {
+  background: linear-gradient(135deg, #6366f1, #8b5cf6) !important;
+  color: white !important;
 }
 
 :root.dark-theme .history-item {
-  background: var(--card-bg);
-  border-color: var(--border-color);
+  background: #1e293b !important;
+  border-color: #334155 !important;
 }
 
-:root.dark-theme .history-text {
-  color: var(--text-primary);
+:root.dark-theme .history-item:hover {
+  background: #334155 !important;
 }
 
 :root.dark-theme .history-translation {
-  color: var(--text-secondary);
-}
-
-:root.dark-theme .history-date {
-  color: var(--text-secondary);
-}
-
-:root.dark-theme .delete-btn {
-  color: var(--text-secondary);
+  background: #0f172a !important;
 }
 
 :root.dark-theme .delete-btn:hover {
-  background: rgba(239, 68, 68, 0.1);
-  color: #ff6b6b;
+  background: rgba(239, 68, 68, 0.15);
 }
 
 :root.dark-theme .history-action {
-  background: rgba(99, 102, 241, 0.1);
-  color: #8b5cf6;
+  background: #334155 !important;
+  color: #cbd5e1 !important;
 }
 
 :root.dark-theme .history-action:hover {
-  background: rgba(99, 102, 241, 0.2);
+  background: #475569 !important;
+  color: #a78bfa !important;
 }
 
 :root.dark-theme .card-footer {
-  border-top-color: var(--border-color);
+  border-top-color: #334155 !important;
 }
 
-:root.dark-theme .footer-info {
-  color: var(--text-secondary);
+:root.dark-theme .export-btn {
+  background: #334155 !important;
+  color: #cbd5e1 !important;
+}
+
+:root.dark-theme .export-btn:hover {
+  background: #475569 !important;
+  color: #a78bfa !important;
 }
 </style>

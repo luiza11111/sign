@@ -14,11 +14,11 @@
       <div class="header-stats">
         <div class="stat-badge">
           <MessageCircle :size="16" />
-          <span>{{ faqs.length }} FAQ</span>
+          <span>{{ faqs.length }} <span data-i18n="faq">FAQ</span></span>
         </div>
         <div class="stat-badge">
           <Video :size="16" />
-          <span>3 бейне</span>
+          <span>3 <span data-i18n="videos">бейне</span></span>
         </div>
       </div>
     </div>
@@ -138,12 +138,12 @@
               <Film :size="28" class="video-emoji" />
             </div>
             <div class="video-info">
-              <h4>Қалай аударма жасауға болады?</h4>
+              <h4 data-i18n="video_1_title">Қалай аударма жасауға болады?</h4>
               <div class="video-meta">
                 <Clock :size="12" />
-                <span>2:35 минут</span>
+                <span>2:35 <span data-i18n="minutes">минут</span></span>
                 <Eye :size="12" />
-                <span>1.2к көрілім</span>
+                <span>1.2к <span data-i18n="views">көрілім</span></span>
               </div>
             </div>
           </div>
@@ -153,12 +153,12 @@
               <Mic :size="28" class="video-emoji" />
             </div>
             <div class="video-info">
-              <h4>Дауыстық енгізу қалай жұмыс істейді?</h4>
+              <h4 data-i18n="video_2_title">Дауыстық енгізу қалай жұмыс істейді?</h4>
               <div class="video-meta">
                 <Clock :size="12" />
-                <span>1:48 минут</span>
+                <span>1:48 <span data-i18n="minutes">минут</span></span>
                 <Eye :size="12" />
-                <span>856 көрілім</span>
+                <span>856 <span data-i18n="views">көрілім</span></span>
               </div>
             </div>
           </div>
@@ -168,12 +168,12 @@
               <BookOpen :size="28" class="video-emoji" />
             </div>
             <div class="video-info">
-              <h4>Жиі сөздерді қалай қосуға болады?</h4>
+              <h4 data-i18n="video_3_title">Жиі сөздерді қалай қосуға болады?</h4>
               <div class="video-meta">
                 <Clock :size="12" />
-                <span>3:12 минут</span>
+                <span>3:12 <span data-i18n="minutes">минут</span></span>
                 <Eye :size="12" />
-                <span>654 көрілім</span>
+                <span>654 <span data-i18n="views">көрілім</span></span>
               </div>
             </div>
           </div>
@@ -198,7 +198,7 @@
 
         <div class="contact-grid">
           <div class="contact-info">
-            <!-- Email - mailto сілтемесі (ӨЗГЕРТІЛГЕН - сіздің email-іңіз) -->
+            <!-- Email - mailto сілтемесі -->
             <a :href="'mailto:' + contact.email" class="contact-item">
               <div class="contact-icon purple">
                 <Mail :size="22" />
@@ -206,7 +206,7 @@
               <div class="contact-details">
                 <h4>Email</h4>
                 <p>{{ contact.email }}</p>
-                <small>Жауап беру уақыты: 1-2 сағат</small>
+                <small data-i18n="response_time">Жауап беру уақыты: 1-2 сағат</small>
               </div>
             </a>
 
@@ -216,9 +216,9 @@
                 <Phone :size="22" />
               </div>
               <div class="contact-details">
-                <h4>Телефон</h4>
+                <h4 data-i18n="phone">Телефон</h4>
                 <p>{{ contact.phoneFormatted }}</p>
-                <small>09:00 - 18:00, Дс-Жм</small>
+                <small data-i18n="working_hours">09:00 - 18:00, Дс-Жм</small>
               </div>
             </a>
 
@@ -230,7 +230,7 @@
               <div class="contact-details">
                 <h4>Telegram</h4>
                 <p>{{ telegramUsername }}</p>
-                <small>24/7 онлайн</small>
+                <small data-i18n="support_24_7">24/7 онлайн</small>
               </div>
             </a>
 
@@ -240,9 +240,9 @@
                 <MapPin :size="22" />
               </div>
               <div class="contact-details">
-                <h4>Мекенжай</h4>
+                <h4 data-i18n="address">Мекенжай</h4>
                 <p>{{ contact.address }}</p>
-                <small>Келу арқылы алдын ала жазылу</small>
+                <small data-i18n="appointment_required">Келу арқылы алдын ала жазылу</small>
               </div>
             </a>
           </div>
@@ -250,15 +250,15 @@
           <!-- Форма -->
           <form @submit.prevent="sendMessage" class="contact-form">
             <div class="form-group">
-              <label data-i18n="message_name">Ваше имя</label>
+              <label data-i18n="your_name">Ваше имя</label>
               <div class="input-icon">
                 <User :size="16" class="icon" />
-                <input v-model="form.name" type="text" placeholder="Иван Иванов" required />
+                <input v-model="form.name" type="text" :placeholder="t('your_name')" required />
               </div>
             </div>
 
             <div class="form-group">
-              <label data-i18n="message_email">Email для ответа</label>
+              <label data-i18n="your_email">Email для ответа</label>
               <div class="input-icon">
                 <Mail :size="16" class="icon" />
                 <input v-model="form.email" type="email" placeholder="example@mail.ru" required />
@@ -266,18 +266,18 @@
             </div>
 
             <div class="form-group">
-              <label data-i18n="message_subject">Тема обращения</label>
+              <label data-i18n="subject">Тема обращения</label>
               <div class="input-icon">
                 <Tag :size="16" class="icon" />
-                <input v-model="form.subject" type="text" placeholder="Например: Проблема с аккаунтом" required />
+                <input v-model="form.subject" type="text" :placeholder="t('subject') + ' - Проблема с аккаунтом'" required />
               </div>
             </div>
 
             <div class="form-group">
-              <label data-i18n="message_text">Подробное описание</label>
+              <label data-i18n="message">Подробное описание</label>
               <div class="input-icon textarea-icon">
                 <FileText :size="16" class="icon" />
-                <textarea v-model="form.message" rows="4" placeholder="Опишите вашу проблему или вопрос..." required></textarea>
+                <textarea v-model="form.message" rows="4" :placeholder="t('message')" required></textarea>
               </div>
             </div>
 
@@ -305,7 +305,8 @@
 </template>
 
 <script setup>
-import { ref, computed } from 'vue'
+import { ref, computed, onMounted } from 'vue'
+import { t, loadLanguage, translatePage } from '../i18n'
 
 // Lucide иконкаларын импорттау
 import { 
@@ -315,9 +316,9 @@ import {
   FileText, Send, Loader2
 } from 'lucide-vue-next'
 
-// ========== БАЙЛАНЫС ДЕРЕКТЕРІ (ӨЗГЕРТІЛГЕН) ==========
+// ========== БАЙЛАНЫС ДЕРЕКТЕРІ ==========
 const contact = {
-  email: 'adilkhanassel507@gmail.com',  // Сіздің email-іңіз
+  email: 'adilkhanassel507@gmail.com',
   phone: '+77001234567',
   phoneFormatted: '+7 (700) 123-45-67',
   address: 'Алматы, Достык даңғылы 123',
@@ -400,27 +401,36 @@ const toggleFaq = (index) => {
 
 // Бейнені ойнату
 const playVideo = (id) => {
-  alert(`Бейне ${id} кейінгі нұсқада қосылады`)
+  alert(t('video_coming_soon') + ` ${id}`)
 }
 
 // Барлық бейнелер
 const showAllVideos = () => {
-  alert('Барлық бейнелер кейінгі нұсқада қосылады')
+  alert(t('videos_coming_soon'))
 }
 
 // Хабарлама жіберу
 const sendMessage = async () => {
   if (!form.value.name || !form.value.email || !form.value.subject || !form.value.message) {
-    alert('Барлық өрістерді толтырыңыз!')
+    alert(t('error_fill_fields'))
     return
   }
   
   loading.value = true
   await new Promise(resolve => setTimeout(resolve, 1000))
-  alert('Хабарламаңыз жіберілді! Біз сізбен жақын арада байланысамыз.')
+  alert(t('message_sent'))
   form.value = { name: '', email: '', subject: '', message: '' }
   loading.value = false
 }
+
+onMounted(() => {
+  loadLanguage()
+  translatePage()
+  
+  window.addEventListener('languageChanged', () => {
+    translatePage()
+  })
+})
 </script>
 
 <style scoped>

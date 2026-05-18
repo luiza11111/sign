@@ -7,14 +7,14 @@
           <Hand :size="32" :stroke-width="1.5" />
         </div>
         <div>
-          <h1>Қош келдіңіз, {{ userName }}!</h1>
-          <p>Бүгін не аударамыз?</p>
+          <h1 data-i18n="welcome">Қош келдіңіз, {{ userName }}!</h1>
+          <p data-i18n="what_translate">Бүгін не аударамыз?</p>
         </div>
       </div>
       <div class="welcome-stats">
         <div class="welcome-badge">
           <Award :size="16" />
-          <span>7 күндік серия</span>
+          <span>{{ streakDays }} <span data-i18n="day_streak">күндік серия</span></span>
         </div>
       </div>
     </div>
@@ -27,7 +27,7 @@
         </div>
         <div class="stat-info">
           <h3>{{ totalTranslations }}</h3>
-          <p>Аударылған сөз</p>
+          <p data-i18n="translated_words">Аударылған сөз</p>
         </div>
         <div class="stat-change up">
           <TrendingUp :size="12" />
@@ -41,7 +41,7 @@
         </div>
         <div class="stat-info">
           <h3>{{ voiceRequests }}</h3>
-          <p>Дауыстық сұрау</p>
+          <p data-i18n="voice_requests">Дауыстық сұрау</p>
         </div>
         <div class="stat-change up">
           <TrendingUp :size="12" />
@@ -55,7 +55,7 @@
         </div>
         <div class="stat-info">
           <h3>{{ frequentWordsCount }}</h3>
-          <p>Жиі қолданылатын</p>
+          <p data-i18n="popular_words">Жиі қолданылатын</p>
         </div>
         <div class="stat-change up">
           <TrendingUp :size="12" />
@@ -69,7 +69,7 @@
         </div>
         <div class="stat-info">
           <h3>{{ todayActivity }}</h3>
-          <p>Бүгінгі белсенділік</p>
+          <p data-i18n="today_activity_home">Бүгінгі белсенділік</p>
         </div>
         <div class="stat-change down">
           <TrendingDown :size="12" />
@@ -86,26 +86,26 @@
         <div class="card-header">
           <div class="header-left">
             <FileText :size="20" />
-            <h3>Мәтін енгізіңіз</h3>
+            <h3 data-i18n="enter_text_home">Мәтін енгізіңіз</h3>
           </div>
           <button class="translate-btn" @click="translateText">
             <Languages :size="16" />
-            <span>Аудару</span>
+            <span data-i18n="translate_button">Аудару</span>
           </button>
         </div>
         <div class="textarea-wrapper">
           <textarea 
             v-model="inputText" 
             rows="5" 
-            placeholder="Сәлем! Қалайсың? Мен бүгін университетке барамын..."
+            :placeholder="t('enter_text_home')"
           ></textarea>
         </div>
         <div class="voice-row">
           <button class="voice-btn" @click="startVoiceInput">
             <Mic :size="16" />
-            <span>Дауыспен сөйлеңіз</span>
+            <span data-i18n="speak_button">Дауыспен сөйлеңіз</span>
           </button>
-          <span class="hint">немесе мәтінді жазыңыз</span>
+          <span class="hint" data-i18n="or_type_home">немесе мәтінді жазыңыз</span>
         </div>
       </div>
 
@@ -115,26 +115,26 @@
         <div class="card-header">
           <div class="header-left">
             <Sparkles :size="20" />
-            <h3>Аударма нәтижесі</h3>
+            <h3 data-i18n="translation_result">Аударма нәтижесі</h3>
           </div>
           <div class="badge">
             <Brain :size="12" />
-            <span>AI ым тілі</span>
+            <span data-i18n="ai_badge">AI ым тілі</span>
           </div>
         </div>
         <div class="result-box" v-html="translatedText"></div>
         <div class="action-buttons" v-if="showActions">
           <button class="action-btn copy" @click="copyResult">
             <Copy :size="14" />
-            <span>Көшіру</span>
+            <span data-i18n="copy">Көшіру</span>
           </button>
           <button class="action-btn speak" @click="speakResult">
             <Volume2 :size="14" />
-            <span>Оқу</span>
+            <span data-i18n="read">Оқу</span>
           </button>
           <button class="action-btn share" @click="shareResult">
             <Share2 :size="14" />
-            <span>Бөлісу</span>
+            <span data-i18n="share">Бөлісу</span>
           </button>
         </div>
       </div>
@@ -146,11 +146,11 @@
       <div class="card-header">
         <div class="header-left">
           <Bookmark :size="20" />
-          <h3>Жиі қолданылатын сөздер</h3>
+          <h3 data-i18n="frequent_words">Жиі қолданылатын сөздер</h3>
         </div>
         <button class="filter-btn" @click="loadMoreWords">
           <Plus :size="14" />
-          <span>Көбірек</span>
+          <span data-i18n="more_words">Көбірек</span>
         </button>
       </div>
       <div class="word-cloud">
@@ -165,7 +165,7 @@
       </div>
       <div class="word-note">
         <MousePointerClick :size="12" />
-        <span>Сөзді басыңыз - мәтінге қосылады</span>
+        <span data-i18n="click_to_add">Сөзді басыңыз - мәтінге қосылады</span>
       </div>
     </div>
   </div>
@@ -174,7 +174,7 @@
   <div class="resources-float">
     <button class="float-btn" @click="showResourcesModal = true">
       <BookOpen :size="22" />
-      <span class="float-text">Ресурсы</span>
+      <span class="float-text" data-i18n="resources">Ресурсы</span>
     </button>
     
     <!-- Модальды терезе -->
@@ -183,7 +183,7 @@
         <div class="modal-header">
           <div class="modal-title">
             <BookOpen :size="24" />
-            <span>Вспомогательные ресурсы</span>
+            <span data-i18n="resources_title">Вспомогательные ресурсы</span>
           </div>
           <button class="modal-close" @click="showResourcesModal = false">
             <X :size="18" />
@@ -193,55 +193,55 @@
           <a href="#" class="modal-item">
             <Book :size="28" />
             <div class="modal-item-info">
-              <strong>Қазақ ым тілінің негіздері</strong>
-              <small>Әліппе мен негізгі сөздер</small>
+              <strong data-i18n="resource_1_title">Қазақ ым тілінің негіздері</strong>
+              <small data-i18n="resource_1_desc">Әліппе мен негізгі сөздер</small>
             </div>
             <ArrowRight :size="16" class="modal-item-arrow" />
           </a>
           <a href="#" class="modal-item">
             <Video :size="28" />
             <div class="modal-item-info">
-              <strong>Бейне сабақтар</strong>
-              <small>Видео нұсқаулықтар жинағы</small>
+              <strong data-i18n="resource_2_title">Бейне сабақтар</strong>
+              <small data-i18n="resource_2_desc">Видео нұсқаулықтар жинағы</small>
             </div>
             <ArrowRight :size="16" class="modal-item-arrow" />
           </a>
           <a href="#" class="modal-item">
             <Smartphone :size="28" />
             <div class="modal-item-info">
-              <strong>Мобильді қосымша</strong>
-              <small>Android және iOS нұсқалары</small>
+              <strong data-i18n="resource_3_title">Мобильді қосымша</strong>
+              <small data-i18n="resource_3_desc">Android және iOS нұсқалары</small>
             </div>
             <ArrowRight :size="16" class="modal-item-arrow" />
           </a>
           <a href="#" class="modal-item">
             <MessageCircle :size="28" />
             <div class="modal-item-info">
-              <strong>Telegram бот</strong>
-              <small>Күнделікті жаттығулар</small>
+              <strong data-i18n="resource_4_title">Telegram бот</strong>
+              <small data-i18n="resource_4_desc">Күнделікті жаттығулар</small>
             </div>
             <ArrowRight :size="16" class="modal-item-arrow" />
           </a>
           <a href="#" class="modal-item">
             <Globe :size="28" />
             <div class="modal-item-info">
-              <strong>Қауымдастық форум</strong>
-              <small>Пікірлер мен сұрақтар</small>
+              <strong data-i18n="resource_5_title">Қауымдастық форум</strong>
+              <small data-i18n="resource_5_desc">Пікірлер мен сұрақтар</small>
             </div>
             <ArrowRight :size="16" class="modal-item-arrow" />
           </a>
           <a href="#" class="modal-item">
             <FileText :size="28" />
             <div class="modal-item-info">
-              <strong>PDF нұсқаулық</strong>
-              <small>Жүктеп алуға арналған</small>
+              <strong data-i18n="resource_6_title">PDF нұсқаулық</strong>
+              <small data-i18n="resource_6_desc">Жүктеп алуға арналған</small>
             </div>
             <ArrowRight :size="16" class="modal-item-arrow" />
           </a>
         </div>
         <div class="modal-footer">
           <button class="footer-btn" @click="showResourcesModal = false">
-            Жабу
+            <span data-i18n="close">Жабу</span>
           </button>
         </div>
       </div>
@@ -252,6 +252,7 @@
 <script setup>
 import { ref, computed, onMounted, watch } from 'vue'
 import { useAuthStore } from '../stores/auth'
+import { t, loadLanguage, translatePage } from '../i18n'
 
 // Lucide иконкаларын импорттау
 import { 
@@ -266,14 +267,21 @@ const authStore = useAuthStore()
 // Қолданушы аты
 const userName = computed(() => authStore.user?.name || 'Қолданушы')
 
-// Статистика деректері
+// ========== НАҚТЫ АНАЛИТИКА ДЕРЕКТЕРІ ==========
 const totalTranslations = ref(0)
 const voiceRequests = ref(0)
 const frequentWordsCount = ref(0)
 const todayActivity = ref(0)
+const streakDays = ref(0)
+
+// Өзгеріс пайыздары
+const translationChange = ref(0)
+const voiceChange = ref(0)
+const frequentChange = ref(0)
+const todayChange = ref(0)
 
 // Аударма деректері
-const inputText = ref(localStorage.getItem('inputText') || '')
+const inputText = ref(localStorage.getItem('inputText') || 'Сәлем! Қалайсың? Мен бүгін университетке барамын...')
 const translatedText = ref('Мәтін енгізіп, аударыңыз')
 const showActions = ref(false)
 
@@ -283,17 +291,86 @@ const commonWords = ref(['Сәлем', 'Рахмет', 'Қалайсың?', 'М�
 // Модальды терезе
 const showResourcesModal = ref(false)
 
-// Статистиканы жүктеу
+// ========== АНАЛИТИКА ФУНКЦИЯЛАРЫ ==========
+
+// Серия күндерін есептеу
+const calculateStreak = (history) => {
+  if (history.length === 0) return 0
+  
+  const dates = [...new Set(history.map(item => item.date.split(',')[0]))]
+  dates.sort((a, b) => new Date(b) - new Date(a))
+  
+  let streak = 0
+  let currentDate = new Date()
+  currentDate.setHours(0, 0, 0, 0)
+  
+  for (let i = 0; i < dates.length; i++) {
+    const itemDate = new Date(dates[i])
+    itemDate.setHours(0, 0, 0, 0)
+    const diffDays = Math.floor((currentDate - itemDate) / (1000 * 60 * 60 * 24))
+    if (diffDays === streak) {
+      streak++
+    } else {
+      break
+    }
+  }
+  return streak
+}
+
+// Өзгеріс пайызын есептеу
+const calculateChange = (current, previous) => {
+  if (previous === 0) return current > 0 ? 100 : 0
+  return Math.round(((current - previous) / previous) * 100)
+}
+
+// Статистиканы жүктеу (НАҚТЫ ДЕРЕКТЕР)
 const loadStats = () => {
   const history = JSON.parse(localStorage.getItem('translationHistory') || '[]')
+  
   totalTranslations.value = history.length
   
-  voiceRequests.value = Math.floor(Math.random() * 100) + 20
+  const voiceHistory = JSON.parse(localStorage.getItem('voiceHistory') || '[]')
+  voiceRequests.value = voiceHistory.length
   
   const dictionary = JSON.parse(localStorage.getItem('signDictionary') || '[]')
   frequentWordsCount.value = dictionary.length
   
-  todayActivity.value = Math.floor(Math.random() * 30) + 5
+  const today = new Date().toLocaleDateString()
+  todayActivity.value = history.filter(item => item.date.includes(today)).length
+  
+  streakDays.value = calculateStreak(history)
+  
+  // Өзгеріс пайыздары (өткен аймен салыстыру)
+  const lastMonth = new Date()
+  lastMonth.setMonth(lastMonth.getMonth() - 1)
+  
+  const currentMonthHistory = history.filter(item => {
+    const itemDate = new Date(item.date)
+    return itemDate >= lastMonth
+  })
+  
+  const previousMonthHistory = history.filter(item => {
+    const itemDate = new Date(item.date)
+    return itemDate < lastMonth
+  })
+  
+  translationChange.value = calculateChange(currentMonthHistory.length, previousMonthHistory.length)
+  
+  const currentVoiceMonth = voiceHistory.filter(item => {
+    const itemDate = new Date(item.date)
+    return itemDate >= lastMonth
+  })
+  const previousVoiceMonth = voiceHistory.filter(item => {
+    const itemDate = new Date(item.date)
+    return itemDate < lastMonth
+  })
+  voiceChange.value = calculateChange(currentVoiceMonth.length, previousVoiceMonth.length)
+  
+  const yesterday = new Date()
+  yesterday.setDate(yesterday.getDate() - 1)
+  const yesterdayStr = yesterday.toLocaleDateString()
+  const yesterdayActivity = history.filter(item => item.date.includes(yesterdayStr)).length
+  todayChange.value = calculateChange(todayActivity.value, yesterdayActivity)
 }
 
 // Сөз қосу
@@ -319,7 +396,7 @@ const translateText = () => {
     translation: `🧏‍♂️ "${inputText.value}" - Қазақ ым тіліне аударылды`,
     date: new Date().toLocaleString()
   })
-  localStorage.setItem('translationHistory', JSON.stringify(history.slice(0, 50)))
+  localStorage.setItem('translationHistory', JSON.stringify(history.slice(0, 100)))
   
   translatedText.value = `
     <div class="result-content">
@@ -343,14 +420,23 @@ const startVoiceInput = () => {
     recognition.start()
     
     recognition.onresult = (event) => {
-      inputText.value = event.results[0][0].transcript
+      const text = event.results[0][0].transcript
+      inputText.value = text
+      
+      const voiceHistory = JSON.parse(localStorage.getItem('voiceHistory') || '[]')
+      voiceHistory.unshift({
+        text: text,
+        date: new Date().toLocaleString()
+      })
+      localStorage.setItem('voiceHistory', JSON.stringify(voiceHistory.slice(0, 100)))
+      loadStats()
     }
     
     recognition.onerror = () => {
-      alert('Дауысты тану мүмкін болмады')
+      alert(t('voice_error'))
     }
   } else {
-    alert('Сіздің браузеріңіз дауыстық енгізуді қолдамайды')
+    alert(t('voice_not_supported'))
   }
 }
 
@@ -358,7 +444,7 @@ const startVoiceInput = () => {
 const copyResult = () => {
   const text = inputText.value
   navigator.clipboard.writeText(text)
-  alert('Көшірілді!')
+  alert(t('copied'))
 }
 
 // Нәтижені оқу
@@ -373,11 +459,11 @@ const speakResult = () => {
 const shareResult = () => {
   if (navigator.share) {
     navigator.share({
-      title: 'Аударма нәтижесі',
+      title: t('share_title'),
       text: inputText.value,
     })
   } else {
-    alert('Бөлісу мүмкін емес')
+    alert(t('share_not_supported'))
   }
 }
 
@@ -389,6 +475,12 @@ const loadMoreWords = () => {
 
 onMounted(() => {
   loadStats()
+  loadLanguage()
+  translatePage()
+  
+  window.addEventListener('languageChanged', () => {
+    translatePage()
+  })
 })
 
 // Сохраняем inputText в localStorage при изменении
@@ -858,6 +950,10 @@ textarea:focus {
   color: #6366f1;
 }
 
+.modal-title span:first-child {
+  font-size: 24px;
+}
+
 .modal-close {
   background: rgba(99, 102, 241, 0.1);
   border: none;
@@ -977,17 +1073,15 @@ textarea:focus {
   }
 }
 
-/* ========== ТЁМНЫЙ РЕЖИМ ========== */
+/* ========== ҚАРАҢҒЫ РЕЖИМ ========== */
 :root.dark-theme .home-container {
-  background: var(--bg-secondary);
-  color: var(--text-primary);
+  background: #0f172a;
 }
 
 :root.dark-theme .welcome-section {
-  background: var(--card-bg);
-  border: 1px solid var(--border-color);
+  background: #1e293b;
+  border: 1px solid #334155;
   border-radius: 28px;
-  padding: 24px;
 }
 
 :root.dark-theme .welcome-icon {
@@ -995,70 +1089,160 @@ textarea:focus {
   color: #8b5cf6;
 }
 
+:root.dark-theme .welcome-badge {
+  background: #334155;
+  border-color: #475569;
+  color: #cbd5e1;
+}
+
+:root.dark-theme .welcome-left h1 {
+  color: #f1f5f9;
+}
+
+:root.dark-theme .welcome-left p {
+  color: #94a3b8;
+}
+
 :root.dark-theme .stat-card {
-  background: var(--card-bg);
-  border-color: var(--border-color);
-  color: var(--text-primary);
+  background: #1e293b;
+  border-color: #334155;
+}
+
+:root.dark-theme .stat-card .stat-info h3 {
+  color: #f1f5f9;
+}
+
+:root.dark-theme .stat-card .stat-info p {
+  color: #94a3b8;
 }
 
 :root.dark-theme .card {
-  background: var(--card-bg);
-  border-color: var(--border-color);
-  color: var(--text-primary);
+  background: #1e293b;
+  border-color: #334155;
+}
+
+:root.dark-theme .card-header {
+  border-bottom-color: #334155;
 }
 
 :root.dark-theme .card-header h3 {
-  color: var(--text-primary);
+  color: #f1f5f9;
+}
+
+:root.dark-theme .header-left {
+  color: #f1f5f9;
+}
+
+:root.dark-theme .badge {
+  background: rgba(99, 102, 241, 0.1);
+  color: #a78bfa;
 }
 
 :root.dark-theme textarea {
-  background: #2a2a3e;
-  color: var(--text-primary);
-  border-color: var(--border-color);
+  background: #334155;
+  color: #f1f5f9;
+}
+
+:root.dark-theme textarea::placeholder {
+  color: #94a3b8;
 }
 
 :root.dark-theme textarea:focus {
   background: #3a3a4e;
 }
 
-:root.dark-theme .badge {
-  background: rgba(99, 102, 241, 0.1);
-  color: #8b5cf6;
+:root.dark-theme .voice-row {
+  background: #1e293b;
+  border-top-color: #334155;
+}
+
+:root.dark-theme .voice-btn {
+  background: #334155;
+  color: #cbd5e1;
+}
+
+:root.dark-theme .voice-btn:hover {
+  background: #475569;
+  color: #a78bfa;
+}
+
+:root.dark-theme .hint {
+  color: #94a3b8;
+}
+
+:root.dark-theme .result-box {
+  background: #1e293b;
+}
+
+:root.dark-theme .result-text {
+  color: #f1f5f9;
+}
+
+:root.dark-theme .action-btn {
+  background: #334155;
+  color: #cbd5e1;
+}
+
+:root.dark-theme .action-btn:hover {
+  background: #475569;
+}
+
+:root.dark-theme .word-tag {
+  background: #334155;
+  border-color: #475569;
+  color: #cbd5e1;
+}
+
+:root.dark-theme .word-tag:hover {
+  background: #475569;
+  color: #a78bfa;
+}
+
+:root.dark-theme .word-note {
+  color: #94a3b8;
 }
 
 :root.dark-theme .modal-content {
-  background: var(--card-bg);
-  border: 1px solid var(--border-color);
+  background: #1e293b;
 }
 
 :root.dark-theme .modal-header {
-  background: rgba(99, 102, 241, 0.1);
-  border-bottom-color: var(--border-color);
+  background: #334155;
+  border-bottom-color: #475569;
 }
 
 :root.dark-theme .modal-title {
-  color: #8b5cf6;
+  color: #a78bfa;
 }
 
 :root.dark-theme .modal-item {
-  border-bottom-color: var(--border-color);
-  color: var(--text-primary);
+  border-bottom-color: #334155;
+  color: #cbd5e1;
+}
+
+:root.dark-theme .modal-item:hover {
+  background: #334155;
 }
 
 :root.dark-theme .modal-item-info strong {
-  color: var(--text-primary);
+  color: #f1f5f9;
 }
 
 :root.dark-theme .modal-item-info small {
-  color: var(--text-secondary);
+  color: #94a3b8;
+}
+
+:root.dark-theme .modal-footer {
+  border-top-color: #334155;
 }
 
 :root.dark-theme .footer-btn {
-  background: rgba(99, 102, 241, 0.1);
-  color: var(--text-primary);
+  background: #334155;
+  color: #cbd5e1;
 }
 
 :root.dark-theme .footer-btn:hover {
-  background: rgba(99, 102, 241, 0.2);
+  background: #475569;
+  color: #a78bfa;
 }
 </style>

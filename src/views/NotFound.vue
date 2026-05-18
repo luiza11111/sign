@@ -4,14 +4,14 @@
       <div class="not-found-content">
         <div class="error-icon">🔍</div>
         <h1>404</h1>
-        <h2>Бет табылмады</h2>
-        <p>Кешіріңіз, сіз іздеген бет жоқ немесе жылжытылған.</p>
+        <h2 data-i18n="not_found_title">Бет табылмады</h2>
+        <p data-i18n="not_found_text">Кешіріңіз, сіз іздеген бет жоқ немесе жылжытылған.</p>
         <div class="button-group">
           <router-link to="/" class="home-btn">
-            🏠 Басты бетке
+            🏠 <span data-i18n="go_home">Басты бетке</span>
           </router-link>
           <button @click="goBack" class="back-btn">
-            ◀ Артқа қайту
+            ◀ <span data-i18n="go_back">Артқа қайту</span>
           </button>
         </div>
       </div>
@@ -21,12 +21,23 @@
 
 <script setup>
 import { useRouter } from 'vue-router'
+import { onMounted } from 'vue'
+import { loadLanguage, translatePage } from '../i18n'
 
 const router = useRouter()
 
 const goBack = () => {
   router.back()
 }
+
+onMounted(() => {
+  loadLanguage()
+  translatePage()
+  
+  window.addEventListener('languageChanged', () => {
+    translatePage()
+  })
+})
 </script>
 
 <style scoped>
@@ -51,6 +62,12 @@ const goBack = () => {
   text-align: center;
   border: 1px solid #eef2f6;
   box-shadow: 0 20px 40px -12px rgba(0, 0, 0, 0.08);
+  transition: background 0.3s ease, border-color 0.3s ease;
+}
+
+:root.dark-theme .not-found-content {
+  background: #1e293b;
+  border-color: #334155;
 }
 
 .error-icon {
@@ -72,11 +89,21 @@ h2 {
   font-size: 24px;
   color: #1e293b;
   margin-bottom: 12px;
+  transition: color 0.3s ease;
+}
+
+:root.dark-theme h2 {
+  color: #f1f5f9;
 }
 
 p {
   color: #64748b;
   margin-bottom: 32px;
+  transition: color 0.3s ease;
+}
+
+:root.dark-theme p {
+  color: #94a3b8;
 }
 
 .button-group {
@@ -94,6 +121,9 @@ p {
   text-decoration: none;
   cursor: pointer;
   transition: all 0.2s;
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
 }
 
 .home-btn {
@@ -115,5 +145,15 @@ p {
 
 .back-btn:hover {
   background: #e2e8f0;
+}
+
+:root.dark-theme .back-btn {
+  background: #334155;
+  color: #cbd5e1;
+  border-color: #475569;
+}
+
+:root.dark-theme .back-btn:hover {
+  background: #475569;
 }
 </style>

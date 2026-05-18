@@ -7,18 +7,18 @@
           <Shield :size="32" :stroke-width="1.5" />
         </div>
         <div>
-          <h1>Админ панелі</h1>
-          <p>Сөздікті басқару және статистика</p>
+          <h1 data-i18n="admin_title">Админ панелі</h1>
+          <p data-i18n="admin_subtitle">Сөздікті басқару және статистика</p>
         </div>
       </div>
       <div class="header-stats">
         <div class="stat-badge">
           <Users :size="16" />
-          <span>{{ users.length }} пайдаланушы</span>
+          <span>{{ users.length }} <span data-i18n="registered_users">пайдаланушы</span></span>
         </div>
         <div class="stat-badge">
           <BookOpen :size="16" />
-          <span>{{ words.length }} сөз</span>
+          <span>{{ words.length }} <span data-i18n="dictionary_words">сөз</span></span>
         </div>
       </div>
     </div>
@@ -31,7 +31,7 @@
         </div>
         <div class="stat-mini-info">
           <div class="stat-mini-value">{{ words.length }}</div>
-          <div class="stat-mini-label">Сөздіктегі сөздер</div>
+          <div class="stat-mini-label" data-i18n="dictionary_words_stat">Сөздіктегі сөздер</div>
         </div>
       </div>
       <div class="stat-mini-card">
@@ -40,7 +40,7 @@
         </div>
         <div class="stat-mini-info">
           <div class="stat-mini-value">{{ users.length }}</div>
-          <div class="stat-mini-label">Тіркелген пайдаланушы</div>
+          <div class="stat-mini-label" data-i18n="registered_users_stat">Тіркелген пайдаланушы</div>
         </div>
       </div>
       <div class="stat-mini-card">
@@ -49,7 +49,7 @@
         </div>
         <div class="stat-mini-info">
           <div class="stat-mini-value">{{ todayTranslations }}</div>
-          <div class="stat-mini-label">Бүгінгі аударма</div>
+          <div class="stat-mini-label" data-i18n="today_translations_stat">Бүгінгі аударма</div>
         </div>
       </div>
       <div class="stat-mini-card">
@@ -58,7 +58,7 @@
         </div>
         <div class="stat-mini-info">
           <div class="stat-mini-value">{{ totalTranslations }}</div>
-          <div class="stat-mini-label">Барлық аударма</div>
+          <div class="stat-mini-label" data-i18n="total_translations_stat">Барлық аударма</div>
         </div>
       </div>
     </div>
@@ -71,7 +71,7 @@
         @click="activeTab = 'words'"
       >
         <BookOpen :size="16" />
-        <span>Сөздік</span>
+        <span data-i18n="dictionary_tab">Сөздік</span>
       </button>
       <button 
         class="tab-btn" 
@@ -79,7 +79,7 @@
         @click="activeTab = 'users'"
       >
         <Users :size="16" />
-        <span>Пайдаланушылар</span>
+        <span data-i18n="users_tab">Пайдаланушылар</span>
       </button>
       <button 
         class="tab-btn" 
@@ -87,7 +87,7 @@
         @click="activeTab = 'stats'"
       >
         <BarChart3 :size="16" />
-        <span>Статистика</span>
+        <span data-i18n="statistics_tab">Статистика</span>
       </button>
       <button 
         class="tab-btn" 
@@ -95,7 +95,7 @@
         @click="activeTab = 'settings'"
       >
         <Settings :size="16" />
-        <span>Параметрлер</span>
+        <span data-i18n="settings_tab">Параметрлер</span>
       </button>
     </div>
 
@@ -108,26 +108,26 @@
           <div class="card-header">
             <div class="header-left">
               <PlusCircle :size="20" />
-              <h3>Жаңа сөз қосу</h3>
+              <h3 data-i18n="add_word">Жаңа сөз қосу</h3>
             </div>
           </div>
           
           <div class="add-form">
             <div class="form-row">
               <div class="form-group">
-                <label>Сөз (қазақша)</label>
+                <label data-i18n="word_placeholder">Сөз (қазақша)</label>
                 <div class="input-icon">
                   <FileText :size="16" class="icon" />
                   <input 
                     v-model="newWord.text" 
                     type="text" 
-                    placeholder="Мысалы: Кешіріңіз"
+                    :placeholder="t('word_placeholder') + ' - Кешіріңіз'"
                     @keyup.enter="addWord"
                   />
                 </div>
               </div>
               <div class="form-group">
-                <label>Видео файлының аты</label>
+                <label data-i18n="video_placeholder">Видео файлының аты</label>
                 <div class="input-icon">
                   <Video :size="16" class="icon" />
                   <input 
@@ -141,13 +141,13 @@
             </div>
             <div class="form-row">
               <div class="form-group full-width">
-                <label>Мысал сөйлем (қосымша)</label>
+                <label data-i18n="example_placeholder">Мысал сөйлем (қосымша)</label>
                 <div class="input-icon">
                   <MessageSquare :size="16" class="icon" />
                   <input 
                     v-model="newWord.example" 
                     type="text" 
-                    placeholder="Мысалы: Кешіріңіз, мен кешіктім"
+                    :placeholder="t('example_placeholder') + ' - Кешіріңіз, мен кешіктім'"
                     @keyup.enter="addWord"
                   />
                 </div>
@@ -155,7 +155,7 @@
             </div>
             <button class="add-btn" @click="addWord">
               <Plus :size="16" />
-              <span>Сөзді қосу</span>
+              <span data-i18n="add_word">Сөзді қосу</span>
             </button>
           </div>
         </div>
@@ -168,7 +168,7 @@
           <div class="card-header">
             <div class="header-left">
               <List :size="20" />
-              <h3>Сөздік тізімі ({{ words.length }})</h3>
+              <h3 data-i18n="word_list">Сөздік тізімі ({{ words.length }})</h3>
             </div>
             <div class="header-actions">
               <div class="search-box">
@@ -176,12 +176,12 @@
                 <input 
                   v-model="searchQuery" 
                   type="text" 
-                  placeholder="Сөз іздеу..."
+                  :placeholder="t('search_word')"
                 />
               </div>
               <button class="export-btn" @click="exportWords">
                 <Download :size="14" />
-                <span>Экспорт</span>
+                <span data-i18n="export">Экспорт</span>
               </button>
             </div>
           </div>
@@ -206,10 +206,10 @@
                 </div>
               </div>
               <div class="word-actions">
-                <button class="edit-word" @click="editWord(index)">
+                <button class="edit-word" @click="editWord(index)" :title="t('edit_word')">
                   <Pen :size="14" />
                 </button>
-                <button class="delete-word" @click="deleteWord(index)">
+                <button class="delete-word" @click="deleteWord(index)" :title="t('delete_word')">
                   <Trash2 :size="14" />
                 </button>
               </div>
@@ -220,8 +220,8 @@
             <div class="empty-icon">
               <Inbox :size="64" :stroke-width="1" />
             </div>
-            <p>Сөздер жоқ</p>
-            <small>Жоғарыдағы форма арқылы жаңа сөз қосыңыз</small>
+            <p data-i18n="no_words">Сөздер жоқ</p>
+            <small data-i18n="add_word_hint">Жоғарыдағы форма арқылы жаңа сөз қосыңыз</small>
           </div>
         </div>
       </div>
@@ -235,14 +235,14 @@
           <div class="card-header">
             <div class="header-left">
               <Users :size="20" />
-              <h3>Пайдаланушылар тізімі</h3>
+              <h3 data-i18n="user_list_title">Пайдаланушылар тізімі</h3>
             </div>
             <div class="search-box">
               <Search :size="16" />
               <input 
                 v-model="userSearchQuery" 
                 type="text" 
-                placeholder="Пайдаланушы іздеу..."
+                :placeholder="t('search_user')"
               />
             </div>
           </div>
@@ -263,7 +263,8 @@
                   <span class="user-role" :class="user.role === 'admin' ? 'admin' : 'user'">
                     <Crown v-if="user.role === 'admin'" :size="12" />
                     <User v-else :size="12" />
-                    {{ user.role === 'admin' ? 'Админ' : 'Қолданушы' }}
+                    <span v-if="user.role === 'admin'" data-i18n="admin_role">Админ</span>
+                    <span v-else data-i18n="user_role">Қолданушы</span>
                   </span>
                   <span class="user-date">
                     <Calendar :size="12" />
@@ -272,7 +273,7 @@
                 </div>
               </div>
               <div class="user-actions" v-if="user.role !== 'admin'">
-                <button class="delete-user" @click="deleteUser(index)">
+                <button class="delete-user" @click="deleteUser(index)" :title="t('delete_user')">
                   <Trash2 :size="14" />
                 </button>
               </div>
@@ -283,7 +284,7 @@
             <div class="empty-icon">
               <Users :size="64" :stroke-width="1" />
             </div>
-            <p>Пайдаланушылар жоқ</p>
+            <p data-i18n="no_users">Пайдаланушылар жоқ</p>
           </div>
         </div>
       </div>
@@ -297,14 +298,14 @@
           <div class="card-header">
             <div class="header-left">
               <BarChart3 :size="20" />
-              <h3>Аударма статистикасы</h3>
+              <h3 data-i18n="statistics">Аударма статистикасы</h3>
             </div>
           </div>
 
           <div class="stats-charts">
             <div class="chart-row">
               <div class="chart-label">
-                <span>Аудармалар саны</span>
+                <span data-i18n="total_translations_stat">Аудармалар саны</span>
                 <span class="chart-value">{{ totalTranslations }}</span>
               </div>
               <div class="progress-bar">
@@ -313,7 +314,7 @@
             </div>
             <div class="chart-row">
               <div class="chart-label">
-                <span>Пайдаланушылар саны</span>
+                <span data-i18n="registered_users">Пайдаланушылар саны</span>
                 <span class="chart-value">{{ users.length }}</span>
               </div>
               <div class="progress-bar">
@@ -322,7 +323,7 @@
             </div>
             <div class="chart-row">
               <div class="chart-label">
-                <span>Сөздік көлемі</span>
+                <span data-i18n="dictionary_words_stat">Сөздік көлемі</span>
                 <span class="chart-value">{{ words.length }}</span>
               </div>
               <div class="progress-bar">
@@ -334,15 +335,15 @@
           <div class="stats-info">
             <div class="info-item">
               <Calendar :size="16" />
-              <span>Соңғы 7 күнде: {{ weeklyTranslations }} аударма</span>
+              <span>Соңғы 7 күнде: {{ weeklyTranslations }} <span data-i18n="stat_translations">аударма</span></span>
             </div>
             <div class="info-item">
               <Award :size="16" />
-              <span>Ең белсенді пайдаланушы: {{ topUser }}</span>
+              <span data-i18n="most_active_user">Ең белсенді пайдаланушы: {{ topUser }}</span>
             </div>
             <div class="info-item">
               <Star :size="16" />
-              <span>Ең көп қолданылған сөз: {{ topWord }}</span>
+              <span data-i18n="most_used_word">Ең көп қолданылған сөз: {{ topWord }}</span>
             </div>
           </div>
         </div>
@@ -357,7 +358,7 @@
           <div class="card-header">
             <div class="header-left">
               <Settings :size="20" />
-              <h3>Параметрлер</h3>
+              <h3 data-i18n="settings_tab">Параметрлер</h3>
             </div>
           </div>
 
@@ -366,39 +367,39 @@
               <div class="setting-info">
                 <Database :size="18" />
                 <div>
-                  <div class="setting-title">Деректерді сақтау</div>
-                  <div class="setting-desc">Барлық деректерді JSON файлына сақтау</div>
+                  <div class="setting-title" data-i18n="backup_data_title">Деректерді сақтау</div>
+                  <div class="setting-desc" data-i18n="backup_data_desc">Барлық деректерді JSON файлына сақтау</div>
                 </div>
               </div>
               <button class="setting-btn" @click="backupData">
                 <Download :size="14" />
-                <span>Архивтеу</span>
+                <span data-i18n="backup_data">Архивтеу</span>
               </button>
             </div>
             <div class="setting-item">
               <div class="setting-info">
                 <Upload :size="18" />
                 <div>
-                  <div class="setting-title">Деректерді жүктеу</div>
-                  <div class="setting-desc">Архивтен деректерді қалпына келтіру</div>
+                  <div class="setting-title" data-i18n="restore_data_title">Деректерді жүктеу</div>
+                  <div class="setting-desc" data-i18n="restore_data_desc">Архивтен деректерді қалпына келтіру</div>
                 </div>
               </div>
               <button class="setting-btn" @click="restoreData">
                 <Upload :size="14" />
-                <span>Қалпына келтіру</span>
+                <span data-i18n="restore_data">Қалпына келтіру</span>
               </button>
             </div>
             <div class="setting-item">
               <div class="setting-info">
                 <Trash2 :size="18" />
                 <div>
-                  <div class="setting-title">Барлық деректерді тазалау</div>
-                  <div class="setting-desc">Сөздік пен тарихты толығымен өшіру</div>
+                  <div class="setting-title" data-i18n="clear_all_title">Барлық деректерді тазалау</div>
+                  <div class="setting-desc" data-i18n="clear_all_desc">Сөздік пен тарихты толығымен өшіру</div>
                 </div>
               </div>
               <button class="setting-btn danger" @click="clearAllData">
                 <Trash2 :size="14" />
-                <span>Тазалау</span>
+                <span data-i18n="clear_all">Тазалау</span>
               </button>
             </div>
           </div>
@@ -411,9 +412,8 @@
 <script setup>
 import { ref, computed, onMounted } from 'vue'
 import { useRouter } from 'vue-router'
-import axios from 'axios'
-import apiClient from '../api'
 import { useAuthStore } from '../stores/auth'
+import { t, setLanguage, currentLanguage, loadLanguage, translatePage } from '../i18n'
 
 // Lucide иконкалары
 import { 
@@ -445,17 +445,6 @@ const weeklyTranslations = ref(0)
 const topUser = ref('')
 const topWord = ref('')
 
-// Пайдаланушыларды жүктеу
-const loadUsers = async () => {
-  try {
-    const response = await apiClient.get('/api/users')
-    users.value = response.data
-  } catch (error) {
-    console.error('Error loading users:', error)
-    users.value = []
-  }
-}
-
 // Фильтрленген сөздер
 const filteredWords = computed(() => {
   if (!searchQuery.value) return words.value
@@ -481,7 +470,7 @@ const getProgressPercent = (value, max = 200) => {
 // Сөз қосу
 const addWord = () => {
   if (!newWord.value.text.trim()) {
-    alert('Сөзді толтырыңыз!')
+    alert(t('error_fill_fields'))
     return
   }
   
@@ -498,12 +487,12 @@ const addWord = () => {
   localStorage.setItem('signDictionary', JSON.stringify(words.value))
   
   newWord.value = { text: '', video: '', example: '' }
-  alert('Сөз сәтті қосылды!')
+  alert(t('added'))
 }
 
 // Сөз өшіру
 const deleteWord = (index) => {
-  if (confirm('Бұл сөзді өшіргіңіз келеді ме?')) {
+  if (confirm(t('confirm_delete'))) {
     words.value.splice(index, 1)
     localStorage.setItem('signDictionary', JSON.stringify(words.value))
   }
@@ -512,7 +501,7 @@ const deleteWord = (index) => {
 // Сөз өңдеу
 const editWord = (index) => {
   const word = words.value[index]
-  const newText = prompt('Сөзді өзгертіңіз:', word.text)
+  const newText = prompt(t('edit_word'), word.text)
   if (newText && newText.trim()) {
     word.text = newText.trim()
     localStorage.setItem('signDictionary', JSON.stringify(words.value))
@@ -520,16 +509,10 @@ const editWord = (index) => {
 }
 
 // Пайдаланушы өшіру
-const deleteUser = async (index) => {
-  if (confirm('Бұл пайдаланушыны өшіргіңіз келеді ме?')) {
-    try {
-      const user = users.value[index]
-      await apiClient.delete(`/api/users/${user.id}`)
-      users.value.splice(index, 1)
-    } catch (error) {
-      console.error('Error deleting user:', error)
-      alert('Қате орын алды')
-    }
+const deleteUser = (index) => {
+  if (confirm(t('confirm_delete'))) {
+    users.value.splice(index, 1)
+    localStorage.setItem('registeredUsers', JSON.stringify(users.value))
   }
 }
 
@@ -559,7 +542,7 @@ const backupData = () => {
   a.download = `backup_${new Date().toISOString().slice(0, 19)}.json`
   a.click()
   URL.revokeObjectURL(url)
-  alert('Деректер архивтелді!')
+  alert(t('saved'))
 }
 
 // Қалпына келтіру
@@ -581,9 +564,9 @@ const restoreData = () => {
           users.value = data.users
           localStorage.setItem('registeredUsers', JSON.stringify(users.value))
         }
-        alert('Деректер қалпына келтірілді!')
+        alert(t('saved'))
       } catch (error) {
-        alert('Қате файл!')
+        alert(t('error'))
       }
     }
     reader.readAsText(file)
@@ -593,13 +576,13 @@ const restoreData = () => {
 
 // Барлық деректерді тазалау
 const clearAllData = () => {
-  if (confirm('БАРЛЫҚ деректерді өшіргіңіз келеді ме? Бұл әрекетті қайтару мүмкін емес!')) {
+  if (confirm(t('confirm_clear_all'))) {
     words.value = []
     users.value = users.value.filter(u => u.role === 'admin')
     localStorage.setItem('signDictionary', JSON.stringify([]))
     localStorage.setItem('registeredUsers', JSON.stringify(users.value))
     localStorage.setItem('translationHistory', JSON.stringify([]))
-    alert('Барлық деректер тазаланды!')
+    alert(t('deleted'))
   }
 }
 
@@ -618,10 +601,8 @@ const loadStats = () => {
     return itemDate >= weekAgo
   }).length
   
-  // Ең белсенді пайдаланушы (симуляция)
   topUser.value = 'Асель'
   
-  // Ең көп қолданылған сөз
   const wordsList = history.map(item => item.text.split(' ')).flat()
   const wordCount = {}
   wordsList.forEach(w => { wordCount[w] = (wordCount[w] || 0) + 1 })
@@ -638,7 +619,6 @@ const loadData = () => {
   if (savedUsers) {
     users.value = JSON.parse(savedUsers)
   } else {
-    // Демо пайдаланушы
     users.value = [
       { name: 'Админ', email: 'admin@gmail.com', role: 'admin', registeredAt: '2024-01-01' },
       { name: 'Асель', email: 'asel@example.com', role: 'user', registeredAt: '2024-01-15' }
@@ -653,8 +633,14 @@ onMounted(() => {
     router.push('/')
   }
   loadData()
-  loadUsers()
   loadStats()
+  loadLanguage()
+  translatePage()
+  
+  // Тіл өзгергенде бетті аудару
+  window.addEventListener('languageChanged', () => {
+    translatePage()
+  })
 })
 </script>
 
@@ -1357,237 +1343,88 @@ onMounted(() => {
 }
 
 /* ========== DARK MODE STYLES ========== */
-:root.dark-theme {
-  --admin-bg-primary: #0f0f1e;
-  --admin-bg-secondary: #1e1e30;
-  --admin-text-primary: #e8e8f0;
-  --admin-text-secondary: #a8a8b8;
-  --admin-border: #2a2a3e;
-  --admin-input-bg: #1e1e30;
-  --admin-card-bg: #2a2a3e;
-}
-
 :root.dark-theme .admin-container {
-  background: var(--admin-bg-primary);
+  background: #0f172a;
 }
 
-:root.dark-theme .admin-content {
-  background: var(--admin-bg-primary);
+:root.dark-theme .stat-badge,
+:root.dark-theme .stat-mini-card,
+:root.dark-theme .add-card,
+:root.dark-theme .words-card,
+:root.dark-theme .users-card,
+:root.dark-theme .stats-card,
+:root.dark-theme .settings-card {
+  background: #1e293b !important;
+  border-color: #334155 !important;
 }
 
-:root.dark-theme .header {
-  background: var(--admin-bg-secondary);
-  border-color: var(--admin-border);
+:root.dark-theme .header-content h1,
+:root.dark-theme .stat-mini-value,
+:root.dark-theme .card-header h3,
+:root.dark-theme .word-text,
+:root.dark-theme .user-name,
+:root.dark-theme .setting-title,
+:root.dark-theme .chart-value {
+  color: #f1f5f9 !important;
 }
 
-:root.dark-theme .header-content h2 {
-  color: var(--admin-text-primary);
+:root.dark-theme .header-content p,
+:root.dark-theme .stat-mini-label,
+:root.dark-theme .word-details,
+:root.dark-theme .user-email,
+:root.dark-theme .setting-desc,
+:root.dark-theme .chart-label,
+:root.dark-theme .info-item {
+  color: #94a3b8 !important;
 }
 
-:root.dark-theme .header-content p {
-  color: var(--admin-text-secondary);
-}
-
-:root.dark-theme .stat-badge {
-  background: var(--admin-card-bg);
-  border-color: var(--admin-border);
-  color: var(--admin-text-secondary);
-}
-
-:root.dark-theme .card {
-  background: var(--admin-card-bg);
-  border-color: var(--admin-border);
-}
-
-:root.dark-theme .card-header {
-  color: var(--admin-text-primary);
-}
-
-:root.dark-theme .card-header h3 {
-  color: var(--admin-text-primary);
-}
-
-:root.dark-theme .tab-btn {
-  background: transparent;
-  border-color: var(--admin-border);
-  color: var(--admin-text-secondary);
-}
-
-:root.dark-theme .tab-btn.active {
-  background: var(--admin-card-bg);
-  border-color: #6366f1;
-  color: #6366f1;
-}
-
-:root.dark-theme .stat-mini-card {
-  background: var(--admin-card-bg);
-  border-color: var(--admin-border);
-}
-
-:root.dark-theme .stat-mini-card:hover {
-  background: #3a3a4e;
-}
-
-:root.dark-theme .stat-mini-icon {
-  background: rgba(99, 102, 241, 0.15);
-  color: #6366f1;
-}
-
-:root.dark-theme .stat-value {
-  color: var(--admin-text-primary);
-}
-
-:root.dark-theme .stat-label {
-  color: var(--admin-text-secondary);
-}
-
-:root.dark-theme .input-icon input {
-  background: var(--admin-input-bg);
-  border-color: var(--admin-border);
-  color: var(--admin-text-primary);
-}
-
-:root.dark-theme .input-icon input::placeholder {
-  color: var(--admin-text-secondary);
-}
-
-:root.dark-theme .input-icon input:focus {
-  border-color: #6366f1;
-  box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.2);
-}
-
+:root.dark-theme .input-icon input,
 :root.dark-theme .search-box {
-  background: var(--admin-card-bg);
-  border-color: var(--admin-border);
+  background: #334155 !important;
+  border-color: #475569 !important;
+  color: #f1f5f9 !important;
 }
 
 :root.dark-theme .search-box input {
-  background: var(--admin-input-bg);
-  border-color: var(--admin-border);
-  color: var(--admin-text-primary);
+  background: #334155 !important;
 }
 
-:root.dark-theme .search-box input::placeholder {
-  color: var(--admin-text-secondary);
-}
-
-:root.dark-theme .word-item {
-  background: var(--admin-card-bg);
-  border-color: var(--admin-border);
-}
-
-:root.dark-theme .word-item:hover {
-  background: #3a3a4e;
-  border-color: #3a3a4e;
-}
-
-:root.dark-theme .word-text {
-  color: var(--admin-text-primary);
-}
-
-:root.dark-theme .word-example {
-  color: var(--admin-text-secondary);
-}
-
-:root.dark-theme .delete-word {
-  background: transparent;
-  color: var(--admin-text-secondary);
-}
-
-:root.dark-theme .delete-word:hover {
-  background: rgba(239, 68, 68, 0.15);
-  color: #ef4444;
-}
-
-:root.dark-theme .empty-state {
-  color: var(--admin-text-secondary);
-}
-
-:root.dark-theme .user-item {
-  background: var(--admin-card-bg);
-  border-color: var(--admin-border);
-}
-
-:root.dark-theme .user-item:hover {
-  background: #3a3a4e;
-  border-color: #3a3a4e;
-}
-
-:root.dark-theme .user-name {
-  color: var(--admin-text-primary);
-}
-
-:root.dark-theme .user-email {
-  color: var(--admin-text-secondary);
-}
-
-:root.dark-theme .user-role {
-  background: rgba(99, 102, 241, 0.15);
-  color: #6366f1;
-}
-
-:root.dark-theme .delete-user {
-  background: transparent;
-  color: var(--admin-text-secondary);
-}
-
-:root.dark-theme .delete-user:hover {
-  background: rgba(239, 68, 68, 0.15);
-  color: #ef4444;
-}
-
-:root.dark-theme .chart-label {
-  color: var(--admin-text-secondary);
-}
-
-:root.dark-theme .chart-value {
-  color: var(--admin-text-primary);
-}
-
-:root.dark-theme .progress-bar {
-  background: rgba(99, 102, 241, 0.2);
-}
-
-:root.dark-theme .progress-fill {
-  background: #6366f1;
-}
-
-:root.dark-theme .stats-card {
-  background: var(--admin-card-bg);
-  border-color: var(--admin-border);
-}
-
+:root.dark-theme .word-item,
+:root.dark-theme .user-item,
 :root.dark-theme .setting-item {
-  background: var(--admin-card-bg);
-  border-color: var(--admin-border);
+  background: #1e293b !important;
+  border-color: #334155 !important;
 }
 
-:root.dark-theme .setting-title {
-  color: var(--admin-text-primary);
+:root.dark-theme .word-item:hover,
+:root.dark-theme .user-item:hover {
+  background: #334155 !important;
 }
 
-:root.dark-theme .setting-desc {
-  color: var(--admin-text-secondary);
+:root.dark-theme .tabs {
+  background: #1e293b !important;
+  border-color: #334155 !important;
+}
+
+:root.dark-theme .tab-btn {
+  color: #94a3b8 !important;
+}
+
+:root.dark-theme .tab-btn:hover {
+  background: #334155 !important;
+}
+
+:root.dark-theme .tab-btn.active {
+  background: linear-gradient(135deg, #6366f1, #8b5cf6) !important;
+  color: white !important;
 }
 
 :root.dark-theme .setting-btn {
-  background: rgba(99, 102, 241, 0.1);
-  border-color: var(--admin-border);
-  color: var(--admin-text-secondary);
+  background: #334155 !important;
+  color: #cbd5e1 !important;
 }
 
 :root.dark-theme .setting-btn:hover {
-  background: rgba(99, 102, 241, 0.2);
-  color: #6366f1;
-}
-
-:root.dark-theme .delete-setting {
-  background: transparent;
-  color: var(--admin-text-secondary);
-}
-
-:root.dark-theme .delete-setting:hover {
-  background: rgba(239, 68, 68, 0.15);
-  color: #ef4444;
+  background: #475569 !important;
 }
 </style>

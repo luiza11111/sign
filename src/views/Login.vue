@@ -7,8 +7,8 @@
           <div class="logo-badge">
             <Hand class="logo-hand" :size="56" :stroke-width="1.5" />
           </div>
-          <h1>Қош келдіңіз!</h1>
-          <p class="welcome-text">
+          <h1 data-i18n="welcome_title">Қош келдіңіз!</h1>
+          <p class="welcome-text" data-i18n="welcome_text">
             Біздің кәсіби қауымдастыққа қосылыңыз. 
             Эксклюзивті мүмкіндіктерге қол жеткізу 
             және жекелендірілген тәжірибе алу үшін 
@@ -17,15 +17,15 @@
           <div class="features">
             <div class="feature">
               <Sparkles class="feature-icon" :size="18" />
-              <span>AI негізіндегі аударма</span>
+              <span data-i18n="feature_ai">AI негізіндегі аударма</span>
             </div>
             <div class="feature">
               <Mic class="feature-icon" :size="18" />
-              <span>Дауыстық басқару</span>
+              <span data-i18n="feature_voice">Дауыстық басқару</span>
             </div>
             <div class="feature">
               <Smartphone class="feature-icon" :size="18" />
-              <span>Барлық құрылғыға бейімделген</span>
+              <span data-i18n="feature_mobile">Барлық құрылғыға бейімделген</span>
             </div>
           </div>
         </div>
@@ -36,14 +36,14 @@
         <div class="form-container">
           <div class="form-header">
             <LogIn class="header-icon" :size="28" />
-            <h2>Кіру</h2>
+            <h2 data-i18n="login_title">Кіру</h2>
           </div>
           
           <form @submit.prevent="handleLogin" class="login-form">
             <div class="input-group">
               <label>
                 <Mail class="label-icon" :size="14" />
-                Email
+                <span data-i18n="email_label">Email</span>
               </label>
               <div class="input-icon-wrapper">
                 <Mail class="input-icon" :size="18" />
@@ -51,7 +51,7 @@
                   v-model="form.email"
                   type="email"
                   required
-                  placeholder="example@email.com"
+                  :placeholder="t('email_placeholder')"
                 />
               </div>
             </div>
@@ -59,7 +59,7 @@
             <div class="input-group">
               <label>
                 <Lock class="label-icon" :size="14" />
-                Пароль
+                <span data-i18n="password_label">Пароль</span>
               </label>
               <div class="input-icon-wrapper password-wrapper">
                 <Lock class="input-icon" :size="18" />
@@ -67,7 +67,7 @@
                   v-model="form.password"
                   :type="showPassword ? 'text' : 'password'"
                   required
-                  placeholder="*********"
+                  :placeholder="t('password_placeholder')"
                 />
                 <button 
                   type="button" 
@@ -83,41 +83,42 @@
             <div class="form-options">
               <label class="checkbox-label">
                 <input type="checkbox" v-model="rememberMe">
-                <span>Есте сақтау</span>
+                <span data-i18n="remember_me">Есте сақтау</span>
               </label>
               <a href="#" class="forgot-link">
                 <KeyRound :size="12" />
-                Ұмыттыңыз ба?
+                <span data-i18n="forgot_password">Ұмыттыңыз ба?</span>
               </a>
             </div>
 
             <button type="submit" :disabled="loading" class="login-btn">
               <LogIn v-if="!loading" :size="18" />
               <Loader2 v-else class="spinner-icon" :size="18" />
-              <span>{{ loading ? 'Кіруде...' : 'Кіру' }}</span>
+              <span>{{ loading ? t('logging_in') : t('login_button') }}</span>
             </button>
           </form>
 
           <div class="divider">
-            <span>немесе</span>
+            <span data-i18n="or">немесе</span>
           </div>
 
           <button class="google-btn">
             <Chrome class="google-icon" :size="18" />
-            Google арқылы кіру
+            <span data-i18n="google_login">Google арқылы кіру</span>
           </button>
 
           <div class="register-prompt">
-            <p>Аккаунтыңыз жоқ па? 
+            <p>
+              <span data-i18n="no_account">Аккаунтыңыз жоқ па?</span> 
               <router-link to="/register" class="register-link">
                 <UserPlus :size="14" />
-                Тіркелу
+                <span data-i18n="register_link">Тіркелу</span>
               </router-link>
             </p>
           </div>
 
           <div class="demo-info">
-            <p>🎯 Демо аккаунт:</p>
+            <p data-i18n="demo_account">🎯 Демо аккаунт:</p>
             <code>admin@gmail.com / admin123</code>
           </div>
         </div>
@@ -127,9 +128,10 @@
 </template>
 
 <script setup>
-import { ref } from 'vue'
+import { ref, onMounted } from 'vue'
 import { useRouter } from 'vue-router'
 import { useAuthStore } from '../stores/auth'
+import { t, loadLanguage, translatePage } from '../i18n'
 
 // Lucide иконкаларын импорттау
 import { 
@@ -150,7 +152,7 @@ const handleLogin = async () => {
   
   await new Promise(resolve => setTimeout(resolve, 500))
   
-  const result = await authStore.login(form.value.email, form.value.password)
+  const result = authStore.login(form.value.email, form.value.password)
   
   if (result.success) {
     if (rememberMe.value) {
@@ -160,7 +162,7 @@ const handleLogin = async () => {
     }
     router.push('/')
   } else {
-    alert(result.message || 'Email немесе пароль қате')
+    alert(result.message || t('login_error'))
   }
   loading.value = false
 }
@@ -170,6 +172,15 @@ if (rememberedEmail) {
   form.value.email = rememberedEmail
   rememberMe.value = true
 }
+
+onMounted(() => {
+  loadLanguage()
+  translatePage()
+  
+  window.addEventListener('languageChanged', () => {
+    translatePage()
+  })
+})
 </script>
 
 <style scoped>
@@ -501,6 +512,10 @@ if (rememberedEmail) {
   color: #94a3b8;
 }
 
+:root.dark-theme .divider span {
+  background: #0f0f1e;
+}
+
 /* Google батырмасы */
 .google-btn {
   width: 100%;
@@ -526,6 +541,16 @@ if (rememberedEmail) {
 
 .google-icon {
   stroke: #475569;
+}
+
+:root.dark-theme .google-btn {
+  background: #1e1e30;
+  border-color: #2a2a3e;
+  color: #a8a8b8;
+}
+
+:root.dark-theme .google-btn:hover {
+  background: #2a2a3e;
 }
 
 /* Тіркелу сілтемесі */
@@ -558,6 +583,14 @@ if (rememberedEmail) {
   text-decoration: underline;
 }
 
+:root.dark-theme .register-prompt {
+  border-top-color: #2a2a3e;
+}
+
+:root.dark-theme .register-prompt p {
+  color: #a8a8b8;
+}
+
 /* Демо ақпарат */
 .demo-info {
   margin-top: 20px;
@@ -580,6 +613,19 @@ if (rememberedEmail) {
   font-size: 11px;
   color: #6366f1;
   font-family: monospace;
+}
+
+:root.dark-theme .demo-info {
+  background: #1e1e30;
+}
+
+:root.dark-theme .demo-info p {
+  color: #a8a8b8;
+}
+
+:root.dark-theme .demo-info code {
+  background: #2a2a3e;
+  color: #8b5cf6;
 }
 
 /* ========== МОБИЛЬДІ ========== */
@@ -622,5 +668,22 @@ if (rememberedEmail) {
   .form-container h2 {
     font-size: 24px;
   }
+}
+
+/* ========== ҚАРАҢҒЫ РЕЖИМ (ЖАЛПЫ) ========== */
+:root.dark-theme .login-wrapper {
+  background: #0f172a;
+}
+
+:root.dark-theme .login-container {
+  background: #1e293b;
+}
+
+:root.dark-theme .welcome-section {
+  background: linear-gradient(135deg, #4c1d95, #5b21b6);
+}
+
+:root.dark-theme .input-icon-wrapper input::placeholder {
+  color: #94a3b8;
 }
 </style>

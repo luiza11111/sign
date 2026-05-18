@@ -7,14 +7,14 @@
           <User :size="32" :stroke-width="1.5" />
         </div>
         <div>
-          <h1>Профиль</h1>
-          <p>Жеке ақпаратыңыз және параметрлеріңіз</p>
+          <h1 data-i18n="profile_title">Профиль</h1>
+          <p data-i18n="profile_subtitle">Жеке ақпаратыңыз және параметрлеріңіз</p>
         </div>
       </div>
       <div class="header-stats">
         <div class="stat-badge">
           <BarChart3 :size="16" />
-          <span>{{ translationCount }} аударма</span>
+          <span>{{ translationCount }} <span data-i18n="stat_translations">аударма</span></span>
         </div>
         <button class="edit-profile-btn" @click="editMode = !editMode">
           <Pen :size="14" />
@@ -31,7 +31,7 @@
         </div>
         <div class="stat-mini-info">
           <div class="stat-mini-value">{{ translationCount }}</div>
-          <div class="stat-mini-label">Аудармалар</div>
+          <div class="stat-mini-label" data-i18n="stat_translations">Аудармалар</div>
         </div>
       </div>
       <div class="stat-mini-card">
@@ -40,7 +40,7 @@
         </div>
         <div class="stat-mini-info">
           <div class="stat-mini-value">{{ voiceCount }}</div>
-          <div class="stat-mini-label">Дауыстық сұрау</div>
+          <div class="stat-mini-label" data-i18n="stat_voice">Дауыстық сұрау</div>
         </div>
       </div>
       <div class="stat-mini-card">
@@ -49,7 +49,7 @@
         </div>
         <div class="stat-mini-info">
           <div class="stat-mini-value">{{ favoriteWordsCount }}</div>
-          <div class="stat-mini-label">Жиі сөздер</div>
+          <div class="stat-mini-label" data-i18n="stat_frequent">Жиі сөздер</div>
         </div>
       </div>
       <div class="stat-mini-card">
@@ -58,7 +58,7 @@
         </div>
         <div class="stat-mini-info">
           <div class="stat-mini-value">{{ streakDays }}</div>
-          <div class="stat-mini-label">Күндік серия</div>
+          <div class="stat-mini-label" data-i18n="stat_streak">Күндік серия</div>
         </div>
       </div>
     </div>
@@ -90,11 +90,11 @@
             <div class="profile-badges">
               <span class="profile-badge">
                 <Crown :size="12" />
-                <span>{{ userRole }}</span>
+                <span data-i18n="admin_role">{{ userRole }}</span>
               </span>
               <span class="profile-badge">
                 <Calendar :size="12" />
-                <span>Тіркелген: {{ registeredDate }}</span>
+                <span data-i18n="registered_date">Тіркелген: {{ registeredDate }}</span>
               </span>
             </div>
           </div>
@@ -109,7 +109,7 @@
         <div class="card-header">
           <div class="header-left">
             <ClipboardList :size="20" />
-            <h3>Жеке ақпарат</h3>
+            <h3 data-i18n="personal_info">Жеке ақпарат</h3>
           </div>
         </div>
 
@@ -117,7 +117,7 @@
           <div class="info-item">
             <div class="info-label">
               <User :size="14" />
-              <span>Аты-жөні</span>
+              <span data-i18n="full_name">Аты-жөні</span>
             </div>
             <div class="info-value" v-if="!editMode">{{ userName }}</div>
             <input v-else v-model="editedName" class="info-edit-input" />
@@ -126,7 +126,7 @@
           <div class="info-item">
             <div class="info-label">
               <Mail :size="14" />
-              <span>Email</span>
+              <span data-i18n="email">Email</span>
             </div>
             <div class="info-value" v-if="!editMode">{{ userEmail }}</div>
             <input v-else v-model="editedEmail" class="info-edit-input" type="email" />
@@ -135,7 +135,7 @@
           <div class="info-item">
             <div class="info-label">
               <Crown :size="14" />
-              <span>Рөл</span>
+              <span data-i18n="role">Рөл</span>
             </div>
             <div class="info-value">
               <span class="role-badge">{{ userRole }}</span>
@@ -145,7 +145,7 @@
           <div class="info-item">
             <div class="info-label">
               <Clock :size="14" />
-              <span>Соңғы кіру</span>
+              <span data-i18n="last_login">Соңғы кіру</span>
             </div>
             <div class="info-value">{{ lastLogin }}</div>
           </div>
@@ -154,11 +154,11 @@
         <div class="card-actions" v-if="editMode">
           <button class="save-btn" @click="saveProfile">
             <Check :size="14" />
-            <span>Сақтау</span>
+            <span data-i18n="save">Сақтау</span>
           </button>
           <button class="cancel-btn" @click="cancelEdit">
             <X :size="14" />
-            <span>Болдырмау</span>
+            <span data-i18n="cancel">Болдырмау</span>
           </button>
         </div>
       </div>
@@ -171,52 +171,73 @@
         <div class="card-header">
           <div class="header-left">
             <Settings :size="20" />
-            <h3>Параметрлер</h3>
+            <h3 data-i18n="settings">Параметрлер</h3>
           </div>
         </div>
 
         <div class="settings-list">
+          <!-- Хабарландырулар -->
           <div class="setting-item">
             <div class="setting-info">
               <Bell :size="20" />
               <div>
-                <div class="setting-title">Хабарландырулар</div>
-                <div class="setting-desc">Жаңа функциялар туралы хабарландырулар алу</div>
+                <div class="setting-title" data-i18n="notifications">Хабарландырулар</div>
+                <div class="setting-desc" data-i18n="notifications_desc">Жаңа функциялар туралы хабарландырулар алу</div>
               </div>
             </div>
             <label class="switch">
-              <input type="checkbox" v-model="notifications">
+              <input type="checkbox" v-model="notifications" @change="saveNotifications">
               <span class="slider"></span>
             </label>
           </div>
 
+          <!-- Қараңғы режим -->
           <div class="setting-item">
             <div class="setting-info">
               <Moon :size="20" />
               <div>
-                <div class="setting-title">Қараңғы режим</div>
-                <div class="setting-desc">Интерфейстің түс схемасын өзгерту</div>
+                <div class="setting-title" data-i18n="dark_mode">Қараңғы режим</div>
+                <div class="setting-desc" data-i18n="dark_mode_desc">Интерфейстің түс схемасын өзгерту</div>
               </div>
             </div>
             <label class="switch">
-              <input type="checkbox" v-model="darkMode">
+              <input type="checkbox" v-model="darkMode" @change="toggleDarkMode">
               <span class="slider"></span>
             </label>
           </div>
 
+          <!-- Тіл -->
           <div class="setting-item">
             <div class="setting-info">
               <Globe :size="20" />
               <div>
-                <div class="setting-title">Тіл</div>
-                <div class="setting-desc">Интерфейс тілін өзгерту</div>
+                <div class="setting-title" data-i18n="language">Тіл</div>
+                <div class="setting-desc" data-i18n="language_desc">Интерфейс тілін өзгерту</div>
               </div>
             </div>
-            <select class="language-select" v-model="language">
-              <option value="kk">Қазақша</option>
-              <option value="ru">Русский</option>
-              <option value="en">English</option>
-            </select>
+            <div class="language-buttons">
+              <button 
+                class="lang-btn" 
+                :class="{ active: currentLang === 'kk' }"
+                @click="changeLanguage('kk')"
+              >
+                🇰🇿 Қаз
+              </button>
+              <button 
+                class="lang-btn" 
+                :class="{ active: currentLang === 'ru' }"
+                @click="changeLanguage('ru')"
+              >
+                🇷🇺 Рус
+              </button>
+              <button 
+                class="lang-btn" 
+                :class="{ active: currentLang === 'en' }"
+                @click="changeLanguage('en')"
+              >
+                🇬🇧 Eng
+              </button>
+            </div>
           </div>
         </div>
       </div>
@@ -229,18 +250,18 @@
         <div class="card-header">
           <div class="header-left">
             <Shield :size="20" />
-            <h3>Қауіпсіздік</h3>
+            <h3 data-i18n="security">Қауіпсіздік</h3>
           </div>
         </div>
 
         <div class="security-buttons">
           <button class="security-btn" @click="changePassword">
             <KeyRound :size="14" />
-            <span>Құпия сөзді өзгерту</span>
+            <span data-i18n="change_password">Құпия сөзді өзгерту</span>
           </button>
           <button class="security-btn logout" @click="handleLogout">
             <LogOut :size="14" />
-            <span>Шығу</span>
+            <span data-i18n="logout">Шығу</span>
           </button>
         </div>
       </div>
@@ -249,12 +270,12 @@
 </template>
 
 <script setup>
-import { ref, computed, onMounted, watch } from 'vue'
+import { ref, computed, onMounted } from 'vue'
 import { useRouter } from 'vue-router'
 import { useAuthStore } from '../stores/auth'
-import { useSettingsStore } from '../stores/settings'
+import { setLanguage, currentLanguage, loadLanguage, translatePage, t } from '../i18n'
 
-// Lucide иконкаларын импорттау
+// Lucide иконкалары
 import { 
   User, BarChart3, Pen, FileText, Mic, Star, Flame,
   Camera, Mail, Crown, Calendar, ClipboardList, Clock,
@@ -263,12 +284,11 @@ import {
 
 const router = useRouter()
 const authStore = useAuthStore()
-const settingsStore = useSettingsStore()
 
 // Пайдаланушы деректері
-const userName = computed(() => authStore.user?.name || 'Қолданушы')
+const userName = computed(() => authStore.user?.name || t('user'))
 const userEmail = computed(() => authStore.user?.email || 'user@example.com')
-const userRole = computed(() => authStore.user?.role === 'admin' ? 'Админ' : 'Қолданушы')
+const userRole = computed(() => authStore.user?.role === 'admin' ? t('admin_role') : t('user_role'))
 const userInitials = computed(() => userName.value.charAt(0).toUpperCase())
 
 // Редакциялау режимі
@@ -282,78 +302,132 @@ const voiceCount = ref(0)
 const favoriteWordsCount = ref(0)
 const streakDays = ref(7)
 
-// Параметрлер - привязаны к store
-const notifications = computed({
-  get: () => settingsStore.notifications,
-  set: (val) => {
-    settingsStore.notifications = val
-    settingsStore.toggleNotifications()
-  }
-})
-
-const darkMode = computed({
-  get: () => settingsStore.darkMode,
-  set: (val) => {
-    settingsStore.darkMode = val
-    settingsStore.toggleDarkMode()
-  }
-})
-
-const language = computed({
-  get: () => settingsStore.language,
-  set: (val) => settingsStore.setLanguage(val)
-})
+// Параметрлер
+const notifications = ref(true)
+const darkMode = ref(false)
+const currentLang = ref('kk')
 
 // Басқа деректер
 const registeredDate = ref('2024-01-15')
 const lastLogin = ref(new Date().toLocaleString())
 
-// Статистиканы жүктеу
+// Хабарландыруларды сақтау
+const saveNotifications = () => {
+  localStorage.setItem('notifications', notifications.value)
+}
+
+// ========== ТІЛДІ ӨЗГЕРТУ (БЕТТІ ҚАЙТА ЖҮКТЕМЕЙ) ==========
+const changeLanguage = (lang) => {
+  currentLang.value = lang
+  setLanguage(lang)
+  console.log('Тіл өзгертілді:', lang)
+}
+
+// ========== ҚАРАҢҒЫ РЕЖИМ ==========
+const toggleDarkMode = () => {
+  if (darkMode.value) {
+    document.documentElement.classList.add('dark-theme')
+    document.body.classList.add('dark-theme')
+    localStorage.setItem('darkMode', 'true')
+  } else {
+    document.documentElement.classList.remove('dark-theme')
+    document.body.classList.remove('dark-theme')
+    localStorage.setItem('darkMode', 'false')
+  }
+}
+
+const loadDarkMode = () => {
+  const savedDarkMode = localStorage.getItem('darkMode') === 'true'
+  darkMode.value = savedDarkMode
+  if (savedDarkMode) {
+    document.documentElement.classList.add('dark-theme')
+    document.body.classList.add('dark-theme')
+  }
+}
+
+// ========== СТАТИСТИКА ==========
 const loadStats = () => {
   const history = JSON.parse(localStorage.getItem('translationHistory') || '[]')
   translationCount.value = history.length
   
-  voiceCount.value = Math.floor(Math.random() * 100) + 20
+  const voiceHistory = JSON.parse(localStorage.getItem('voiceHistory') || '[]')
+  voiceCount.value = voiceHistory.length
   
   const words = JSON.parse(localStorage.getItem('signDictionary') || '[]')
   favoriteWordsCount.value = words.length
+  
+  if (history.length > 0) {
+    const dates = [...new Set(history.map(item => item.date.split(',')[0]))]
+    dates.sort((a, b) => new Date(b) - new Date(a))
+    let streak = 0
+    let currentDate = new Date()
+    currentDate.setHours(0, 0, 0, 0)
+    for (let i = 0; i < dates.length; i++) {
+      const itemDate = new Date(dates[i])
+      itemDate.setHours(0, 0, 0, 0)
+      const diffDays = Math.floor((currentDate - itemDate) / (1000 * 60 * 60 * 24))
+      if (diffDays === streak) {
+        streak++
+      } else {
+        break
+      }
+    }
+    streakDays.value = streak
+  }
 }
 
-// Профильді сақтау
+// ========== ПРОФИЛЬ ФУНКЦИЯЛАРЫ ==========
 const saveProfile = () => {
-  alert('Профиль сақталды!')
+  alert(t('profile_saved'))
   editMode.value = false
 }
 
-// Редакциялауды болдырмау
 const cancelEdit = () => {
   editedName.value = userName.value
   editedEmail.value = userEmail.value
   editMode.value = false
 }
 
-// Аватарды өзгерту
 const changeAvatar = () => {
-  alert('Аватарды өзгерту мүмкіндігі кейінгі нұсқада қосылады')
+  alert(t('avatar_change_msg'))
 }
 
-// Құпия сөзді өзгерту
 const changePassword = () => {
-  alert('Құпия сөзді өзгерту сілтемесі email арқылы жіберілді')
+  const newPassword = prompt(t('enter_new_password'))
+  if (newPassword && newPassword.length >= 6) {
+    alert(t('password_changed'))
+  } else if (newPassword) {
+    alert(t('password_too_short'))
+  }
 }
 
-// Шығу
 const handleLogout = () => {
   authStore.logout()
   router.push('/login')
 }
 
+// ========== ПАРАМЕТРЛЕРДІ ЖҮКТЕУ ==========
+const loadSettings = () => {
+  const savedNotifications = localStorage.getItem('notifications')
+  if (savedNotifications !== null) {
+    notifications.value = savedNotifications === 'true'
+  }
+  loadDarkMode()
+  loadLanguage()
+  currentLang.value = currentLanguage.value || 'kk'
+}
+
 onMounted(() => {
   loadStats()
+  loadSettings()
   editedName.value = userName.value
   editedEmail.value = userEmail.value
+  translatePage()
+  
+  window.addEventListener('languageChanged', () => {
+    translatePage()
+  })
 })
-
 </script>
 
 <style scoped>
@@ -508,21 +582,6 @@ onMounted(() => {
 
 .profile-card:hover, .info-card:hover, .settings-card:hover, .security-card:hover {
   box-shadow: 0 20px 40px -12px rgba(0, 0, 0, 0.1);
-}
-
-:root.dark-theme .profile-card, 
-:root.dark-theme .info-card, 
-:root.dark-theme .settings-card, 
-:root.dark-theme .security-card {
-  background: #1e1e30;
-  border-color: #2a2a3e;
-}
-
-:root.dark-theme .profile-card:hover, 
-:root.dark-theme .info-card:hover, 
-:root.dark-theme .settings-card:hover, 
-:root.dark-theme .security-card:hover {
-  box-shadow: 0 20px 40px -12px rgba(0, 0, 0, 0.5);
 }
 
 .card-gradient {
@@ -839,13 +898,34 @@ input:checked + .slider:before {
   transform: translateX(24px);
 }
 
-.language-select {
-  padding: 8px 16px;
-  border: 1.5px solid #e2e8f0;
+/* ========== ТІЛ ТАҢДАУ ========== */
+.language-buttons {
+  display: flex;
+  gap: 8px;
+  background: #f1f5f9;
+  padding: 4px;
   border-radius: 40px;
-  font-size: 13px;
-  background: white;
+}
+
+.lang-btn {
+  padding: 6px 16px;
+  border-radius: 32px;
+  background: none;
+  border: none;
   cursor: pointer;
+  font-size: 13px;
+  font-weight: 500;
+  color: #475569;
+  transition: all 0.2s;
+}
+
+.lang-btn:hover {
+  background: #e2e8f0;
+}
+
+.lang-btn.active {
+  background: linear-gradient(135deg, #6366f1, #8b5cf6);
+  color: white;
 }
 
 /* ========== ҚАУІПСІЗДІК ========== */
@@ -882,6 +962,50 @@ input:checked + .slider:before {
 
 .security-btn.logout:hover {
   background: #fecaca;
+}
+
+/* ========== ҚАРАҢҒЫ РЕЖИМ ========== */
+:root.dark-theme .profile-container {
+  background: #0f172a;
+}
+
+:root.dark-theme .stat-badge,
+:root.dark-theme .stat-mini-card,
+:root.dark-theme .profile-card,
+:root.dark-theme .info-card,
+:root.dark-theme .settings-card,
+:root.dark-theme .security-card {
+  background: #1e293b;
+  border-color: #334155;
+}
+
+:root.dark-theme .header-content h1,
+:root.dark-theme .stat-mini-value,
+:root.dark-theme .profile-name h2,
+:root.dark-theme .setting-title,
+:root.dark-theme .card-header h3,
+:root.dark-theme .info-value {
+  color: #f1f5f9;
+}
+
+:root.dark-theme .header-content p,
+:root.dark-theme .stat-mini-label,
+:root.dark-theme .profile-email,
+:root.dark-theme .setting-desc,
+:root.dark-theme .info-label {
+  color: #94a3b8;
+}
+
+:root.dark-theme .language-buttons {
+  background: #334155;
+}
+
+:root.dark-theme .lang-btn {
+  color: #cbd5e1;
+}
+
+:root.dark-theme .lang-btn:hover {
+  background: #475569;
 }
 
 /* ========== МОБИЛЬДІ ========== */
@@ -944,85 +1068,5 @@ input:checked + .slider:before {
   .security-btn {
     justify-content: center;
   }
-}
-
-/* ========== ТЁМНЫЙ РЕЖИМ ========== */
-:root.dark-theme .profile-container {
-  background: var(--bg-secondary);
-  color: var(--text-primary);
-}
-
-:root.dark-theme .page-header {
-  color: var(--text-primary);
-}
-
-:root.dark-theme .header-content h1 {
-  color: var(--text-primary);
-}
-
-:root.dark-theme .header-content p {
-  color: var(--text-secondary);
-}
-
-:root.dark-theme .stat-badge {
-  background: var(--card-bg);
-  border-color: var(--border-color);
-  color: var(--text-secondary);
-}
-
-:root.dark-theme .profile-card,
-:root.dark-theme .info-card,
-:root.dark-theme .settings-card,
-:root.dark-theme .security-card {
-  background: #1e1e30;
-  border: 1px solid #2a2a3e;
-  color: var(--text-primary);
-}
-
-:root.dark-theme .card-header {
-  background: rgba(99, 102, 241, 0.1);
-  border-bottom-color: var(--border-color);
-}
-
-:root.dark-theme .card-header h3 {
-  color: var(--text-primary);
-}
-
-:root.dark-theme .info-label,
-:root.dark-theme .setting-title {
-  color: var(--text-primary);
-}
-
-:root.dark-theme .setting-desc {
-  color: var(--text-secondary);
-}
-
-:root.dark-theme .info-value {
-  color: var(--text-secondary);
-}
-
-:root.dark-theme .language-select {
-  background: var(--input-bg);
-  color: var(--text-primary);
-  border-color: var(--border-color);
-}
-
-:root.dark-theme .switch input:checked + .slider {
-  background: #8b5cf6;
-}
-
-:root.dark-theme .security-btn {
-  background: rgba(99, 102, 241, 0.1);
-  color: var(--text-primary);
-  border-color: var(--border-color);
-}
-
-:root.dark-theme .security-btn:hover {
-  background: rgba(99, 102, 241, 0.2);
-}
-
-:root.dark-theme .save-btn,
-:root.dark-theme .edit-profile-btn {
-  background: linear-gradient(135deg, #8b5cf6, #6366f1);
 }
 </style>

@@ -7,18 +7,18 @@
           <Star :size="32" :stroke-width="1.5" />
         </div>
         <div>
-          <h1>Жиі сөздер</h1>
-          <p>Ең көп қолданылатын сөздер тізімі</p>
+          <h1 data-i18n="frequent_title">Жиі сөздер</h1>
+          <p data-i18n="frequent_subtitle">Ең көп қолданылатын сөздер тізімі</p>
         </div>
       </div>
       <div class="header-stats">
         <div class="stat-badge">
           <BarChart3 :size="16" />
-          <span>{{ frequentWords.length }} сөз</span>
+          <span>{{ frequentWords.length }} <span data-i18n="all_words">сөз</span></span>
         </div>
         <button class="export-btn" @click="exportWords">
           <Download :size="14" />
-          <span>Экспорт</span>
+          <span data-i18n="export">Экспорт</span>
         </button>
       </div>
     </div>
@@ -31,7 +31,7 @@
         </div>
         <div class="stat-mini-info">
           <div class="stat-mini-value">{{ frequentWords.length }}</div>
-          <div class="stat-mini-label">Барлық сөздер</div>
+          <div class="stat-mini-label" data-i18n="all_words">Барлық сөздер</div>
         </div>
       </div>
       <div class="stat-mini-card">
@@ -40,7 +40,7 @@
         </div>
         <div class="stat-mini-info">
           <div class="stat-mini-value">{{ totalUsage }}</div>
-          <div class="stat-mini-label">Барлық қолдану</div>
+          <div class="stat-mini-label" data-i18n="total_usage">Барлық қолдану</div>
         </div>
       </div>
       <div class="stat-mini-card">
@@ -49,7 +49,7 @@
         </div>
         <div class="stat-mini-info">
           <div class="stat-mini-value">{{ topWord }}</div>
-          <div class="stat-mini-label">Ең көп қолданылған</div>
+          <div class="stat-mini-label" data-i18n="most_used">Ең көп қолданылған</div>
         </div>
       </div>
       <div class="stat-mini-card">
@@ -58,7 +58,7 @@
         </div>
         <div class="stat-mini-info">
           <div class="stat-mini-value">{{ getTodayAdded }}</div>
-          <div class="stat-mini-label">Бүгін қосылған</div>
+          <div class="stat-mini-label" data-i18n="today_added">Бүгін қосылған</div>
         </div>
       </div>
     </div>
@@ -70,7 +70,7 @@
         <div class="card-header">
           <div class="header-left">
             <Bookmark :size="20" />
-            <h3>Жиі қолданылатын сөздер</h3>
+            <h3 data-i18n="frequent_words">Жиі қолданылатын сөздер</h3>
           </div>
           <div class="header-actions">
             <button class="sort-btn" @click="sortWords">
@@ -104,15 +104,15 @@
                 </div>
                 <div class="usage-stats">
                   <MousePointerClick :size="11" />
-                  <span>{{ word.usage }} рет қолданылған</span>
+                  <span>{{ word.usage }} <span data-i18n="times_used">рет қолданылған</span></span>
                 </div>
               </div>
             </div>
             <div class="word-actions">
-              <button class="word-action" @click.stop="incrementUsage(word.text)">
+              <button class="word-action" @click.stop="incrementUsage(word.text)" :title="t('increment_usage')">
                 <Plus :size="16" />
               </button>
-              <button class="word-action delete" @click.stop="deleteWord(word.text)">
+              <button class="word-action delete" @click.stop="deleteWord(word.text)" :title="t('delete_word')">
                 <Trash2 :size="16" />
               </button>
             </div>
@@ -124,8 +124,8 @@
           <div class="empty-icon">
             <Inbox :size="64" :stroke-width="1" />
           </div>
-          <p>Әзірге сөздер жоқ</p>
-          <small>Төмендегі форма арқылы жаңа сөз қосыңыз</small>
+          <p data-i18n="no_words">Әзірге сөздер жоқ</p>
+          <small data-i18n="add_word_hint">Төмендегі форма арқылы жаңа сөз қосыңыз</small>
         </div>
       </div>
     </div>
@@ -137,32 +137,32 @@
         <div class="card-header">
           <div class="header-left">
             <PlusCircle :size="20" />
-            <h3>Жаңа сөз қосу</h3>
+            <h3 data-i18n="new_word">Жаңа сөз қосу</h3>
           </div>
         </div>
         
         <div class="add-form">
           <div class="form-row">
             <div class="form-group">
-              <label>Сөз (қазақша)</label>
+              <label data-i18n="word_placeholder">Сөз (қазақша)</label>
               <div class="input-icon">
                 <FileText :size="16" class="icon" />
                 <input 
                   v-model="newWord.text" 
                   type="text" 
-                  placeholder="Мысалы: Кешіріңіз"
+                  :placeholder="t('word_placeholder') + ' - Кешіріңіз'"
                   @keyup.enter="addNewWord"
                 />
               </div>
             </div>
             <div class="form-group">
-              <label>Мысал сөйлем</label>
+              <label data-i18n="example_placeholder">Мысал сөйлем</label>
               <div class="input-icon">
                 <MessageSquare :size="16" class="icon" />
                 <input 
                   v-model="newWord.example" 
                   type="text" 
-                  placeholder="Мысалы: Кешіріңіз, мен кешіктім"
+                  :placeholder="t('example_placeholder') + ' - Кешіріңіз, мен кешіктім'"
                   @keyup.enter="addNewWord"
                 />
               </div>
@@ -170,7 +170,7 @@
           </div>
           <button class="add-btn" @click="addNewWord">
             <Plus :size="16" />
-            <span>Сөзді қосу</span>
+            <span data-i18n="add_word">Сөзді қосу</span>
           </button>
         </div>
       </div>
@@ -182,7 +182,8 @@
         <Lightbulb :size="20" />
       </div>
       <div class="tip-content">
-        <strong>Кеңес:</strong> Сөзді басыңыз - көшіру үшін. Жиі қолданылатын сөздер жоғарыда көрсетіледі.
+        <strong data-i18n="tip_title">Кеңес:</strong>
+        <span data-i18n="tip_click_copy">Сөзді басыңыз - көшіру үшін. Жиі қолданылатын сөздер жоғарыда көрсетіледі.</span>
       </div>
     </div>
   </div>
@@ -190,6 +191,7 @@
 
 <script setup>
 import { ref, computed, onMounted } from 'vue'
+import { t, loadLanguage, translatePage } from '../i18n'
 
 // Lucide иконкаларын импорттау
 import { 
@@ -258,7 +260,7 @@ const sortWords = () => {
 // Сөз қосу
 const addNewWord = () => {
   if (!newWord.value.text.trim()) {
-    alert('Сөзді толтырыңыз!')
+    alert(t('error_fill_fields'))
     return
   }
   
@@ -268,7 +270,7 @@ const addNewWord = () => {
   
   const exists = frequentWords.value.some(w => w.text === newWord.value.text)
   if (exists) {
-    alert('Бұл сөз бұрын қосылған!')
+    alert(t('word_exists'))
     return
   }
   
@@ -281,7 +283,7 @@ const addNewWord = () => {
   localStorage.setItem('frequentWords', JSON.stringify(frequentWords.value))
   
   newWord.value = { text: '', example: '' }
-  alert('Сөз сәтті қосылды!')
+  alert(t('added'))
 }
 
 // Қолдану санын арттыру
@@ -295,7 +297,7 @@ const incrementUsage = (text) => {
 
 // Сөз өшіру
 const deleteWord = (text) => {
-  if (confirm(`"${text}" сөзін өшіргіңіз келеді ме?`)) {
+  if (confirm(t('confirm_delete'))) {
     frequentWords.value = frequentWords.value.filter(w => w.text !== text)
     localStorage.setItem('frequentWords', JSON.stringify(frequentWords.value))
   }
@@ -304,7 +306,7 @@ const deleteWord = (text) => {
 // Сөзді көшіру
 const copyWord = (text) => {
   navigator.clipboard.writeText(text)
-  alert(`"${text}" көшірілді!`)
+  alert(t('copied'))
 }
 
 // Экспорт
@@ -329,6 +331,12 @@ const loadData = () => {
 
 onMounted(() => {
   loadData()
+  loadLanguage()
+  translatePage()
+  
+  window.addEventListener('languageChanged', () => {
+    translatePage()
+  })
 })
 </script>
 
@@ -836,78 +844,66 @@ onMounted(() => {
 
 /* ========== ТЁМНЫЙ РЕЖИМ ========== */
 :root.dark-theme .frequent-container {
-  background: var(--bg-secondary);
-  color: var(--text-primary);
+  background: #0f172a;
 }
 
-:root.dark-theme .card {
-  background: var(--card-bg);
-  border-color: var(--border-color);
+:root.dark-theme .stat-badge,
+:root.dark-theme .stat-mini-card,
+:root.dark-theme .frequent-card,
+:root.dark-theme .add-card {
+  background: #1e293b !important;
+  border-color: #334155 !important;
 }
 
-:root.dark-theme .card-header {
-  color: var(--text-primary);
-}
-
+:root.dark-theme .header-content h1,
+:root.dark-theme .stat-mini-value,
 :root.dark-theme .card-header h3,
-:root.dark-theme .header-left {
-  color: var(--text-primary);
+:root.dark-theme .word-text {
+  color: #f1f5f9 !important;
+}
+
+:root.dark-theme .header-content p,
+:root.dark-theme .stat-mini-label,
+:root.dark-theme .word-example,
+:root.dark-theme .usage-stats {
+  color: #94a3b8 !important;
 }
 
 :root.dark-theme .word-card {
-  background: var(--card-bg);
-  border-color: var(--border-color);
+  background: #1e293b !important;
+  border-color: #334155 !important;
 }
 
-:root.dark-theme .word-title {
-  color: var(--text-primary);
-}
-
-:root.dark-theme .word-example {
-  color: var(--text-secondary);
-}
-
-:root.dark-theme .usage-bar {
-  background: rgba(99, 102, 241, 0.1);
-}
-
-:root.dark-theme .stat-mini-card {
-  background: var(--card-bg);
-  border-color: var(--border-color);
-}
-
-:root.dark-theme .stat-badge {
-  background: var(--card-bg);
-  border-color: var(--border-color);
-  color: var(--text-secondary);
-}
-
-:root.dark-theme .input-icon input {
-  background: #2a2a3e;
-  color: var(--text-primary);
-  border-color: var(--border-color);
-}
-
-:root.dark-theme .input-icon input::placeholder {
-  color: var(--text-secondary);
+:root.dark-theme .word-card:hover {
+  background: #334155 !important;
 }
 
 :root.dark-theme .sort-btn,
 :root.dark-theme .export-btn {
-  background: rgba(99, 102, 241, 0.1);
-  color: var(--text-primary);
+  background: #334155 !important;
+  color: #cbd5e1 !important;
 }
 
 :root.dark-theme .sort-btn:hover,
 :root.dark-theme .export-btn:hover {
-  background: rgba(99, 102, 241, 0.2);
+  background: #475569 !important;
 }
 
-:root.dark-theme .empty-state p {
-  color: var(--text-primary);
+:root.dark-theme .input-icon input {
+  background: #334155 !important;
+  border-color: #475569 !important;
+  color: #f1f5f9 !important;
 }
 
-:root.dark-theme .empty-state small {
-  color: var(--text-secondary);
+:root.dark-theme .input-icon input::placeholder {
+  color: #94a3b8 !important;
+}
+
+:root.dark-theme .tip-card {
+  background: #334155 !important;
+}
+
+:root.dark-theme .tip-content {
+  color: #cbd5e1 !important;
 }
 </style>
