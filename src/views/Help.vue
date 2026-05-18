@@ -7,8 +7,8 @@
           <HelpCircle :size="32" :stroke-width="1.5" />
         </div>
         <div>
-          <h1>Көмек</h1>
-          <p>Жиі қойылатын сұрақтар және көмек</p>
+          <h1 data-i18n="help_title">Көмек</h1>
+          <p data-i18n="help_subtitle">Жиі қойылатын сұрақтар және көмек</p>
         </div>
       </div>
       <div class="header-stats">
@@ -31,7 +31,7 @@
         </div>
         <div class="stat-mini-info">
           <div class="stat-mini-value">{{ faqs.length }}</div>
-          <div class="stat-mini-label">Жиі сұрақтар</div>
+          <div class="stat-mini-label" data-i18n="faq">Жиі сұрақтар</div>
         </div>
       </div>
       <div class="stat-mini-card">
@@ -40,7 +40,7 @@
         </div>
         <div class="stat-mini-info">
           <div class="stat-mini-value">3</div>
-          <div class="stat-mini-label">Нұсқаулық бейне</div>
+          <div class="stat-mini-label" data-i18n="videos">Нұсқаулық бейне</div>
         </div>
       </div>
       <div class="stat-mini-card">
@@ -49,7 +49,7 @@
         </div>
         <div class="stat-mini-info">
           <div class="stat-mini-value">24/7</div>
-          <div class="stat-mini-label">Қолдау қызметі</div>
+          <div class="stat-mini-label" data-i18n="support">Қолдау қызметі</div>
         </div>
       </div>
       <div class="stat-mini-card">
@@ -58,7 +58,7 @@
         </div>
         <div class="stat-mini-info">
           <div class="stat-mini-value">98%</div>
-          <div class="stat-mini-label">Қанағаттану</div>
+          <div class="stat-mini-label" data-i18n="satisfaction">Қанағаттану</div>
         </div>
       </div>
     </div>
@@ -70,7 +70,7 @@
         <div class="card-header">
           <div class="header-left">
             <List :size="20" />
-            <h3>Жиі қойылатын сұрақтар</h3>
+            <h3 data-i18n="faq">Жиі қойылатын сұрақтар</h3>
           </div>
           <div class="header-filters">
             <button 
@@ -78,14 +78,14 @@
               :class="{ active: activeFilter === 'all' }"
               @click="activeFilter = 'all'"
             >
-              Барлығы
+              <span data-i18n="all">Барлығы</span>
             </button>
             <button 
               class="filter-chip" 
               :class="{ active: activeFilter === 'popular' }"
               @click="activeFilter = 'popular'"
             >
-              Танымал
+              <span data-i18n="popular">Танымал</span>
             </button>
           </div>
         </div>
@@ -123,10 +123,10 @@
         <div class="card-header">
           <div class="header-left">
             <Film :size="20" />
-            <h3>Нұсқаулық бейнелер</h3>
+            <h3 data-i18n="videos">Нұсқаулық бейнелер</h3>
           </div>
           <button class="more-btn" @click="showAllVideos">
-            <span>Барлығы</span>
+            <span data-i18n="all">Барлығы</span>
             <ArrowRight :size="14" />
           </button>
         </div>
@@ -181,68 +181,76 @@
       </div>
     </div>
 
-    <!-- Байланыс бөлімі -->
+    <!-- ========== БАЙЛАНЫС БӨЛІМІ (СІЛТЕМЕЛЕР ҚОСЫЛҒАН) ========== -->
     <div class="contact-card">
       <div class="card-gradient"></div>
       <div class="card-content">
         <div class="card-header">
           <div class="header-left">
             <Phone :size="20" />
-            <h3>Бізбен байланысыңыз</h3>
+            <h3 data-i18n="contact">Бізбен байланысыңыз</h3>
           </div>
           <div class="contact-badge">
             <Circle :size="10" fill="#10b981" stroke="none" />
-            <span>Онлайн</span>
+            <span data-i18n="online">Онлайн</span>
           </div>
         </div>
 
         <div class="contact-grid">
           <div class="contact-info">
-            <div class="contact-item">
+            <!-- Email - mailto сілтемесі (ӨЗГЕРТІЛГЕН - сіздің email-іңіз) -->
+            <a :href="'mailto:' + contact.email" class="contact-item">
               <div class="contact-icon purple">
                 <Mail :size="22" />
               </div>
               <div class="contact-details">
                 <h4>Email</h4>
-                <p>support@signflow.kz</p>
+                <p>{{ contact.email }}</p>
                 <small>Жауап беру уақыты: 1-2 сағат</small>
               </div>
-            </div>
-            <div class="contact-item">
+            </a>
+
+            <!-- Телефон - tel сілтемесі -->
+            <a :href="'tel:' + contact.phone" class="contact-item">
               <div class="contact-icon blue">
                 <Phone :size="22" />
               </div>
               <div class="contact-details">
                 <h4>Телефон</h4>
-                <p>+7 (700) 123-45-67</p>
+                <p>{{ contact.phoneFormatted }}</p>
                 <small>09:00 - 18:00, Дс-Жм</small>
               </div>
-            </div>
-            <div class="contact-item">
+            </a>
+
+            <!-- Telegram - t.me сілтемесі -->
+            <a :href="telegramUrl" target="_blank" class="contact-item" rel="noopener noreferrer">
               <div class="contact-icon green">
                 <MessageCircle :size="22" />
               </div>
               <div class="contact-details">
                 <h4>Telegram</h4>
-                <p>@signflow_support</p>
+                <p>{{ telegramUsername }}</p>
                 <small>24/7 онлайн</small>
               </div>
-            </div>
-            <div class="contact-item">
+            </a>
+
+            <!-- Мекенжай - Google Maps сілтемесі -->
+            <a :href="contact.mapUrl" target="_blank" class="contact-item" rel="noopener noreferrer">
               <div class="contact-icon orange">
                 <MapPin :size="22" />
               </div>
               <div class="contact-details">
                 <h4>Мекенжай</h4>
-                <p>Алматы, Достык даңғылы 123</p>
+                <p>{{ contact.address }}</p>
                 <small>Келу арқылы алдын ала жазылу</small>
               </div>
-            </div>
+            </a>
           </div>
 
+          <!-- Форма -->
           <form @submit.prevent="sendMessage" class="contact-form">
             <div class="form-group">
-              <label>Ваше имя</label>
+              <label data-i18n="message_name">Ваше имя</label>
               <div class="input-icon">
                 <User :size="16" class="icon" />
                 <input v-model="form.name" type="text" placeholder="Иван Иванов" required />
@@ -250,7 +258,7 @@
             </div>
 
             <div class="form-group">
-              <label>Email для ответа</label>
+              <label data-i18n="message_email">Email для ответа</label>
               <div class="input-icon">
                 <Mail :size="16" class="icon" />
                 <input v-model="form.email" type="email" placeholder="example@mail.ru" required />
@@ -258,7 +266,7 @@
             </div>
 
             <div class="form-group">
-              <label>Тема обращения</label>
+              <label data-i18n="message_subject">Тема обращения</label>
               <div class="input-icon">
                 <Tag :size="16" class="icon" />
                 <input v-model="form.subject" type="text" placeholder="Например: Проблема с аккаунтом" required />
@@ -266,7 +274,7 @@
             </div>
 
             <div class="form-group">
-              <label>Подробное описание</label>
+              <label data-i18n="message_text">Подробное описание</label>
               <div class="input-icon textarea-icon">
                 <FileText :size="16" class="icon" />
                 <textarea v-model="form.message" rows="4" placeholder="Опишите вашу проблему или вопрос..." required></textarea>
@@ -276,7 +284,7 @@
             <button type="submit" :disabled="loading" class="submit-btn">
               <Send v-if="!loading" :size="16" />
               <Loader2 v-else class="spinner-icon" :size="16" />
-              <span>{{ loading ? 'Жіберілуде...' : 'Жіберу' }}</span>
+              <span data-i18n="send">{{ loading ? 'Жіберілуде...' : 'Жіберу' }}</span>
             </button>
           </form>
         </div>
@@ -289,7 +297,8 @@
         <Lightbulb :size="20" />
       </div>
       <div class="tip-content">
-        <strong>Кеңес:</strong> Сұрағыңызға жауап таба алмасаңыз, бізге хабарласыңыз. Біз 24/7 онлайн режимінде көмектесуге дайынбыз!
+        <strong data-i18n="tip_help_title">Кеңес:</strong>
+        <span data-i18n="tip_help_text">Сұрағыңызға жауап таба алмасаңыз, бізге хабарласыңыз. Біз 24/7 онлайн режимінде көмектесуге дайынбыз!</span>
       </div>
     </div>
   </div>
@@ -305,6 +314,19 @@ import {
   Play, Clock, Eye, BookOpen, Circle, Mail, MapPin, User, Tag,
   FileText, Send, Loader2
 } from 'lucide-vue-next'
+
+// ========== БАЙЛАНЫС ДЕРЕКТЕРІ (ӨЗГЕРТІЛГЕН) ==========
+const contact = {
+  email: 'adilkhanassel507@gmail.com',  // Сіздің email-іңіз
+  phone: '+77001234567',
+  phoneFormatted: '+7 (700) 123-45-67',
+  address: 'Алматы, Достык даңғылы 123',
+  mapUrl: 'https://maps.google.com/?q=Алматы,Достык+даңғылы+123'
+}
+
+// ========== TELEGRAM ДЕРЕКТЕРІ ==========
+const telegramUsername = '@QazaqSignBot'
+const telegramUrl = 'https://t.me/QazaqSignBot'
 
 // Жиі қойылатын сұрақтар
 const faqs = ref([
@@ -343,6 +365,12 @@ const faqs = ref([
     answer: '"Профиль" бетіне өтіп, "Өңдеу" батырмасын басыңыз. Атыңыз бен email-іңізді өзгерте аласыз.',
     open: false,
     popular: false
+  },
+  {
+    question: 'Telegram ботыңыз бар ма?',
+    answer: 'Иә! Біздің Telegram ботымыз @QazaqSignBot. Ол арқылы сұрақтарыңызды қойып, AI көмекшіден жауап ала аласыз! 🤖',
+    open: false,
+    popular: true
   }
 ])
 
@@ -382,6 +410,11 @@ const showAllVideos = () => {
 
 // Хабарлама жіберу
 const sendMessage = async () => {
+  if (!form.value.name || !form.value.email || !form.value.subject || !form.value.message) {
+    alert('Барлық өрістерді толтырыңыз!')
+    return
+  }
+  
   loading.value = true
   await new Promise(resolve => setTimeout(resolve, 1000))
   alert('Хабарламаңыз жіберілді! Біз сізбен жақын арада байланысамыз.')
@@ -420,6 +453,7 @@ const sendMessage = async () => {
   align-items: center;
   justify-content: center;
   color: #6366f1;
+  transition: all 0.3s ease;
 }
 
 .header-content h1 {
@@ -520,6 +554,7 @@ const sendMessage = async () => {
 }
 
 .faq-card:hover, .video-card:hover, .contact-card:hover {
+  transform: translateY(-4px);
   box-shadow: 0 20px 40px -12px rgba(0, 0, 0, 0.1);
 }
 
@@ -763,7 +798,7 @@ const sendMessage = async () => {
   color: #94a3b8;
 }
 
-/* ========== БАЙЛАНЫС ========== */
+/* ========== БАЙЛАНЫС (СІЛТЕМЕЛЕР ҚОСЫЛҒАН) ========== */
 .contact-grid {
   display: grid;
   grid-template-columns: 1fr 1.2fr;
@@ -773,13 +808,23 @@ const sendMessage = async () => {
 .contact-info {
   display: flex;
   flex-direction: column;
-  gap: 20px;
+  gap: 16px;
 }
 
 .contact-item {
   display: flex;
   gap: 14px;
   align-items: flex-start;
+  text-decoration: none;
+  padding: 12px;
+  border-radius: 20px;
+  transition: all 0.2s;
+  cursor: pointer;
+}
+
+.contact-item:hover {
+  background: #f8fafc;
+  transform: translateX(4px);
 }
 
 .contact-icon {
@@ -790,6 +835,11 @@ const sendMessage = async () => {
   justify-content: center;
   border-radius: 18px;
   color: white;
+  transition: transform 0.2s;
+}
+
+.contact-item:hover .contact-icon {
+  transform: scale(1.05);
 }
 
 .contact-icon.purple { background: #8b5cf6; }
@@ -944,6 +994,61 @@ const sendMessage = async () => {
   color: #6366f1;
 }
 
+/* ========== ҚАРАҢҒЫ РЕЖИМ ========== */
+:root.dark-theme .help-container {
+  background: #0f172a;
+}
+
+:root.dark-theme .stat-badge,
+:root.dark-theme .stat-mini-card,
+:root.dark-theme .faq-card,
+:root.dark-theme .video-card,
+:root.dark-theme .contact-card {
+  background: #1e293b !important;
+  border-color: #334155 !important;
+}
+
+:root.dark-theme .header-content h1,
+:root.dark-theme .stat-mini-value,
+:root.dark-theme .card-header h3,
+:root.dark-theme .contact-details h4,
+:root.dark-theme .contact-details p {
+  color: #f1f5f9 !important;
+}
+
+:root.dark-theme .header-content p,
+:root.dark-theme .stat-mini-label,
+:root.dark-theme .contact-details small {
+  color: #94a3b8 !important;
+}
+
+:root.dark-theme .contact-item:hover {
+  background: #334155 !important;
+}
+
+:root.dark-theme .form-group label {
+  color: #cbd5e1 !important;
+}
+
+:root.dark-theme .input-icon input,
+:root.dark-theme .input-icon textarea {
+  background: #334155 !important;
+  border-color: #475569 !important;
+  color: #f1f5f9 !important;
+}
+
+:root.dark-theme .submit-btn {
+  background: linear-gradient(135deg, #6366f1, #8b5cf6) !important;
+}
+
+:root.dark-theme .tip-card {
+  background: #334155 !important;
+}
+
+:root.dark-theme .tip-content {
+  color: #cbd5e1 !important;
+}
+
 /* ========== МОБИЛЬДІ ========== */
 @media (max-width: 900px) {
   .stats-row {
@@ -992,115 +1097,11 @@ const sendMessage = async () => {
   .question-left {
     flex: 1;
   }
-}
-
-/* ========== ТЁМНЫЙ РЕЖИМ ========== */
-:root.dark-theme .help-container {
-  background: var(--bg-secondary);
-  color: var(--text-primary);
-}
-
-:root.dark-theme .card {
-  background: var(--card-bg);
-  border-color: var(--border-color);
-}
-
-:root.dark-theme .card-header h3 {
-  color: var(--text-primary);
-}
-
-:root.dark-theme .stat-mini-card {
-  background: var(--card-bg);
-  border-color: var(--border-color);
-}
-
-:root.dark-theme .stat-badge {
-  background: var(--card-bg);
-  border-color: var(--border-color);
-  color: var(--text-secondary);
-}
-
-:root.dark-theme .question {
-  background: var(--card-bg);
-  border-color: var(--border-color);
-}
-
-:root.dark-theme .question-left {
-  color: var(--text-primary);
-}
-
-:root.dark-theme .question-answer {
-  color: var(--text-secondary);
-}
-
-:root.dark-theme .video-item {
-  background: var(--card-bg);
-  border-color: var(--border-color);
-}
-
-:root.dark-theme .video-item:hover {
-  background: rgba(99, 102, 241, 0.1);
-}
-
-:root.dark-theme .video-thumbnail {
-  background: rgba(99, 102, 241, 0.1);
-}
-
-:root.dark-theme .video-title {
-  color: var(--text-primary);
-}
-
-:root.dark-theme .video-description {
-  color: var(--text-secondary);
-}
-
-:root.dark-theme .contact-details {
-  color: var(--text-primary);
-}
-
-:root.dark-theme .contact-details small {
-  color: var(--text-secondary);
-}
-
-:root.dark-theme .form-group label {
-  color: var(--text-secondary);
-}
-
-:root.dark-theme .input-icon input {
-  background: #2a2a3e;
-  color: var(--text-primary);
-  border-color: var(--border-color);
-}
-
-:root.dark-theme .input-icon input::placeholder {
-  color: var(--text-secondary);
-}
-
-:root.dark-theme .input-icon textarea {
-  background: #2a2a3e;
-  color: var(--text-primary);
-  border-color: var(--border-color);
-}
-
-:root.dark-theme .submit-btn {
-  background: linear-gradient(135deg, #8b5cf6, #6366f1);
-}
-
-:root.dark-theme .tip-card {
-  background: rgba(99, 102, 241, 0.1);
-}
-
-:root.dark-theme .tip-content {
-  color: var(--text-primary);
-}
-
-:root.dark-theme .filter-chip {
-  background: rgba(99, 102, 241, 0.1);
-  color: var(--text-primary);
-  border-color: var(--border-color);
-}
-
-:root.dark-theme .filter-chip.active {
-  background: linear-gradient(135deg, #8b5cf6, #6366f1);
+  
+  .contact-item {
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+  }
 }
 </style>

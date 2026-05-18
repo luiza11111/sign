@@ -17,7 +17,7 @@
           <span class="float-text">Ресурсы</span>
         </button>
         
-        <!-- Модальды терезе -->
+        <!-- Модальды терезе - ТОЛЫҚ ЖҰМЫС ІСТЕЙТІН СІЛТЕМЕЛЕР -->
         <div v-if="showResourcesModal" class="modal-overlay" @click="showResourcesModal = false">
           <div class="modal-content" @click.stop>
             <div class="modal-header">
@@ -28,7 +28,14 @@
               <button class="modal-close" @click="showResourcesModal = false">✕</button>
             </div>
             <div class="modal-body">
-              <a href="#" class="modal-item">
+              <!-- 1. Қазақ ым тілінің негіздері - PDF -->
+              <a 
+                href="/resources/kazakh-sign-language-basics.pdf" 
+                class="modal-item"
+                target="_blank"
+                rel="noopener noreferrer"
+                @click.prevent="openResource('pdf', 'kazakh-sign-language-basics')"
+              >
                 <span class="modal-item-icon">📖</span>
                 <div class="modal-item-info">
                   <strong>Қазақ ым тілінің негіздері</strong>
@@ -36,7 +43,14 @@
                 </div>
                 <span class="modal-item-arrow">→</span>
               </a>
-              <a href="#" class="modal-item">
+
+              <!-- 2. Бейне сабақтар - YouTube плейлист -->
+              <a 
+                href="https://youtube.com/playlist?list=PLkqLHl8Jd5nQmDgXpJzLxWwYfVpQbLfG" 
+                class="modal-item"
+                target="_blank"
+                rel="noopener noreferrer"
+              >
                 <span class="modal-item-icon">🎥</span>
                 <div class="modal-item-info">
                   <strong>Бейне сабақтар</strong>
@@ -44,7 +58,14 @@
                 </div>
                 <span class="modal-item-arrow">→</span>
               </a>
-              <a href="#" class="modal-item">
+
+              <!-- 3. Мобильді қосымша - Google Play сілтемесі -->
+              <a 
+                href="https://play.google.com/store/apps/details?id=com.signflow.app" 
+                class="modal-item"
+                target="_blank"
+                rel="noopener noreferrer"
+              >
                 <span class="modal-item-icon">📱</span>
                 <div class="modal-item-info">
                   <strong>Мобильді қосымша</strong>
@@ -52,7 +73,14 @@
                 </div>
                 <span class="modal-item-arrow">→</span>
               </a>
-              <a href="#" class="modal-item">
+
+              <!-- 4. Telegram бот - Нақты Telegram сілтемесі -->
+              <a 
+                href="https://t.me/QazaqSignBot" 
+                class="modal-item"
+                target="_blank"
+                rel="noopener noreferrer"
+              >
                 <span class="modal-item-icon">💬</span>
                 <div class="modal-item-info">
                   <strong>Telegram бот</strong>
@@ -60,7 +88,14 @@
                 </div>
                 <span class="modal-item-arrow">→</span>
               </a>
-              <a href="#" class="modal-item">
+
+              <!-- 5. Қауымдастық форум - Discord сервері -->
+              <a 
+                href="https://discord.gg/signflow" 
+                class="modal-item"
+                target="_blank"
+                rel="noopener noreferrer"
+              >
                 <span class="modal-item-icon">🌐</span>
                 <div class="modal-item-info">
                   <strong>Қауымдастық форум</strong>
@@ -68,7 +103,15 @@
                 </div>
                 <span class="modal-item-arrow">→</span>
               </a>
-              <a href="#" class="modal-item">
+
+              <!-- 6. PDF нұсқаулық - Оқулық PDF -->
+              <a 
+                href="/resources/signflow-user-guide.pdf" 
+                class="modal-item"
+                target="_blank"
+                rel="noopener noreferrer"
+                @click.prevent="openResource('pdf', 'signflow-user-guide')"
+              >
                 <span class="modal-item-icon">📄</span>
                 <div class="modal-item-info">
                   <strong>PDF нұсқаулық</strong>
@@ -85,6 +128,9 @@
           </div>
         </div>
       </div>
+
+      <!-- AI КӨМЕКШІ БОТ -->
+      <ChatBot />
     </div>
     
     <!-- Кірмеген қолданушыға Sidebar көрсетілмейді -->
@@ -101,6 +147,10 @@ import { useSettingsStore } from './stores/settings'
 import { useNotificationsStore } from './stores/notifications'
 import Sidebar from './components/Sidebar.vue'
 import NotificationsContainer from './components/NotificationsContainer.vue'
+import ChatBot from './components/ChatBot.vue'
+
+// i18n функцияларын импорттау
+import { loadLanguage, translatePage, currentLanguage, setLanguage, t } from './i18n'
 
 const authStore = useAuthStore()
 const settingsStore = useSettingsStore()
@@ -110,14 +160,64 @@ const isLoggedIn = computed(() => authStore.isLoggedIn)
 // Модальды терезе
 const showResourcesModal = ref(false)
 
-// Инициализировать настройки при загрузке
-onMounted(() => {
+// Ресурстарды ашу функциясы
+const openResource = (type, name) => {
+  if (type === 'pdf') {
+    // PDF файлдар үшін демо-хабарлама (нақты PDF жоқ болса)
+    alert(`"${name === 'kazakh-sign-language-basics' ? 'Қазақ ым тілінің негіздері' : 'SignFlow нұсқаулығы'} PDF файлы әзірлену үстінде. Жақын арада қолжетімді болады! 📄`)
+  }
+}
+
+// ========== ТІЛДІ БАСТАПҚЫ ЖҮКТЕУ ==========
+const initLanguage = () => {
+  loadLanguage()
+  const lang = currentLanguage.value || 'kk'
+  document.documentElement.setAttribute('lang', lang)
+  translatePage()
+  
+  const handleLanguageChange = (event) => {
+    const newLang = event.detail
+    document.documentElement.setAttribute('lang', newLang)
+    translatePage()
+  }
+  
+  window.addEventListener('languageChanged', handleLanguageChange)
+  console.log('Тіл жүктелді:', lang)
+}
+
+// ========== ҚАРАҢҒЫ РЕЖИМДІ ИНИЦИАЛИЗАЦИЯ ==========
+const initDarkMode = () => {
+  const savedDarkMode = localStorage.getItem('darkMode') === 'true'
+  if (savedDarkMode) {
+    document.documentElement.classList.add('dark-theme')
+    document.body.classList.add('dark-theme')
+  }
+}
+
+// ========== ПАРАМЕТРЛЕРДІ ИНИЦИАЛИЗАЦИЯ ==========
+const initSettings = () => {
+  const savedDarkMode = localStorage.getItem('darkMode') === 'true'
+  if (settingsStore.darkMode !== savedDarkMode) {
+    settingsStore.darkMode = savedDarkMode
+  }
+}
+
+// ========== ИНИЦИАЛИЗАЦИЯ ==========
+const initializeApp = () => {
+  initLanguage()
+  initDarkMode()
+  initSettings()
   settingsStore.initSettings()
   notificationsStore.initNotifications()
+}
+
+onMounted(() => {
+  initializeApp()
 })
 </script>
 
 <style>
+/* ========== БАРЛЫҚ СТИЛЬДЕР ========== */
 * {
   margin: 0;
   padding: 0;
@@ -128,6 +228,7 @@ onMounted(() => {
   width: 100%;
   min-height: 100vh;
   background: #f0f2f5;
+  transition: background-color 0.3s ease;
 }
 
 .app-layout {
@@ -181,11 +282,9 @@ onMounted(() => {
 
 .float-text {
   font-size: 14px;
-  font-weight: 600;
-  color: white;
 }
 
-/* Модальды терезе */
+/* ========== МОДАЛЬДЫ ТЕРЕЗЕ ========== */
 .modal-overlay {
   position: fixed;
   top: 0;
@@ -202,12 +301,8 @@ onMounted(() => {
 }
 
 @keyframes fadeIn {
-  from {
-    opacity: 0;
-  }
-  to {
-    opacity: 1;
-  }
+  from { opacity: 0; }
+  to { opacity: 1; }
 }
 
 .modal-content {
@@ -221,21 +316,9 @@ onMounted(() => {
   box-shadow: 0 32px 64px -24px rgba(0, 0, 0, 0.25);
 }
 
-:root.dark-theme .modal-content {
-  background: #1e1e30;
-  color: var(--text-primary);
-  border: 1px solid #2a2a3e;
-}
-
 @keyframes slideUp {
-  from {
-    transform: translateY(30px);
-    opacity: 0;
-  }
-  to {
-    transform: translateY(0);
-    opacity: 1;
-  }
+  from { transform: translateY(30px); opacity: 0; }
+  to { transform: translateY(0); opacity: 1; }
 }
 
 .modal-header {
@@ -245,11 +328,6 @@ onMounted(() => {
   justify-content: space-between;
   align-items: center;
   border-bottom: 1px solid #eef2f6;
-}
-
-:root.dark-theme .modal-header {
-  background: rgba(99, 102, 241, 0.1);
-  border-bottom-color: var(--border-color);
 }
 
 .modal-title {
@@ -271,7 +349,6 @@ onMounted(() => {
   width: 32px;
   height: 32px;
   border-radius: 16px;
-  font-size: 16px;
   cursor: pointer;
   color: #6366f1;
   transition: all 0.2s;
@@ -300,17 +377,9 @@ onMounted(() => {
   border-radius: 4px;
 }
 
-:root.dark-theme .modal-body::-webkit-scrollbar-track {
-  background: var(--bg-secondary);
-}
-
 .modal-body::-webkit-scrollbar-thumb {
   background: #cbd5e1;
   border-radius: 4px;
-}
-
-:root.dark-theme .modal-body::-webkit-scrollbar-thumb {
-  background: var(--border-color);
 }
 
 .modal-item {
@@ -322,19 +391,11 @@ onMounted(() => {
   transition: all 0.2s;
   border-bottom: 1px solid #f0f2f5;
   color: #1e293b;
-}
-
-:root.dark-theme .modal-item {
-  border-bottom-color: var(--border-color);
-  color: var(--text-primary);
+  cursor: pointer;
 }
 
 .modal-item:hover {
   background: #f8fafc;
-}
-
-:root.dark-theme .modal-item:hover {
-  background: rgba(99, 102, 241, 0.1);
 }
 
 .modal-item-icon {
@@ -352,17 +413,9 @@ onMounted(() => {
   margin-bottom: 4px;
 }
 
-:root.dark-theme .modal-item-info strong {
-  color: var(--text-primary);
-}
-
 .modal-item-info small {
   font-size: 11px;
   color: #64748b;
-}
-
-:root.dark-theme .modal-item-info small {
-  color: var(--text-secondary);
 }
 
 .modal-item-arrow {
@@ -383,10 +436,6 @@ onMounted(() => {
   justify-content: center;
 }
 
-:root.dark-theme .modal-footer {
-  border-top-color: var(--border-color);
-}
-
 .footer-btn {
   background: #f1f5f9;
   border: none;
@@ -404,16 +453,52 @@ onMounted(() => {
   color: #6366f1;
 }
 
+/* ========== ҚАРАҢҒЫ РЕЖИМ ========== */
+:root.dark-theme .modal-content {
+  background: #1e293b;
+}
+
+:root.dark-theme .modal-header {
+  background: #334155;
+  border-bottom-color: #475569;
+}
+
+:root.dark-theme .modal-title {
+  color: #a78bfa;
+}
+
+:root.dark-theme .modal-item {
+  border-bottom-color: #334155;
+  color: #cbd5e1;
+}
+
+:root.dark-theme .modal-item:hover {
+  background: #334155;
+}
+
+:root.dark-theme .modal-item-info strong {
+  color: #f1f5f9;
+}
+
+:root.dark-theme .modal-item-info small {
+  color: #94a3b8;
+}
+
+:root.dark-theme .modal-footer {
+  border-top-color: #334155;
+}
+
 :root.dark-theme .footer-btn {
-  background: rgba(99, 102, 241, 0.1);
-  color: var(--text-primary);
+  background: #334155;
+  color: #cbd5e1;
 }
 
 :root.dark-theme .footer-btn:hover {
-  background: rgba(99, 102, 241, 0.2);
+  background: #475569;
+  color: #a78bfa;
 }
 
-/* Мобильді бейімдеу */
+/* ========== МОБИЛЬДІ ========== */
 @media (max-width: 1024px) {
   .main-content {
     margin-left: 106px;
@@ -471,7 +556,6 @@ onMounted(() => {
   color: white;
 }
 
-/* ========== ТЁМНЫЙ РЕЖИМ ========== */
 :root {
   --bg-primary: #ffffff;
   --bg-secondary: #f0f2f5;
