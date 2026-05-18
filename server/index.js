@@ -40,6 +40,13 @@ db.connect((err, client, release) => {
     }
 });
 
+const adminAccount = {
+    name: 'Админ',
+    email: 'admin@gmail.com',
+    password: 'admin123',
+    role: 'admin'
+};
+
 // JWT тексеру middleware
 const authenticateToken = (req, res, next) => {
     const authHeader = req.headers['authorization'];

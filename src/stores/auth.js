@@ -8,15 +8,6 @@ export const useAuthStore = defineStore('auth', () => {
   const isLoggedIn = ref(false)
   const token = ref(null)
 
-  // Админ аккаунты (симуляция)
-  const adminAccount = {
-    id: 999,
-    name: "Админ",
-    email: "admin@gmail.com",
-    password: "admin123",
-    role: "admin"
-  }
-
   // Тіркелген қолданушылар тізімі (теперь через API)
   const getRegisteredUsers = async () => {
     try {
@@ -52,11 +43,6 @@ export const useAuthStore = defineStore('auth', () => {
   // Кіру
   const login = async (email, password) => {
     try {
-      if (email === adminAccount.email && password === adminAccount.password) {
-        setAdminSession()
-        return { success: true, message: 'Кіру сәтті!', role: 'admin' }
-      }
-
       const response = await apiClient.post('/api/login', {
         email,
         password
@@ -86,15 +72,6 @@ export const useAuthStore = defineStore('auth', () => {
     localStorage.removeItem('isLoggedIn')
     localStorage.removeItem('token')
     localStorage.removeItem('inputText') // Очищаем сохраненный текст при выходе
-  }
-
-  const setAdminSession = () => {
-    user.value = { ...adminAccount }
-    token.value = 'admin-token'
-    isLoggedIn.value = true
-    localStorage.setItem('user', JSON.stringify(user.value))
-    localStorage.setItem('token', token.value)
-    localStorage.setItem('isLoggedIn', 'true')
   }
 
   // Аутентификацияны инициализациялау (бет жүктелгенде)
