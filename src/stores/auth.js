@@ -34,7 +34,15 @@ export const useAuthStore = defineStore('auth', () => {
         password
       })
 
-      return { success: true, message: 'Тіркелу сәтті! Кіру бетіне өтіңіз.' }
+      user.value = response.data.user
+      token.value = response.data.token
+      isLoggedIn.value = true
+
+      localStorage.setItem('user', JSON.stringify(user.value))
+      localStorage.setItem('token', token.value)
+      localStorage.setItem('isLoggedIn', 'true')
+
+      return { success: true, message: 'Тіркелу сәтті! Қош келдіңіз.' }
     } catch (error) {
       return { success: false, message: error.response?.data?.error || 'Қате орын алды' }
     }
