@@ -2,7 +2,7 @@
   <aside class="sidebar">
     <div class="logo">
       <img src="/logo.png" alt="SignFlow Logo" class="logo-image" />
-      <h2 class="logo-text">SignFlow</h2>
+      <h2 class="logo-text">QosQol</h2>
     </div>
 
     <nav class="nav-menu">
