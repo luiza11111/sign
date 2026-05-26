@@ -242,7 +242,7 @@ const handleRegister = async () => {
   
   if (result.success) {
     alert(result.message)
-    router.push('/')
+    router.push('/login')
   } else {
     alert(result.message)
   }

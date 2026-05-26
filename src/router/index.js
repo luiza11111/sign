@@ -105,6 +105,10 @@ router.beforeEach((to, from, next) => {
   else if (to.meta.requiresAdmin && !isAdminUser) {
     next('/') // Админ емес адам /admin бетіне кірсе — Home-ға қайтарады
   } 
+  // Құртынды жағдай: қолданушы / бетіне өндеген болса және авторизация қажет болса
+  else if (to.path === '/' && !isLoggedIn && from.path === '/') {
+    next('/login')
+  }
   else {
     next()
   }

@@ -1,28 +1,122 @@
 [
   {
-    "kazakh": "сәлем",
-    "russian": "привет",
-    "links": [https://media.spreadthesign.com/video/mp4/12/17658.mp4],
+    "kazakh": "университет",
+    "russian": "университет",
+    "links": [
+      "https://media.spreadthesign.com/video/mp4/12/32309.mp4"
+    ],
     "count": 0
   },
   {
-    "kazakh": "қалайсың",
+    "kazakh": "мен университет оқимын",
+    "russian": "я учусь в университете",
+    "links": [
+      "https://media.spreadthesign.com/video/mp4/12/108750.mp4"
+    ],
+    "count": 0
+  },
+  {
+    "kazakh": "жоқ",
+    "russian": "нет",
+    "links": [
+      "https://media.spreadthesign.com/video/mp4/12/4136.mp4"
+    ],
+    "count": 0
+  },
+  {
+    "kazakh": "иә",
+    "russian": "да",
+    "links": [
+      "https://media.spreadthesign.com/video/mp4/12/4126.mp4"
+    ],
+    "count": 0
+  },
+  {
+    "kazakh": "рахмет",
+    "russian": "спасибо",
+    "links": [
+      "https://media.spreadthesign.com/video/mp4/12/176094.mp4"
+    ],
+    "count": 0
+  },
+  {
+    "kazakh": "көмек",
+    "russian": "помощь",
+    "links": [
+      "https://media.spreadthesign.com/video/mp4/12/2098.mp4"
+    ],
+    "count": 0
+  },
+  {
+    "kazakh": "маған үйге бару керек",
+    "russian": "мне нужно идти домой",
+    "links": [
+      "https://media.spreadthesign.com/video/mp4/12/107731.mp4"
+    ],
+    "count": 0
+  },
+  {
+    "kazakh": "үй",
+    "russian": "дом",
+    "links": [
+      "https://media.spreadthesign.com/video/mp4/12/349173.mp4"
+    ],
+    "count": 0
+  },
+  {
+    "kazakh": "жақсы",
+    "russian": "хорошо",
+    "links": [
+      "https://media.spreadthesign.com/video/mp4/12/176103.mp4"
+    ],
+    "count": 0
+  },
+  {
+    "kazakh": "керемет",
+    "russian": "отлично",
+    "links": [
+      "https://media.spreadthesign.com/video/mp4/12/108652.mp4"
+    ],
+    "count": 0
+  },
+  {
+    "kazakh": "отырмын",
+    "russian": "я сижу",
+    "links": [
+      "https://media.spreadthesign.com/video/mp4/12/17011.mp4"
+    ],
+    "count": 0
+  },
+  {
+    "kazakh": "сәлем",
+    "russian": "привет",
+    "links": [
+      "https://media.spreadthesign.com/video/mp4/12/17658.mp4"
+    ],
+    "count": 0
+  },
+  {
+    "kazakh": "Қалайсың",
     "russian": "как дела",
-    "links": [https://media.spreadthesign.com/video/mp4/12/6155.mp4],
+    "links": [
+      "https://media.spreadthesign.com/video/mp4/12/6155.mp4"
+    ],
     "count": 0
   },
   {
     "kazakh": "нестеп жатырсың",
     "russian": "что делаешь",
-    "links": [https://media.spreadthesign.com/video/mp4/12/321216.mp4],
+    "links": [
+      "https://media.spreadthesign.com/video/mp4/12/321216.mp4"
+    ],
     "count": 0
   },
   {
-    "kazakh": "пока",
+    "kazakh": "сау бол",
     "russian": "пока",
     "links": [
       "https://media.spreadthesign.com/video/mp4/12/100036.mp4"
     ],
-    "count": 1
+    "count": 0
   }
 ]

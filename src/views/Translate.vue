@@ -75,7 +75,32 @@
           </div>
 
           <div class="output-wrapper">
-            <div class="result-box" v-html="translatedText"></div>
+            <div class="result-box">
+              <div v-html="translatedText" class="result-text"></div>
+              <div class="video-results" v-if="videoEntries.length">
+                <div class="video-card">
+                  <p class="video-label">
+                    {{ currentVideoEntry?.kazakh || currentVideoEntry?.text || currentVideoEntry?.russian }}
+                    <span v-if="currentVideoEntry?.russian && currentVideoEntry?.kazakh" class="video-subtitle">({{ currentVideoEntry?.russian }})</span>
+                  </p>
+                  <video
+                    ref="videoPlayer"
+                    :src="getVideoUrl(currentVideoEntry)"
+                    controls
+                    playsinline
+                    muted
+                    autoplay
+                    @ended="nextVideo"
+                    class="video-player"
+                  ></video>
+                  <div class="video-step" v-if="videoEntries.length > 1">
+                    <button class="step-btn" @click="prevVideo" :disabled="currentVideoIndex === 0">Алдыңғы</button>
+                    <span>{{ currentVideoIndex + 1 }} / {{ videoEntries.length }}</span>
+                    <button class="step-btn" @click="nextVideo" :disabled="currentVideoIndex === videoEntries.length - 1">Келесі</button>
+                  </div>
+                </div>
+              </div>
+            </div>
           </div>
 
           <div class="action-buttons" v-if="showActions">
@@ -162,11 +187,12 @@
 </template>
 
 <script setup>
-import { ref, computed, onMounted, watch } from 'vue'
+import { ref, computed, onMounted, watch, nextTick } from 'vue'
 import axios from 'axios'
 import apiClient from '../api'
 import { useAuthStore } from '../stores/auth'
-import { t, loadLanguage, translatePage } from '../i18n'
+import { useDictionaryStore } from '../stores/dictionary'
+import { t, loadLanguage, translatePage, currentLanguage } from '../i18n'
 
 // Lucide иконкаларын импорттау
 import { 
@@ -181,6 +207,11 @@ const translatedText = ref(t('no_result'))
 const showActions = ref(false)
 const recentTranslations = ref([])
 const todayCount = ref(24)
+const videoEntries = ref([])
+const currentVideoIndex = ref(0)
+const videoPlayer = ref(null)
+const dictionaryStore = useDictionaryStore()
+const currentVideoEntry = computed(() => videoEntries.value[currentVideoIndex.value] || null)
 
 // Ұсынылатын сөздер
 const baseSuggestions = ['Сәлем', 'Рахмет', 'Қалайсың?', 'Мен', 'Үйге', 'Барамын', 'Иә', 'Жоқ', 'Көмек', 'Кешіріңіз']
@@ -202,6 +233,99 @@ const getWordIcon = (word) => {
   }
   return icons[word] || '📝'
 }
+
+const normalizeText = (text) => {
+  return text
+    .toLowerCase()
+    .replace(/[^0-9a-zA-Z\u0400-\u04FF\s]/g, ' ')
+    .replace(/\s+/g, ' ')
+    .trim()
+}
+
+const findMatchingDictionaryEntries = (text) => {
+  const normalized = normalizeText(text)
+  const uiLang = currentLanguage.value || 'kk'
+
+  // Build lookup maps for phrases -> entry (normalized)
+  const kazakhMap = new Map()
+  const russianMap = new Map()
+  let maxPhraseWords = 1
+
+  dictionaryStore.dictionary.forEach((entry) => {
+    const kaz = normalizeText(entry.kazakh || entry.text || '')
+    const rus = normalizeText(entry.russian || '')
+    if (kaz) {
+      kazakhMap.set(kaz, entry)
+      const w = kaz.split(' ').length
+      if (w > maxPhraseWords) maxPhraseWords = w
+    }
+    if (rus) {
+      russianMap.set(rus, entry)
+      const w2 = rus.split(' ').length
+      if (w2 > maxPhraseWords) maxPhraseWords = w2
+    }
+  })
+
+  // Tokenize input
+  const words = normalized.split(' ').filter(Boolean)
+  const results = []
+  const seenIds = new Set()
+
+  for (let i = 0; i < words.length; i++) {
+    let matched = false
+    // try longest phrases first
+    for (let len = Math.min(maxPhraseWords, words.length - i); len >= 1; len--) {
+      const slice = words.slice(i, i + len).join(' ')
+      let entry = null
+      if (uiLang === 'ru') {
+        entry = russianMap.get(slice)
+      } else if (uiLang === 'kk') {
+        entry = kazakhMap.get(slice)
+      } else {
+        entry = kazakhMap.get(slice) || russianMap.get(slice)
+      }
+
+      if (entry && !seenIds.has(entry.id || (entry.kazakh + '|' + entry.russian))) {
+        results.push(entry)
+        seenIds.add(entry.id || (entry.kazakh + '|' + entry.russian))
+        i += len - 1
+        matched = true
+        break
+      }
+    }
+    if (!matched) continue
+  }
+
+  return results
+}
+
+const getVideoUrl = (entry) => {
+  return entry?.video_url || entry?.video || entry?.links?.[0] || ''
+}
+
+const nextVideo = () => {
+  if (currentVideoIndex.value < videoEntries.value.length - 1) {
+    currentVideoIndex.value += 1
+  }
+}
+
+const prevVideo = () => {
+  if (currentVideoIndex.value > 0) {
+    currentVideoIndex.value -= 1
+  }
+}
+
+watch(videoEntries, () => {
+  currentVideoIndex.value = 0
+})
+
+// Автозапуск видео при смене текущего видео
+watch(currentVideoEntry, async () => {
+  await nextTick()
+  if (videoPlayer.value) {
+    videoPlayer.value.play().catch(() => {})
+  }
+})
 
 // Текстті қысқарту
 const truncateText = (text, length) => {
@@ -229,11 +353,24 @@ const translateText = async () => {
       </div>
     `
     showActions.value = false
+    videoEntries.value = []
     return
   }
   
   const authStore = useAuthStore()
   const translation = `🧏‍♂️ "${inputText.value}" - ${t('translated')}`
+  translatedText.value = translation
+  videoEntries.value = findMatchingDictionaryEntries(inputText.value)
+  currentVideoIndex.value = 0
+  await nextTick()
+
+  // If we found videos, hide the textual translation and try to autoplay the first one
+  if (videoEntries.value && videoEntries.value.length > 0) {
+    translatedText.value = ''
+    if (videoPlayer.value) {
+      videoPlayer.value.play().catch(() => {})
+    }
+  }
   
   if (authStore.isLoggedIn) {
     try {
@@ -256,13 +393,6 @@ const translateText = async () => {
     saveToLocalStorage()
   }
   
-  translatedText.value = `
-    <div class="result-content">
-      <div class="result-icon">🧏‍♂️</div>
-      <div class="result-text">“${inputText.value}”</div>
-      <div class="result-status">✅ ${t('translated')}</div>
-    </div>
-  `
   showActions.value = true
 }
 
@@ -282,7 +412,7 @@ const startVoiceInput = () => {
   if ('webkitSpeechRecognition' in window || 'SpeechRecognition' in window) {
     const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition
     const recognition = new SpeechRecognition()
-    recognition.lang = 'kk-KZ'
+    recognition.lang = currentLanguage.value === 'ru' ? 'ru-RU' : 'kk-KZ'
     recognition.continuous = false
     
     recognition.start()
@@ -308,7 +438,7 @@ const copyResult = () => {
 // Нәтижені оқу
 const speakResult = () => {
   const utterance = new SpeechSynthesisUtterance(inputText.value)
-  utterance.lang = 'kk-KZ'
+  utterance.lang = currentLanguage.value === 'ru' ? 'ru-RU' : 'kk-KZ'
   speechSynthesis.speak(utterance)
 }
 
@@ -366,7 +496,8 @@ const loadRecent = async () => {
   }
 }
 
-onMounted(() => {
+onMounted(async () => {
+  await dictionaryStore.loadFromLocalStorage()
   loadRecent()
   loadLanguage()
   translatePage()
@@ -610,13 +741,51 @@ watch(inputText, (newValue) => {
   justify-content: center;
 }
 
-.result-content {
-  text-align: center;
+.video-results {
+  margin-top: 20px;
+  display: grid;
+  gap: 16px;
 }
 
-.result-icon {
-  font-size: 48px;
-  margin-bottom: 12px;
+.video-card {
+  border: 1px solid #e2e8f0;
+  border-radius: 20px;
+  padding: 14px;
+  background: #ffffff;
+}
+
+.video-player {
+  width: 100%;
+  aspect-ratio: 16 / 9;
+  max-height: 240px;
+  object-fit: cover;
+  border-radius: 16px;
+  background: #000;
+}
+
+.video-step {
+  margin-top: 12px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 12px;
+  font-size: 13px;
+  color: #475569;
+}
+
+.step-btn {
+  background: #f1f5f9;
+  border: 1px solid #e2e8f0;
+  border-radius: 999px;
+  padding: 8px 14px;
+  color: #475569;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.step-btn:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
 }
 
 .result-text {
@@ -934,4 +1103,62 @@ watch(inputText, (newValue) => {
 :root.dark-theme .recent-item:hover {
   background: #334155 !important;
 }
+
+.video-results {
+  margin-top: 20px;
+}
+
+.video-title {
+  margin-bottom: 14px;
+  font-size: 16px;
+  font-weight: 700;
+  color: #0f172a;
+}
+
+.video-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 18px;
+}
+
+.video-card {
+  border: 1px solid #e2e8f0;
+  border-radius: 16px;
+  padding: 14px;
+  background: #ffffff;
+}
+
+.video-label {
+  margin-bottom: 10px;
+  font-weight: 600;
+  color: #1f2937;
+}
+
+.video-player {
+  width: 100%;
+  border-radius: 14px;
+  background: #000;
+}
+
+.video-link {
+  display: inline-block;
+  margin-top: 10px;
+  color: #4f46e5;
+  font-weight: 600;
+  text-decoration: none;
+}
+
+.video-link:hover {
+  text-decoration: underline;
+}
+
+:root.dark-theme .video-card {
+  background: #0f172a !important;
+  border-color: #334155 !important;
+}
+
+:root.dark-theme .video-label {
+  color: #f1f5f9 !important;
+}
+
 </style>

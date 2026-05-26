@@ -108,6 +108,35 @@ const initializeDatabase = async () => {
             );
             console.log('✅ Admin user created:', adminAccount.email);
         }
+
+        const dictionaryCount = await db.query('SELECT COUNT(*) FROM dictionary');
+        if (parseInt(dictionaryCount.rows[0].count, 10) === 0) {
+            const defaultEntries = [
+                { text: 'университет', video_url: 'https://media.spreadthesign.com/video/mp4/12/32309.mp4', category: 'орын' },
+                { text: 'мен университет оқимын', video_url: 'https://media.spreadthesign.com/video/mp4/12/108750.mp4', category: 'сөйлем' },
+                { text: 'жоқ', video_url: 'https://media.spreadthesign.com/video/mp4/12/4136.mp4', category: 'жауап' },
+                { text: 'иә', video_url: 'https://media.spreadthesign.com/video/mp4/12/4126.mp4', category: 'жауап' },
+                { text: 'рахмет', video_url: 'https://media.spreadthesign.com/video/mp4/12/176094.mp4', category: 'сөздер' },
+                { text: 'көмек', video_url: 'https://media.spreadthesign.com/video/mp4/12/2098.mp4', category: 'сөздер' },
+                { text: 'маған үйге бару керек', video_url: 'https://media.spreadthesign.com/video/mp4/12/107731.mp4', category: 'сөйлем' },
+                { text: 'үй', video_url: 'https://media.spreadthesign.com/video/mp4/12/349173.mp4', category: 'зат' },
+                { text: 'жақсы', video_url: 'https://media.spreadthesign.com/video/mp4/12/176103.mp4', category: 'сын' },
+                { text: 'керемет', video_url: 'https://media.spreadthesign.com/video/mp4/12/108652.mp4', category: 'сын' },
+                { text: 'отырмын', video_url: 'https://media.spreadthesign.com/video/mp4/12/17011.mp4', category: 'етістік' },
+                { text: 'сәлем', video_url: 'https://media.spreadthesign.com/video/mp4/12/17658.mp4', category: 'сәлемдесу' },
+                { text: 'қалайсың', video_url: 'https://media.spreadthesign.com/video/mp4/12/6155.mp4', category: 'сұрақ' },
+                { text: 'нестеп жатырсың', video_url: 'https://media.spreadthesign.com/video/mp4/12/321216.mp4', category: 'сұрақ' },
+                { text: 'сау бол', video_url: 'https://media.spreadthesign.com/video/mp4/12/100036.mp4', category: 'қоштасу' }
+            ];
+
+            for (const entry of defaultEntries) {
+                await db.query(
+                    'INSERT INTO dictionary (text, video_url, category) VALUES ($1, $2, $3)',
+                    [entry.text, entry.video_url, entry.category]
+                );
+            }
+            console.log('✅ Default dictionary entries initialized.');
+        }
     } catch (err) {
         console.error('❌ Database initialization error:', err.message);
     }
@@ -325,6 +354,32 @@ app.delete('/api/users/:id', authenticateToken, async (req, res) => {
 
         res.json({ message: 'Өшірілді' })
     } catch (err) {
+        res.status(500).json({ error: err.message })
+    }
+});
+
+// ========== ПАЙДАЛАНУШЫНЫҢ ПРОФИЛІН ЖАҢАРТУ ==========
+app.put('/api/users/me', authenticateToken, async (req, res) => {
+    const { name, email } = req.body
+    if (!name || !email) {
+        return res.status(400).json({ error: 'Аты-жөні мен email міндетті' })
+    }
+
+    try {
+        const result = await db.query(
+            'UPDATE users SET name = $1, email = $2 WHERE id = $3 RETURNING id, name, email, role, created_at',
+            [name, email, req.user.id]
+        )
+
+        if (result.rows.length === 0) {
+            return res.status(404).json({ error: 'Пайдаланушы табылмады' })
+        }
+
+        res.json({ user: result.rows[0] })
+    } catch (err) {
+        if (err.code === '23505') {
+            return res.status(409).json({ error: 'Бұл email бұрыннан бар' })
+        }
         res.status(500).json({ error: err.message })
     }
 });

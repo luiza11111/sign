@@ -186,7 +186,10 @@ const initLanguage = () => {
 
 // ========== ҚАРАҢҒЫ РЕЖИМДІ ИНИЦИАЛИЗАЦИЯ ==========
 const initDarkMode = () => {
-  const savedDarkMode = localStorage.getItem('darkMode') === 'true'
+  const storedAppDarkMode = localStorage.getItem('appDarkMode')
+  const storedLegacyDarkMode = localStorage.getItem('darkMode')
+  const savedDarkMode = storedAppDarkMode === 'true' ? true : (storedAppDarkMode === 'false' ? false : storedLegacyDarkMode === 'true')
+
   if (savedDarkMode) {
     document.documentElement.classList.add('dark-theme')
     document.body.classList.add('dark-theme')
@@ -195,7 +198,10 @@ const initDarkMode = () => {
 
 // ========== ПАРАМЕТРЛЕРДІ ИНИЦИАЛИЗАЦИЯ ==========
 const initSettings = () => {
-  const savedDarkMode = localStorage.getItem('darkMode') === 'true'
+  const storedAppDarkMode = localStorage.getItem('appDarkMode')
+  const storedLegacyDarkMode = localStorage.getItem('darkMode')
+  const savedDarkMode = storedAppDarkMode === 'true' ? true : (storedAppDarkMode === 'false' ? false : storedLegacyDarkMode === 'true')
+
   if (settingsStore.darkMode !== savedDarkMode) {
     settingsStore.darkMode = savedDarkMode
   }

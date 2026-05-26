@@ -122,7 +122,29 @@
             <span data-i18n="ai_badge">AI ым тілі</span>
           </div>
         </div>
-        <div class="result-box" v-html="translatedText"></div>
+        <div class="result-box">
+          <div v-html="translatedText"></div>
+          <div class="video-results" v-if="videoEntries.length">
+            <div class="video-card">
+              <!-- no text label above video; only show video -->
+              <video
+                ref="videoPlayer"
+                :src="getVideoUrl(currentVideoEntry)"
+                controls
+                playsinline
+                muted
+                autoplay
+                @ended="nextVideo"
+                class="video-player"
+              ></video>
+              <div class="video-step" v-if="videoEntries.length > 1">
+                <button class="step-btn" @click="prevVideo" :disabled="currentVideoIndex === 0">Алдыңғы</button>
+                <span>{{ currentVideoIndex + 1 }} / {{ videoEntries.length }}</span>
+                <button class="step-btn" @click="nextVideo" :disabled="currentVideoIndex === videoEntries.length - 1">Келесі</button>
+              </div>
+            </div>
+          </div>
+        </div>
         <div class="action-buttons" v-if="showActions">
           <button class="action-btn copy" @click="copyResult">
             <Copy :size="14" />
@@ -250,9 +272,10 @@
 </template>
 
 <script setup>
-import { ref, computed, onMounted, watch } from 'vue'
+import { ref, computed, onMounted, watch, nextTick } from 'vue'
 import { useAuthStore } from '../stores/auth'
-import { t, loadLanguage, translatePage } from '../i18n'
+import { useDictionaryStore } from '../stores/dictionary'
+import { t, loadLanguage, translatePage, currentLanguage } from '../i18n'
 
 // Lucide иконкаларын импорттау
 import { 
@@ -263,6 +286,7 @@ import {
 } from 'lucide-vue-next'
 
 const authStore = useAuthStore()
+const dictionaryStore = useDictionaryStore()
 
 // Қолданушы аты
 const userName = computed(() => authStore.user?.name || 'Қолданушы')
@@ -273,6 +297,10 @@ const voiceRequests = ref(0)
 const frequentWordsCount = ref(0)
 const todayActivity = ref(0)
 const streakDays = ref(0)
+const videoEntries = ref([])
+const currentVideoIndex = ref(0)
+const videoPlayer = ref(null)
+const currentVideoEntry = computed(() => videoEntries.value[currentVideoIndex.value] || null)
 
 // Өзгеріс пайыздары
 const translationChange = ref(0)
@@ -382,11 +410,94 @@ const addWord = (word) => {
   }
 }
 
+const normalizeText = (text) => {
+  return text
+    .toLowerCase()
+    .replace(/[^0-9a-zA-Z\u0400-\u04FF\s]/g, ' ')
+    .replace(/\s+/g, ' ')
+    .trim()
+}
+
+const findMatchingDictionaryEntries = (text) => {
+  const normalized = normalizeText(text)
+  const uiLang = currentLanguage.value || 'kk'
+
+  const kazakhMap = new Map()
+  const russianMap = new Map()
+  let maxPhraseWords = 1
+
+  dictionaryStore.dictionary.forEach((entry) => {
+    const kaz = normalizeText(entry.kazakh || entry.text || '')
+    const rus = normalizeText(entry.russian || '')
+    if (kaz) {
+      kazakhMap.set(kaz, entry)
+      const w = kaz.split(' ').length
+      if (w > maxPhraseWords) maxPhraseWords = w
+    }
+    if (rus) {
+      russianMap.set(rus, entry)
+      const w2 = rus.split(' ').length
+      if (w2 > maxPhraseWords) maxPhraseWords = w2
+    }
+  })
+
+  const words = normalized.split(' ').filter(Boolean)
+  const results = []
+  const seenIds = new Set()
+
+  for (let i = 0; i < words.length; i++) {
+    let matched = false
+    for (let len = Math.min(maxPhraseWords, words.length - i); len >= 1; len--) {
+      const slice = words.slice(i, i + len).join(' ')
+      let entry = null
+      if (uiLang === 'ru') {
+        entry = russianMap.get(slice)
+      } else if (uiLang === 'kk') {
+        entry = kazakhMap.get(slice)
+      } else {
+        entry = kazakhMap.get(slice) || russianMap.get(slice)
+      }
+
+      if (entry && !seenIds.has(entry.id || (entry.kazakh + '|' + entry.russian))) {
+        results.push(entry)
+        seenIds.add(entry.id || (entry.kazakh + '|' + entry.russian))
+        i += len - 1
+        matched = true
+        break
+      }
+    }
+    if (!matched) continue
+  }
+
+  return results
+}
+
+const getVideoUrl = (entry) => {
+  return entry?.video_url || entry?.video || entry?.links?.[0] || ''
+}
+
+const nextVideo = () => {
+  if (currentVideoIndex.value < videoEntries.value.length - 1) {
+    currentVideoIndex.value += 1
+  }
+}
+
+const prevVideo = () => {
+  if (currentVideoIndex.value > 0) {
+    currentVideoIndex.value -= 1
+  }
+}
+
+watch(videoEntries, () => {
+  currentVideoIndex.value = 0
+})
+
 // Аудару
-const translateText = () => {
+const translateText = async () => {
   if (!inputText.value.trim()) {
     translatedText.value = '❗ Мәтінді енгізіңіз...'
     showActions.value = false
+    videoEntries.value = []
     return
   }
   
@@ -398,13 +509,13 @@ const translateText = () => {
   })
   localStorage.setItem('translationHistory', JSON.stringify(history.slice(0, 100)))
   
-  translatedText.value = `
-    <div class="result-content">
-      <div class="result-icon">🧏‍♂️</div>
-      <div class="result-text">“${inputText.value}”</div>
-      <div class="result-status">✅ Қазақ ым тіліне сәтті аударылды</div>
-    </div>
-  `
+  videoEntries.value = findMatchingDictionaryEntries(inputText.value)
+  await nextTick()
+  document.querySelectorAll('.video-player').forEach((video) => {
+    video.play().catch(() => {})
+  })
+  
+  translatedText.value = ''
   showActions.value = true
   loadStats()
 }
@@ -414,7 +525,7 @@ const startVoiceInput = () => {
   if ('webkitSpeechRecognition' in window || 'SpeechRecognition' in window) {
     const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition
     const recognition = new SpeechRecognition()
-    recognition.lang = 'kk-KZ'
+    recognition.lang = currentLanguage.value === 'ru' ? 'ru-RU' : 'kk-KZ'
     recognition.continuous = false
     
     recognition.start()
@@ -451,7 +562,7 @@ const copyResult = () => {
 const speakResult = () => {
   const text = inputText.value
   const utterance = new SpeechSynthesisUtterance(text)
-  utterance.lang = 'kk-KZ'
+  utterance.lang = currentLanguage.value === 'ru' ? 'ru-RU' : 'kk-KZ'
   speechSynthesis.speak(utterance)
 }
 
@@ -473,7 +584,8 @@ const loadMoreWords = () => {
   commonWords.value = [...commonWords.value, ...moreWords]
 }
 
-onMounted(() => {
+onMounted(async () => {
+  await dictionaryStore.loadFromLocalStorage()
   loadStats()
   loadLanguage()
   translatePage()
@@ -528,11 +640,60 @@ watch(inputText, (newValue) => {
   margin-bottom: 6px;
 }
 
-.welcome-left p {
-  font-size: 14px;
-  color: #64748b;
-}
+  .video-results {
+    margin-top: 20px;
+    display: grid;
+    gap: 16px;
+  }
 
+  .video-card {
+    border: 1px solid #e2e8f0;
+    border-radius: 20px;
+    padding: 14px;
+    background: #ffffff;
+  }
+
+  .video-player {
+    width: 100%;
+    aspect-ratio: 16 / 9;
+    max-height: 240px;
+    object-fit: cover;
+    border-radius: 16px;
+    background: #000;
+  }
+
+  .video-step {
+    margin-top: 12px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 12px;
+    font-size: 13px;
+    color: #475569;
+  }
+
+  .step-btn {
+    background: #f1f5f9;
+    border: 1px solid #e2e8f0;
+    border-radius: 999px;
+    padding: 8px 14px;
+    color: #475569;
+    cursor: pointer;
+    transition: all 0.2s ease;
+  }
+
+  .step-btn:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+  }
+
+  .video-card-title {
+    margin-top: 10px;
+    font-size: 14px;
+    font-weight: 600;
+    color: #1e293b;
+    text-align: center;
+  }
 .welcome-badge {
   background: white;
   border-radius: 40px;
@@ -769,15 +930,52 @@ textarea:focus {
 
 /* Нәтиже блогы */
 .result-box {
-  padding: 32px 24px;
-  min-height: 200px;
+  padding: 24px;
+  min-height: 260px;
   background: #fafcff;
+  border-radius: 24px;
   display: flex;
+  flex-direction: column;
   align-items: center;
-  justify-content: center;
+  justify-content: flex-start;
+  gap: 18px;
 }
 
 .result-content {
+  text-align: center;
+  width: 100%;
+}
+
+.video-results {
+  width: 100%;
+}
+
+.video-grid {
+  display: grid;
+  gap: 16px;
+}
+
+.video-card {
+  border: 1px solid #e2e8f0;
+  border-radius: 20px;
+  padding: 14px;
+  background: #ffffff;
+}
+
+.video-player {
+  width: 100%;
+  aspect-ratio: 16 / 9;
+  max-height: 240px;
+  object-fit: cover;
+  border-radius: 16px;
+  background: #000;
+}
+
+.video-card-title {
+  margin-top: 10px;
+  font-size: 14px;
+  font-weight: 600;
+  color: #1e293b;
   text-align: center;
 }
 

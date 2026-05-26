@@ -81,10 +81,6 @@
             </div>
 
             <div class="form-options">
-              <label class="checkbox-label">
-                <input type="checkbox" v-model="rememberMe">
-                <span data-i18n="remember_me">Есте сақтау</span>
-              </label>
               <a href="#" class="forgot-link">
                 <KeyRound :size="12" />
                 <span data-i18n="forgot_password">Ұмыттыңыз ба?</span>
@@ -121,6 +117,9 @@
             <p data-i18n="demo_account">🎯 Демо аккаунт:</p>
             <code>admin@gmail.com / admin123</code>
           </div>
+            <div style="margin-top:10px; display:flex; gap:8px; justify-content:center;">
+              <button type="button" class="demo-admin-btn" @click="demoAdminLogin">Войти как админ</button>
+            </div>
         </div>
       </div>
     </div>
@@ -145,21 +144,15 @@ const authStore = useAuthStore()
 const form = ref({ email: '', password: '' })
 const loading = ref(false)
 const showPassword = ref(false)
-const rememberMe = ref(false)
 
 const handleLogin = async () => {
   loading.value = true
   
   await new Promise(resolve => setTimeout(resolve, 500))
   
-  const result = authStore.login(form.value.email, form.value.password)
+  const result = await authStore.login(form.value.email, form.value.password)
   
   if (result.success) {
-    if (rememberMe.value) {
-      localStorage.setItem('rememberedEmail', form.value.email)
-    } else {
-      localStorage.removeItem('rememberedEmail')
-    }
     router.push('/')
   } else {
     alert(result.message || t('login_error'))
@@ -167,11 +160,15 @@ const handleLogin = async () => {
   loading.value = false
 }
 
-const rememberedEmail = localStorage.getItem('rememberedEmail')
-if (rememberedEmail) {
-  form.value.email = rememberedEmail
-  rememberMe.value = true
+const demoAdminLogin = async () => {
+  // Быстрая авторизация админом
+  form.value.email = 'admin@gmail.com'
+  form.value.password = 'admin123'
+  await handleLogin()
 }
+
+// Очистить сохраненный email - поля всегда пусты
+localStorage.removeItem('rememberedEmail')
 
 onMounted(() => {
   loadLanguage()

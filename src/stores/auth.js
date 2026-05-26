@@ -28,21 +28,13 @@ export const useAuthStore = defineStore('auth', () => {
   // Тіркелу
   const register = async (name, email, password) => {
     try {
-      const response = await apiClient.post('/api/register', {
+      await apiClient.post('/api/register', {
         name,
         email,
         password
       })
 
-      user.value = response.data.user
-      token.value = response.data.token
-      isLoggedIn.value = true
-
-      localStorage.setItem('user', JSON.stringify(user.value))
-      localStorage.setItem('token', token.value)
-      localStorage.setItem('isLoggedIn', 'true')
-
-      return { success: true, message: 'Тіркелу сәтті! Қош келдіңіз.' }
+      return { success: true, message: 'Тіркелу сәтті! Енді жүйеге кіріңіз.' }
     } catch (error) {
       return { success: false, message: error.response?.data?.error || 'Қате орын алды' }
     }
@@ -80,6 +72,31 @@ export const useAuthStore = defineStore('auth', () => {
     localStorage.removeItem('isLoggedIn')
     localStorage.removeItem('token')
     localStorage.removeItem('inputText') // Очищаем сохраненный текст при выходе
+  }
+
+  // Профиль жаңарту
+  const updateProfile = async (name, email) => {
+    try {
+      const response = await apiClient.put(
+        '/api/users/me',
+        { name, email },
+        {
+          headers: {
+            Authorization: `Bearer ${token.value}`
+          }
+        }
+      )
+
+      user.value = response.data.user
+      localStorage.setItem('user', JSON.stringify(user.value))
+
+      return { success: true, message: 'Профиль сақталды' }
+    } catch (error) {
+      return {
+        success: false,
+        message: error.response?.data?.error || 'Профильді сақтау кезінде қате орын алды'
+      }
+    }
   }
 
   // Аутентификацияны инициализациялау (бет жүктелгенде)

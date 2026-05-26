@@ -328,20 +328,26 @@ const toggleDarkMode = () => {
   if (darkMode.value) {
     document.documentElement.classList.add('dark-theme')
     document.body.classList.add('dark-theme')
-    localStorage.setItem('darkMode', 'true')
+    localStorage.setItem('appDarkMode', 'true')
   } else {
     document.documentElement.classList.remove('dark-theme')
     document.body.classList.remove('dark-theme')
-    localStorage.setItem('darkMode', 'false')
+    localStorage.setItem('appDarkMode', 'false')
   }
 }
 
 const loadDarkMode = () => {
-  const savedDarkMode = localStorage.getItem('darkMode') === 'true'
+  const storedAppDarkMode = localStorage.getItem('appDarkMode')
+  const storedLegacyDarkMode = localStorage.getItem('darkMode')
+  const savedDarkMode = storedAppDarkMode === 'true' ? true : (storedAppDarkMode === 'false' ? false : storedLegacyDarkMode === 'true')
   darkMode.value = savedDarkMode
+
   if (savedDarkMode) {
     document.documentElement.classList.add('dark-theme')
     document.body.classList.add('dark-theme')
+  } else {
+    document.documentElement.classList.remove('dark-theme')
+    document.body.classList.remove('dark-theme')
   }
 }
 
@@ -377,9 +383,23 @@ const loadStats = () => {
 }
 
 // ========== ПРОФИЛЬ ФУНКЦИЯЛАРЫ ==========
-const saveProfile = () => {
-  alert(t('profile_saved'))
-  editMode.value = false
+const saveProfile = async () => {
+  if (!editedName.value.trim() || !editedEmail.value.trim()) {
+    alert(t('fill_required_fields') || 'Аты-жөніңіз бен email енгізіңіз')
+    return
+  }
+
+  const result = await authStore.updateProfile(
+    editedName.value.trim(),
+    editedEmail.value.trim()
+  )
+
+  if (result.success) {
+    alert(t('profile_saved'))
+    editMode.value = false
+  } else {
+    alert(result.message)
+  }
 }
 
 const cancelEdit = () => {
@@ -417,7 +437,8 @@ const loadSettings = () => {
   currentLang.value = currentLanguage.value || 'kk'
 }
 
-onMounted(() => {
+onMounted(async () => {
+  authStore.initAuth()
   loadStats()
   loadSettings()
   editedName.value = userName.value

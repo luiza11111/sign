@@ -2,15 +2,15 @@ import { defineStore } from 'pinia'
 import { ref, watch } from 'vue'
 
 export const useSettingsStore = defineStore('settings', () => {
-  // Состояние - тёмный режим по умолчанию
+  // Состояние - тёмный режим по умолчанию выключен
   const language = ref('kk')
-  const darkMode = ref(true)
+  const darkMode = ref(false)
   const notifications = ref(true)
 
   // Инициализация из localStorage
   const initSettings = () => {
     const savedLanguage = localStorage.getItem('appLanguage') || 'kk'
-    const savedDarkMode = localStorage.getItem('appDarkMode') !== 'false' // По умолчанию true
+    const savedDarkMode = localStorage.getItem('appDarkMode') === 'true'
     const savedNotifications = localStorage.getItem('appNotifications') !== 'false'
 
     language.value = savedLanguage
