@@ -99,7 +99,13 @@ router.beforeEach((to, from, next) => {
   authStore.initAuth()
   
   const isLoggedIn = authStore.isLoggedIn
+  const isDemoMode = authStore.isDemoMode
   const isAdminUser = authStore.isAdmin()
+
+  // デモモード：すべてのページにアクセス可能
+  if (isDemoMode) {
+    return next()
+  }
 
   // Егер бет авторизация қажет етсе және қолданушы кірмеген болса
   if (to.meta.requiresAuth && !isLoggedIn) {

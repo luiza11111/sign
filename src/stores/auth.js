@@ -2,11 +2,15 @@ import { defineStore } from 'pinia'
 import { ref, computed } from 'vue'
 import apiClient from '../api'
 
+// デモモードの有効化
+const DEMO_MODE = true
+
 export const useAuthStore = defineStore('auth', () => {
   // State
   const user = ref(null)
   const isLoggedIn = ref(false)
   const token = ref(null)
+  const isDemoMode = ref(DEMO_MODE)
 
   // Тіркелген қолданушылар тізімі (теперь через API)
   const getRegisteredUsers = async () => {
@@ -101,6 +105,23 @@ export const useAuthStore = defineStore('auth', () => {
 
   // Аутентификацияны инициализациялау (бет жүктелгенде)
   const initAuth = () => {
+    // デモモード：ダミーユーザーで自動ログイン
+    if (DEMO_MODE) {
+      user.value = {
+        id: 1,
+        name: 'Демо пайдаланушы',
+        email: 'demo@sign.kz',
+        role: 'user'
+      }
+      token.value = 'demo-token-' + Date.now()
+      isLoggedIn.value = true
+      
+      localStorage.setItem('user', JSON.stringify(user.value))
+      localStorage.setItem('token', token.value)
+      localStorage.setItem('isLoggedIn', 'true')
+      return
+    }
+    
     const savedUser = localStorage.getItem('user')
     const savedToken = localStorage.getItem('token')
     const savedLogin = localStorage.getItem('isLoggedIn')
@@ -130,6 +151,7 @@ export const useAuthStore = defineStore('auth', () => {
     user, 
     isLoggedIn, 
     token,
+    isDemoMode,
     register, 
     login, 
     logout, 

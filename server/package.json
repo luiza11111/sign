@@ -5,7 +5,9 @@
   "main": "index.js",
   "scripts": {
     "start": "node index.js",
-    "dev": "nodemon index.js"
+    "dev": "nodemon index.js",
+    "demo": "node demo-server.js",
+    "reset-db": "node reset-demo-db.js"
   },
   "dependencies": {
     "axios": "^1.6.0",
