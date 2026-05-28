@@ -19,6 +19,14 @@ const demoUsers = {
     email: 'demo@sign.kz',
     password_hash: '$2a$10$demo_hash',
     role: 'user'
+  },
+  // Админ для демонстрации
+  'admin@sign.kz': {
+    id: 99,
+    name: 'Админ',
+    email: 'admin@sign.kz',
+    password_hash: '$2a$10$admin_demo_hash',
+    role: 'admin'
   }
 };
 
@@ -41,35 +49,40 @@ console.log('⚠️  ВНИМАНИЕ: Это демо-версия с фикт�
 // Demo Login endpoint
 app.post('/api/login', (req, res) => {
   const { email, password } = req.body;
-  
-  if (email === 'demo@sign.kz' && password === 'demo') {
-    const user = demoUsers[email];
-    const token = jwt.sign(
-      { id: user.id, email: user.email, role: user.role },
-      process.env.JWT_SECRET || 'demo-secret',
-      { expiresIn: '24h' }
-    );
-    
-    return res.json({
-      success: true,
-      token,
-      user: { id: user.id, name: user.name, email: user.email, role: user.role }
-    });
+
+  // Простая проверка для демонстрации: email + password
+  if (email && password) {
+    // admin credentials
+    if (email === 'admin@sign.kz' && password === 'admin') {
+      const user = demoUsers['admin@sign.kz'];
+      const token = jwt.sign(
+        { id: user.id, email: user.email, role: user.role },
+        process.env.JWT_SECRET || 'demo-secret',
+        { expiresIn: '24h' }
+      );
+      return res.json({ success: true, token, user: { id: user.id, name: user.name, email: user.email, role: user.role } });
+    }
+
+    // demo user credentials
+    if (email === 'demo@sign.kz' && password === 'demo') {
+      const user = demoUsers['demo@sign.kz'];
+      const token = jwt.sign(
+        { id: user.id, email: user.email, role: user.role },
+        process.env.JWT_SECRET || 'demo-secret',
+        { expiresIn: '24h' }
+      );
+      return res.json({ success: true, token, user: { id: user.id, name: user.name, email: user.email, role: user.role } });
+    }
   }
-  
-  // Default demo user auto-login
-  const demoUser = Object.values(demoUsers)[0];
+
+  // Default demo auto-login (fallback)
+  const demoUser = demoUsers['demo@sign.kz'];
   const token = jwt.sign(
     { id: demoUser.id, email: demoUser.email, role: demoUser.role },
     process.env.JWT_SECRET || 'demo-secret',
     { expiresIn: '24h' }
   );
-  
-  return res.json({
-    success: true,
-    token,
-    user: { id: demoUser.id, name: demoUser.name, email: demoUser.email, role: demoUser.role }
-  });
+  return res.json({ success: true, token, user: { id: demoUser.id, name: demoUser.name, email: demoUser.email, role: demoUser.role } });
 });
 
 // Demo Register endpoint
@@ -145,5 +158,6 @@ app.get('*', (req, res) => {
 
 app.listen(port, () => {
   console.log(`✅ Демо сервер готов! Посетите: http://localhost:${port}`);
-  console.log('⏭️  Вход: demo@sign.kz (пароль: demo или любой пароль)');
+  console.log('⏭️  Вход пользователя: demo@sign.kz (пароль: demo)');
+  console.log('🔐 Админ для просмотра админ-панели: admin@sign.kz (пароль: admin)');
 });

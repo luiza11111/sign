@@ -28,32 +28,16 @@
               <button class="modal-close" @click="showResourcesModal = false">✕</button>
             </div>
             <div class="modal-body">
-              <!-- 1. Қазақ ым тілінің алфавиті -->
-              <a 
-                href="#" 
+              <!-- Біріктірілген ресурс: Алфавит және Негіздері -->
+              <a
+                href="#"
                 class="modal-item"
-                @click.prevent="openResource('alphabet')"
-              >
-                <span class="modal-item-icon">🅰️</span>
-                <div class="modal-item-info">
-                  <strong>Қазақ ым тілінің алфавиті</strong>
-                  <small>Символдар және қол қимылдары</small>
-                </div>
-                <span class="modal-item-arrow">→</span>
-              </a>
-
-              <!-- 2. Қазақ ым тілінің негіздері - PDF -->
-              <a 
-                href="/files/kazakh-sign-language-basics.pdf" 
-                class="modal-item"
-                target="_blank"
-                rel="noopener noreferrer"
-                @click.prevent="openResource('pdf', 'kazakh-sign-language-basics')"
+                @click.prevent="openResource('combined')"
               >
                 <span class="modal-item-icon">📖</span>
                 <div class="modal-item-info">
-                  <strong>Қазақ ым тілінің негіздері</strong>
-                  <small>Әліппе мен негізгі сөздер</small>
+                  <strong>Алфавит және негіздері</strong>
+                  <small>Символдар, қол қимылдары және негізгі сөздер</small>
                 </div>
                 <span class="modal-item-arrow">→</span>
               </a>
@@ -177,7 +161,19 @@ const isLoggedIn = computed(() => authStore.isLoggedIn)
 const showResourcesModal = ref(false)
 
 // Ресурстарды ашу функциясы
+
+// Біріктірілген ресурс үшін қысқаша өңдеу
+const openCombinedResource = () => {
+  // Ашылатын бет: Алфавит бөлімін көрсетеміз
+  router.push('/alphabet')
+  showResourcesModal.value = false
+}
+
+// Қолданыстағы функцияны кеңейту: 'combined' түрін өңдеу
 const openResource = (type, name) => {
+  if (type === 'combined') {
+    return openCombinedResource()
+  }
   if (type === 'pdf') {
     const url = name === 'kazakh-sign-language-basics'
       ? '/files/kazakh-sign-language-basics.pdf'
