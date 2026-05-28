@@ -66,6 +66,14 @@ const router = createRouter({
       meta: { requiresAuth: true }
     },
     
+    // Қазақ ым тілінің алфавиті
+    { 
+      path: '/alphabet', 
+      name: 'Alphabet', 
+      component: () => import('../views/Alphabet.vue'),
+      meta: { requiresAuth: true }
+    },
+
     // Админ панелі (тек админдер үшін)
     { 
       path: '/admin', 

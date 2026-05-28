@@ -212,19 +212,19 @@
           </button>
         </div>
         <div class="modal-body">
-          <a href="#" class="modal-item">
+          <button class="modal-item" type="button" @click="router.push('/alphabet')">
             <Book :size="28" />
+            <div class="modal-item-info">
+              <strong data-i18n="resource_alphabet_title">Қазақ ым тілінің алфавиті</strong>
+              <small data-i18n="resource_alphabet_desc">Символдар және қол қимылдары</small>
+            </div>
+            <ArrowRight :size="16" class="modal-item-arrow" />
+          </button>
+          <a href="/files/kazakh-sign-language-basics.pdf" class="modal-item" target="_blank" rel="noopener noreferrer">
+            <Video :size="28" />
             <div class="modal-item-info">
               <strong data-i18n="resource_1_title">Қазақ ым тілінің негіздері</strong>
               <small data-i18n="resource_1_desc">Әліппе мен негізгі сөздер</small>
-            </div>
-            <ArrowRight :size="16" class="modal-item-arrow" />
-          </a>
-          <a href="#" class="modal-item">
-            <Video :size="28" />
-            <div class="modal-item-info">
-              <strong data-i18n="resource_2_title">Бейне сабақтар</strong>
-              <small data-i18n="resource_2_desc">Видео нұсқаулықтар жинағы</small>
             </div>
             <ArrowRight :size="16" class="modal-item-arrow" />
           </a>
@@ -252,7 +252,7 @@
             </div>
             <ArrowRight :size="16" class="modal-item-arrow" />
           </a>
-          <a href="#" class="modal-item">
+          <a href="/files/signflow-user-guide.pdf" class="modal-item" target="_blank" rel="noopener noreferrer">
             <FileText :size="28" />
             <div class="modal-item-info">
               <strong data-i18n="resource_6_title">PDF нұсқаулық</strong>
@@ -273,6 +273,7 @@
 
 <script setup>
 import { ref, computed, onMounted, watch, nextTick } from 'vue'
+import { useRouter } from 'vue-router'
 import { useAuthStore } from '../stores/auth'
 import { useDictionaryStore } from '../stores/dictionary'
 import { t, loadLanguage, translatePage, currentLanguage } from '../i18n'
@@ -286,6 +287,7 @@ import {
 } from 'lucide-vue-next'
 
 const authStore = useAuthStore()
+const router = useRouter()
 const dictionaryStore = useDictionaryStore()
 
 // Қолданушы аты

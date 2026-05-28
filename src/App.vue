@@ -28,9 +28,23 @@
               <button class="modal-close" @click="showResourcesModal = false">✕</button>
             </div>
             <div class="modal-body">
-              <!-- 1. Қазақ ым тілінің негіздері - PDF -->
+              <!-- 1. Қазақ ым тілінің алфавиті -->
               <a 
-                href="/resources/kazakh-sign-language-basics.pdf" 
+                href="#" 
+                class="modal-item"
+                @click.prevent="openResource('alphabet')"
+              >
+                <span class="modal-item-icon">🅰️</span>
+                <div class="modal-item-info">
+                  <strong>Қазақ ым тілінің алфавиті</strong>
+                  <small>Символдар және қол қимылдары</small>
+                </div>
+                <span class="modal-item-arrow">→</span>
+              </a>
+
+              <!-- 2. Қазақ ым тілінің негіздері - PDF -->
+              <a 
+                href="/files/kazakh-sign-language-basics.pdf" 
                 class="modal-item"
                 target="_blank"
                 rel="noopener noreferrer"
@@ -44,7 +58,7 @@
                 <span class="modal-item-arrow">→</span>
               </a>
 
-              <!-- 2. Бейне сабақтар - YouTube -->
+              <!-- 3. Бейне сабақтар - YouTube -->
               <a 
                 href="https://youtu.be/h6ukdwq-D6o?si=GS9sxsavCmGL3bSI" 
                 class="modal-item"
@@ -106,7 +120,7 @@
 
               <!-- 6. PDF нұсқаулық -->
               <a 
-                href="/resources/signflow-user-guide.pdf" 
+                href="/files/signflow-user-guide.pdf" 
                 class="modal-item"
                 target="_blank"
                 rel="noopener noreferrer"
@@ -142,6 +156,7 @@
 
 <script setup>
 import { ref, computed, onMounted } from 'vue'
+import { useRouter } from 'vue-router'
 import { useAuthStore } from './stores/auth'
 import { useSettingsStore } from './stores/settings'
 import { useNotificationsStore } from './stores/notifications'
@@ -155,6 +170,7 @@ import { loadLanguage, translatePage, currentLanguage, setLanguage, t } from './
 const authStore = useAuthStore()
 const settingsStore = useSettingsStore()
 const notificationsStore = useNotificationsStore()
+const router = useRouter()
 const isLoggedIn = computed(() => authStore.isLoggedIn)
 
 // Модальды терезе
@@ -163,7 +179,15 @@ const showResourcesModal = ref(false)
 // Ресурстарды ашу функциясы
 const openResource = (type, name) => {
   if (type === 'pdf') {
-    alert(`"${name === 'kazakh-sign-language-basics' ? 'Қазақ ым тілінің негіздері' : 'SignFlow нұсқаулығы'} PDF файлы әзірлену үстінде. Жақын арада қолжетімді болады! 📄`)
+    const url = name === 'kazakh-sign-language-basics'
+      ? '/files/kazakh-sign-language-basics.pdf'
+      : '/files/signflow-user-guide.pdf'
+    window.open(url, '_blank', 'noopener')
+    showResourcesModal.value = false
+  }
+  if (type === 'alphabet') {
+    router.push('/alphabet')
+    showResourcesModal.value = false
   }
 }
 

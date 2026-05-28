@@ -599,6 +599,7 @@ watch(inputText, (newValue) => {
 .animation-module {
   margin-top: 24px;
 }
+.page-header {
   display: flex;
   justify-content: space-between;
   align-items: center;

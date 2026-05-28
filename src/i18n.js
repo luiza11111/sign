@@ -187,6 +187,8 @@ const translations = {
     // === РЕСУРСТАР ===
     'resources': 'Ресурсы',
     'resources_title': 'Вспомогательные ресурсы',
+    'resource_alphabet_title': 'Қазақ ым тілінің алфавиті',
+    'resource_alphabet_desc': 'Символдар және қол қимылдары',
     'resource_1_title': 'Қазақ ым тілінің негіздері',
     'resource_1_desc': 'Әліппе мен негізгі сөздер',
     'resource_2_title': 'Бейне сабақтар',
@@ -198,7 +200,12 @@ const translations = {
     'resource_5_title': 'Қауымдастық форум',
     'resource_5_desc': 'Пікірлер мен сұрақтар',
     'resource_6_title': 'PDF нұсқаулық',
-    'resource_6_desc': 'Жүктеп алуға арналған'
+    'resource_6_desc': 'Жүктеп алуға арналған',
+    'alphabet_page_title': 'Қазақ ым тілінің алфавиті',
+    'alphabet_page_intro': 'Бұл бетте қазақ ым тілінің бастапқы әріптері және негізгі қол белгілері сипатталған.',
+    'alphabet_download_guide': 'PDF нұсқаулықты жүктеу',
+    'alphabet_practice_title': 'Жаттығу',
+    'alphabet_practice_text': 'Әр әріпті қол қимылымен бірге қайталаңыз. Бұл қазақ ым тілін үйренудің ең жақсы жолы.'
   },
 
   // ========== ОРЫСША АУДАРМА ==========
@@ -384,7 +391,12 @@ const translations = {
     'resource_5_title': 'Сообщество форум',
     'resource_5_desc': 'Отзывы и вопросы',
     'resource_6_title': 'PDF руководство',
-    'resource_6_desc': 'Для скачивания'
+    'resource_6_desc': 'Для скачивания',
+    'alphabet_page_title': 'Алфавит казахского жестового языка',
+    'alphabet_page_intro': 'На этой странице описаны базовые буквы и ключевые жесты казахского жестового языка.',
+    'alphabet_download_guide': 'Скачать PDF руководство',
+    'alphabet_practice_title': 'Практика',
+    'alphabet_practice_text': 'Повторяйте каждый знак вместе с движением руки. Это лучший способ выучить язык.'
   },
 
   // ========== АҒЫЛШЫНША АУДАРМА ==========
@@ -559,6 +571,8 @@ const translations = {
 
     'resources': 'Resources',
     'resources_title': 'Additional Resources',
+    'resource_alphabet_title': 'Kazakh Sign Language Alphabet',
+    'resource_alphabet_desc': 'Symbols and hand movements',
     'resource_1_title': 'Basics of Kazakh Sign Language',
     'resource_1_desc': 'Alphabet and basic words',
     'resource_2_title': 'Video Tutorials',
@@ -570,7 +584,12 @@ const translations = {
     'resource_5_title': 'Community Forum',
     'resource_5_desc': 'Feedback and questions',
     'resource_6_title': 'PDF Guide',
-    'resource_6_desc': 'For download'
+    'resource_6_desc': 'For download',
+    'alphabet_page_title': 'Kazakh Sign Language Alphabet',
+    'alphabet_page_intro': 'This page describes the basic letters and core hand signs of Kazakh Sign Language.',
+    'alphabet_download_guide': 'Download the PDF guide',
+    'alphabet_practice_title': 'Practice',
+    'alphabet_practice_text': 'Repeat each sign together with the hand movement. This is the best way to learn the language.'
   }
 }
 
