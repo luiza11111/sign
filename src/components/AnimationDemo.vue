@@ -20,8 +20,12 @@
     <div class="animation-body">
       <div class="lottie-panel">
         <div ref="animationContainer" class="animation-container"></div>
+        <div v-if="mode === 'dactyl'" class="letter-overlay">
+          <span>{{ currentLetter || ' ' }}</span>
+          <div class="letter-note">Қазіргі поза</div>
+        </div>
         <div class="animation-caption">
-          {{ mode === 'dactyl' ? 'Бұл жерде Lottie анимациясы көрсетіледі.' : 'Lottie анимациясы мен бейне бірге жұмыс істейді.' }}
+          {{ mode === 'dactyl' ? 'Персонаж ым тілін имитациялайтын позаларды көрсетеді.' : 'Lottie анимациясы мен бейне бірге көрсетіледі.' }}
         </div>
       </div>
 
@@ -29,7 +33,12 @@
         <div class="demo-section" v-if="mode === 'dactyl'">
           <div class="demo-label">Қолданылатын мәтін:</div>
           <div class="letter-grid" v-if="letters.length">
-            <span class="letter-chip" v-for="(letter, index) in letters" :key="index">{{ letter }}</span>
+            <span 
+              class="letter-chip" 
+              :class="{ active: index === currentLetterIndex.value }"
+              v-for="(letter, index) in letters" 
+              :key="index"
+            >{{ letter }}</span>
           </div>
           <div class="empty-notice" v-else>Мәтінді енгізіңіз немесе аударма жасаңыз.</div>
         </div>
@@ -61,21 +70,31 @@ const props = defineProps({
 
 const animationContainer = ref(null)
 let animation = null
+let letterTimer = null
+const currentLetterIndex = ref(0)
 
 const letters = computed(() => {
   if (!props.text) return []
   return props.text
     .toUpperCase()
-    .replace(/[^A-ZА-ЯӘҒҚҢӨҰҮҺІЁ\s]/gi, '')
+    .replace(/[^A-ZА-ЯӘҒҚҢӨҰҮҺІЁ\s]/gi, ' ')
+    .replace(/\s+/g, ' ')
+    .trim()
     .split('')
     .filter((char) => char !== '')
 })
 
+const currentLetter = computed(() => {
+  return letters.value[currentLetterIndex.value] || ''
+})
+
 const subtitle = computed(() => {
   return props.mode === 'dactyl'
-    ? 'Әріптік дактиль көрсетілімі, мәтінді бөліп көрсетеді.'
+    ? 'Персонажтың ым тілін имитациялайтын позалардың көрсетілімі.'
     : 'Lottie анимациясы мен бейне демонстрациясы бірге көрсетіледі.'
 })
+
+const fallbackPath = '/lottie/fallback.json'
 
 const animationData = {
   v: '5.5.7',
@@ -122,7 +141,7 @@ const animationData = {
   ]
 }
 
-const initAnimation = () => {
+const loadAnimationData = (data) => {
   if (!animationContainer.value) return
 
   if (animation) {
@@ -135,8 +154,67 @@ const initAnimation = () => {
     renderer: 'svg',
     loop: true,
     autoplay: true,
-    animationData
+    animationData: data
   })
+}
+
+const loadAnimationJson = async (path) => {
+  const response = await fetch(path)
+  if (!response.ok) {
+    throw new Error(`Unable to fetch ${path}`)
+  }
+  return response.json()
+}
+
+const loadLetterAnimation = async (letter) => {
+  const encodedLetter = encodeURIComponent(letter)
+  const filePath = `/lottie/${encodedLetter}.json`
+
+  try {
+    const jsonData = await loadAnimationJson(filePath)
+    loadAnimationData(jsonData)
+  } catch (err) {
+    try {
+      const fallbackData = await loadAnimationJson(fallbackPath)
+      loadAnimationData(fallbackData)
+    } catch (fallbackErr) {
+      loadAnimationData(animationData)
+    }
+  }
+}
+
+const initAnimation = async () => {
+  if (!animationContainer.value) return
+
+  if (animation) {
+    animation.destroy()
+    animation = null
+  }
+
+  if (props.mode === 'dactyl' && currentLetter.value) {
+    await loadLetterAnimation(currentLetter.value)
+  } else {
+    loadAnimationData(animationData)
+  }
+}
+
+const startLetterSequence = () => {
+  if (letterTimer) clearInterval(letterTimer)
+  currentLetterIndex.value = 0
+
+  if (letters.value.length === 0) return
+
+  letterTimer = setInterval(async () => {
+    currentLetterIndex.value = (currentLetterIndex.value + 1) % letters.value.length
+    await loadLetterAnimation(currentLetter.value)
+  }, 1200)
+}
+
+const stopLetterSequence = () => {
+  if (letterTimer) {
+    clearInterval(letterTimer)
+    letterTimer = null
+  }
 }
 
 const playAnimation = () => {
@@ -151,22 +229,34 @@ const reloadAnimation = () => {
   initAnimation()
 }
 
-watch(() => props.mode, () => {
-  reloadAnimation()
-})
+watch(() => props.mode, async () => {
+  await initAnimation()
 
-watch(() => props.text, () => {
   if (props.mode === 'dactyl') {
-    reloadAnimation()
+    startLetterSequence()
+  } else {
+    stopLetterSequence()
   }
 })
 
-onMounted(() => {
-  initAnimation()
+watch(() => props.text, async () => {
+  if (props.mode === 'dactyl') {
+    currentLetterIndex.value = 0
+    startLetterSequence()
+    await initAnimation()
+  }
+})
+
+onMounted(async () => {
+  await initAnimation()
+  if (props.mode === 'dactyl') {
+    startLetterSequence()
+  }
 })
 
 onBeforeUnmount(() => {
   if (animation) animation.destroy()
+  stopLetterSequence()
 })
 </script>
 
@@ -242,6 +332,7 @@ onBeforeUnmount(() => {
 }
 
 .lottie-panel {
+  position: relative;
   border-radius: 24px;
   background: #f8fafc;
   padding: 18px;
@@ -262,6 +353,65 @@ onBeforeUnmount(() => {
 .animation-caption {
   font-size: 13px;
   color: #475569;
+}
+
+.letter-overlay {
+  position: absolute;
+  top: 40%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  pointer-events: none;
+  text-align: center;
+}
+
+.letter-overlay span {
+  font-size: 68px;
+  font-weight: 800;
+  color: #0f172a;
+  text-shadow: 0 10px 30px rgba(15, 23, 42, 0.12);
+}
+
+.letter-note {
+  margin-top: 8px;
+  font-size: 13px;
+  color: #64748b;
+}
+
+.animation-container {
+  flex: 1;
+  min-height: 260px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.letter-grid {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+}
+
+.letter-chip {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 40px;
+  min-height: 40px;
+  border-radius: 999px;
+  background: #f8fafc;
+  color: #334155;
+  font-weight: 700;
+  border: 1px solid #e2e8f0;
+}
+
+.letter-chip.active {
+  background: #6366f1;
+  color: #ffffff;
+  border-color: #4f46e5;
 }
 
 .demo-info {
