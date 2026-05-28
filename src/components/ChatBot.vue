@@ -17,8 +17,8 @@
             <Bot :size="20" />
           </div>
           <div>
-            <h4>SignFlow AI</h4>
-            <p>Grok AI</p>
+            <h4>QosQol</h4>
+            <p>QosQol</p>
           </div>
         </div>
         <button class="close-chat" @click="toggleChat">
@@ -62,7 +62,7 @@
       </div>
       
       <div class="chat-footer">
-        <span>⚡ Grok AI</span>
+        <span>⚡ QosQol</span>
       </div>
     </div>
   </div>
@@ -81,7 +81,7 @@ const messagesContainer = ref(null)
 // Бастапқы хабарлар
 const messages = ref([
   {
-    text: 'Сәлем! Мен SignFlow AI көмекшісімін. Мен Grok AI технологиясымен жұмыс істеймін. Сізге қалай көмектесе аламын? 🤟',
+    text: 'Сәлем! Мен QosQol көмекшісімін. Мен Grok AI технологиясымен жұмыс істеймін. Сізге қалай көмектесе аламын? 🤟',
     sender: 'bot',
     time: getCurrentTime()
   }

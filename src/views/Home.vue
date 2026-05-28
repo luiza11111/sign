@@ -196,7 +196,7 @@
   <div class="resources-float">
     <button class="float-btn" @click="showResourcesModal = true">
       <BookOpen :size="22" />
-      <span class="float-text" data-i18n="resources">Ресурсы</span>
+      <span class="float-text" data-i18n="resources">Ресурстар</span>
     </button>
     
     <!-- Модальды терезе -->
@@ -205,7 +205,7 @@
         <div class="modal-header">
           <div class="modal-title">
             <BookOpen :size="24" />
-            <span data-i18n="resources_title">Вспомогательные ресурсы</span>
+            <span data-i18n="resources_title">Көмекші ресурстар</span>
           </div>
           <button class="modal-close" @click="showResourcesModal = false">
             <X :size="18" />

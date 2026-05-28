@@ -185,8 +185,8 @@ const translations = {
     'avatar_change_msg': 'Аватарды өзгерту мүмкіндігі кейінгі нұсқада қосылады',
 
     // === РЕСУРСТАР ===
-    'resources': 'Ресурсы',
-    'resources_title': 'Вспомогательные ресурсы',
+    'resources': 'Ресурстар',
+    'resources_title': 'Көмекші ресурстар',
     'resource_alphabet_title': 'Қазақ ым тілінің алфавиті',
     'resource_alphabet_desc': 'Символдар және қол қимылдары',
     'resource_1_title': 'Қазақ ым тілінің негіздері',

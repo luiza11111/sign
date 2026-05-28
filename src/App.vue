@@ -14,7 +14,7 @@
       <div class="resources-float">
         <button class="float-btn" @click="showResourcesModal = true">
           <span class="float-icon">📚</span>
-          <span class="float-text">Ресурсы</span>
+          <span class="float-text" data-i18n="resources">Ресурстар</span>
         </button>
         
         <!-- Модальды терезе - ТОЛЫҚ ЖҰМЫС ІСТЕЙТІН СІЛТЕМЕЛЕР -->
@@ -23,7 +23,7 @@
             <div class="modal-header">
               <div class="modal-title">
                 <span>📚</span>
-                <span>Вспомогательные ресурсы</span>
+                <span data-i18n="resources_title">Көмекші ресурстар</span>
               </div>
               <button class="modal-close" @click="showResourcesModal = false">✕</button>
             </div>
