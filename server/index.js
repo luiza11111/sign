@@ -1,7 +1,7 @@
 require('dotenv').config();
 const express = require('express');
 const cors = require('cors');
-const bcrypt = require('bcrypt');
+const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
 const { Pool } = require('pg');
 const fs = require('fs');
@@ -16,20 +16,33 @@ app.use(cors());
 app.use(express.json());
 
 // PostgreSQL қосылуы
-const db = new Pool(
-  process.env.DATABASE_URL
-    ? {
-        connectionString: process.env.DATABASE_URL,
-        ssl: process.env.NODE_ENV === 'production' ? { rejectUnauthorized: false } : false,
-      }
-    : {
-        user: process.env.DB_USER,
-        password: process.env.DB_PASSWORD,
-        host: process.env.DB_HOST,
-        port: process.env.DB_PORT,
-        database: process.env.DB_NAME,
-      }
-);
+const localDbConfig = {
+  user: process.env.DB_USER || 'postgres',
+  host: process.env.DB_HOST || 'localhost',
+  port: process.env.DB_PORT ? Number(process.env.DB_PORT) : 5432,
+  database: process.env.DB_NAME || 'sign',
+};
+if (process.env.DB_PASSWORD !== undefined) {
+  const password = process.env.DB_PASSWORD;
+  localDbConfig.password = password === '' ? undefined : String(password);
+}
+
+const dbConfig = process.env.DATABASE_URL
+  ? {
+      connectionString: process.env.DATABASE_URL,
+      ssl: process.env.NODE_ENV === 'production' ? { rejectUnauthorized: false } : false,
+    }
+  : localDbConfig;
+
+console.log('ℹ️  PostgreSQL конфигурациясы:', {
+  mode: process.env.DATABASE_URL ? 'DATABASE_URL' : 'local',
+  host: dbConfig.host || undefined,
+  port: dbConfig.port || undefined,
+  database: dbConfig.database || undefined,
+  user: dbConfig.user || undefined,
+});
+
+const db = new Pool(dbConfig);
 
 // Қосылуды тексеру
 db.connect((err, client, release) => {
@@ -482,6 +495,17 @@ app.post('/api/grok', authenticateToken, async (req, res) => {
 });
 
 // ========== СЕРВЕРДІ ІСКЕ ҚОСУ ==========
-app.listen(port, () => {
-    console.log(`🚀 Сервер https://sign-0urr.onrender.com портында жұмыс істейді`);
+const server = app.listen(port, () => {
+    console.log(`🚀 Сервер портында жұмыс істейді: ${port}`);
+    if (!process.env.DATABASE_URL) {
+        console.log('ℹ️  Ескерту: .env файлы жоқ немесе DATABASE_URL орнатылмаған. local Postgres үшін DB_USER, DB_HOST, DB_PORT, DB_NAME параметрлерін қосыңыз.');
+    }
+});
+
+server.on('error', (err) => {
+    if (err.code === 'EADDRINUSE') {
+        console.error(`❌ Порт ${port} бос емес. Қолданылып жатқан серверді тоқтатып немесе басқа портты қойыңыз.`);
+        process.exit(1);
+    }
+    throw err;
 });
