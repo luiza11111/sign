@@ -6,6 +6,7 @@ const jwt = require('jsonwebtoken');
 const { Pool } = require('pg');
 const fs = require('fs');
 const path = require('path');
+const axios = require('axios');
 
 const app = express();
 const port = process.env.PORT || 4000;
@@ -426,6 +427,57 @@ app.get('/api/sign-videos/:word', (req, res) => {
         res.json(found);
     } catch (err) {
         res.status(500).json({ error: err.message });
+    }
+});
+
+// ========== GROK AI API ==========
+app.post('/api/grok', authenticateToken, async (req, res) => {
+    const { message } = req.body;
+
+    if (!message) {
+        return res.status(400).json({ error: 'Хабарлама міндетті' });
+    }
+
+    const apiKey = process.env.XAI_API_KEY;
+    if (!apiKey) {
+        return res.status(500).json({ error: 'Grok API ключі табылмады' });
+    }
+
+    try {
+        const response = await axios.post(
+            'https://api.x.ai/v1/responses',
+            {
+                model: 'grok-4.20-reasoning',
+                input: message
+            },
+            {
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Authorization': `Bearer ${apiKey}`
+                }
+            }
+        );
+
+        // Сөзбен аударуға немесе ауыстыруға жұмыс істеу
+        const botResponse = response.data.result || response.data.output || 'Жауап алынбады';
+
+        // Тарихқа сақтау
+        await db.query(
+            'INSERT INTO translation_history (user_id, text, translation) VALUES ($1, $2, $3)',
+            [req.user.id, message, botResponse]
+        );
+
+        res.json({
+            message: message,
+            response: botResponse,
+            timestamp: new Date()
+        });
+    } catch (err) {
+        console.error('❌ Grok API қатесі:', err.message);
+        res.status(500).json({
+            error: 'Grok сервері қосылмады',
+            details: err.message
+        });
     }
 });
 
