@@ -103,6 +103,18 @@
             </div>
           </div>
 
+          <div class="animation-toggle-row">
+            <label class="toggle-label">
+              <input type="checkbox" v-model="dactylMode" />
+              <span>Дактиль режимі</span>
+            </label>
+            <span class="toggle-description">{{ dactylMode ? 'Дактиль және Lottie анимациясы' : 'Видео және Lottie анимациясы' }}</span>
+          </div>
+
+          <div class="animation-module">
+            <AnimationDemo :mode="animationMode" :text="inputText" :video-url="getVideoUrl(currentVideoEntry)" />
+          </div>
+
           <div class="action-buttons" v-if="showActions">
             <button class="action-btn copy" @click="copyResult">
               <Copy :size="14" />
@@ -193,6 +205,7 @@ import apiClient from '../api'
 import { useAuthStore } from '../stores/auth'
 import { useDictionaryStore } from '../stores/dictionary'
 import { t, loadLanguage, translatePage, currentLanguage } from '../i18n'
+import AnimationDemo from '../components/AnimationDemo.vue'
 
 // Lucide иконкаларын импорттау
 import { 
@@ -210,8 +223,10 @@ const todayCount = ref(24)
 const videoEntries = ref([])
 const currentVideoIndex = ref(0)
 const videoPlayer = ref(null)
+const dactylMode = ref(false)
 const dictionaryStore = useDictionaryStore()
 const currentVideoEntry = computed(() => videoEntries.value[currentVideoIndex.value] || null)
+const animationMode = computed(() => dactylMode.value ? 'dactyl' : 'video')
 
 // Ұсынылатын сөздер
 const baseSuggestions = ['Сәлем', 'Рахмет', 'Қалайсың?', 'Мен', 'Үйге', 'Барамын', 'Иә', 'Жоқ', 'Көмек', 'Кешіріңіз']
@@ -517,8 +532,73 @@ watch(inputText, (newValue) => {
   width: 100%;
 }
 
-/* ========== БЕТ БАСЫ ========== */
-.page-header {
+.animation-toggle-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  margin: 16px 0 8px;
+  flex-wrap: wrap;
+}
+
+.toggle-label {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  background: #eef2ff;
+  border-radius: 999px;
+  padding: 10px 16px;
+  font-size: 14px;
+  color: #1d4ed8;
+}
+
+.toggle-label input {
+  width: 18px;
+  height: 18px;
+}
+
+.toggle-description {
+  color: #64748b;
+  font-size: 13px;
+}
+
+.animation-module {
+  margin-top: 24px;
+}
+
+.animation-toggle-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  margin: 16px 0 8px;
+  flex-wrap: wrap;
+}
+
+.toggle-label {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  background: #eef2ff;
+  border-radius: 999px;
+  padding: 10px 16px;
+  font-size: 14px;
+  color: #1d4ed8;
+}
+
+.toggle-label input {
+  width: 18px;
+  height: 18px;
+}
+
+.toggle-description {
+  color: #64748b;
+  font-size: 13px;
+}
+
+.animation-module {
+  margin-top: 24px;
+}
   display: flex;
   justify-content: space-between;
   align-items: center;

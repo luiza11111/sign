@@ -127,15 +127,28 @@
                 </div>
               </div>
               <div class="form-group">
-                <label data-i18n="video_placeholder">Видео файлының аты</label>
+                <label data-i18n="video_url_placeholder">Видео URL</label>
                 <div class="input-icon">
                   <Video :size="16" class="icon" />
                   <input 
-                    v-model="newWord.video" 
+                    v-model="newWord.video_url" 
                     type="text" 
-                    placeholder="keshiriniz.mp4"
+                    placeholder="https://example.com/video.mp4"
                     @keyup.enter="addWord"
                   />
+                </div>
+              </div>
+              <div class="form-group">
+                <label data-i18n="category_placeholder">Категория</label>
+                <div class="input-icon">
+                  <Tag :size="16" class="icon" />
+                  <select v-model="newWord.category">
+                    <option value="">-- Таңдаңыз --</option>
+                    <option value="сөз">Сөз</option>
+                    <option value="сөйлем">Сөйлем</option>
+                    <option value="етістік">Етістік</option>
+                    <option value="зат">Зат</option>
+                  </select>
                 </div>
               </div>
             </div>
@@ -197,7 +210,11 @@
                 <div class="word-details">
                   <span class="word-video">
                     <Video :size="12" />
-                    {{ word.video }}
+                    {{ word.video_url || word.video }}
+                  </span>
+                  <span v-if="word.category" class="word-category">
+                    <Tag :size="12" />
+                    {{ word.category }}
                   </span>
                   <span v-if="word.example" class="word-example">
                     <MessageSquare :size="12" />
@@ -420,7 +437,7 @@ import {
   Shield, Users, BookOpen, Activity, TrendingUp, BarChart3, Settings,
   PlusCircle, FileText, Video, MessageSquare, Plus, List, Search,
   Download, Pen, Trash2, Inbox, Crown, User, Calendar, Award, Star,
-  Database, Upload
+  Database, Upload, Tag
 } from 'lucide-vue-next'
 
 const router = useRouter()
@@ -431,7 +448,7 @@ const activeTab = ref('words')
 
 // Сөздік деректері
 const words = ref([])
-const newWord = ref({ text: '', video: '', example: '' })
+const newWord = ref({ text: '', video_url: '', example: '', category: '' })
 const searchQuery = ref('')
 
 // Пайдаланушылар деректері
@@ -480,7 +497,8 @@ const addWord = () => {
   
   words.value.push({
     text: newWord.value.text,
-    video: newWord.value.video,
+    video_url: newWord.value.video_url || `${newWord.value.text}.mp4`,
+    category: newWord.value.category,
     example: newWord.value.example || `${newWord.value.text} - мысал сөйлем`
   })
   
@@ -887,7 +905,8 @@ onMounted(() => {
   color: #94a3b8;
 }
 
-.input-icon input {
+.input-icon input,
+.input-icon select {
   width: 100%;
   padding: 12px 16px 12px 42px;
   border: 1.5px solid #e2e8f0;
@@ -895,6 +914,19 @@ onMounted(() => {
   font-size: 14px;
   transition: all 0.2s;
   outline: none;
+  background: white;
+  appearance: none;
+}
+
+.input-icon select {
+  -webkit-appearance: none;
+  -moz-appearance: none;
+}
+
+.input-icon input:focus,
+.input-icon select:focus {
+  border-color: #6366f1;
+  box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.1);
 }
 
 .input-icon input:focus {
@@ -996,7 +1028,7 @@ onMounted(() => {
   margin-top: 6px;
 }
 
-.word-video, .word-example {
+.word-video, .word-example, .word-category {
   display: flex;
   align-items: center;
   gap: 4px;
