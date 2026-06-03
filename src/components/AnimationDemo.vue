@@ -50,17 +50,26 @@
               <svg class="hand-graphic" viewBox="0 0 520 300" xmlns="http://www.w3.org/2000/svg">
                 <defs>
                   <linearGradient id="palmGradient" x1="0" y1="0" x2="0" y2="1">
-                    <stop offset="0%" stop-color="#f9dfb9" />
-                    <stop offset="100%" stop-color="#f3d0a1" />
+                    <stop offset="0%" stop-color="#f8e3b6" />
+                    <stop offset="100%" stop-color="#e3c39a" />
                   </linearGradient>
                   <linearGradient id="fingerGradient" x1="0" y1="0" x2="0" y2="1">
-                    <stop offset="0%" stop-color="#f8dab2" />
-                    <stop offset="100%" stop-color="#f2cfa0" />
+                    <stop offset="0%" stop-color="#f5d5a5" />
+                    <stop offset="100%" stop-color="#d8b289" />
                   </linearGradient>
+                  <radialGradient id="highlightGradient" cx="50%" cy="30%" r="60%">
+                    <stop offset="0%" stop-color="#ffffff" stop-opacity="0.75" />
+                    <stop offset="100%" stop-color="#ffffff" stop-opacity="0" />
+                  </radialGradient>
+                  <filter id="fingerShadow" x="-50%" y="-50%" width="200%" height="200%">
+                    <feDropShadow dx="0" dy="12" stdDeviation="10" flood-color="#000000" flood-opacity="0.12" />
+                  </filter>
                 </defs>
 
                 <g :transform="leftHandSvgTransform" class="hand-layer">
-                  <path class="palm-shape" d="M44 142c0-20 18-36 40-36h80c22 0 40 16 40 36v40c0 20-18 36-40 36H84c-22 0-40-16-40-36v-40z" />
+                  <path class="wrist-shape" d="M24 214c0 16 42 32 98 32h80c56 0 98-16 98-32s-42-40-98-40h-80c-56 0-98 24-98 40z" />
+                  <path class="palm-shape" d="M42 146c0-22 18-40 40-40h84c22 0 40 18 40 40v40c0 22-18 40-40 40H82c-22 0-40-18-40-40v-40z" />
+                  <path class="palm-highlight" d="M62 156c0-14 10-24 24-24h84c14 0 24 10 24 24v20c0 14-10 24-24 24H86c-14 0-24-10-24-24v-20z" />
                   <g v-for="finger in svgFingers" :key="finger.key">
                     <rect
                       :x="finger.x"
@@ -225,27 +234,27 @@ const rightFingers = computed(() => currentPose.value.right.fingers)
 const svgFingers = computed(() => {
   return currentPose.value.left.fingers.map((state, index) => {
     const isThumb = index === 0
-    const height = isThumb ? (state === 0 ? 84 : state === 1 ? 64 : 46) : (state === 0 ? 118 : state === 1 ? 80 : 54)
-    const baseX = isThumb ? 26 : 78 + (index - 1) * 24
-    const baseY = isThumb ? 156 : 26 + (118 - height)
-    const rotate = isThumb ? (state === 2 ? -42 : state === 1 ? -30 : -18) : -8 + (index - 1) * 4
-    const originX = baseX + 9
+    const height = isThumb ? (state === 0 ? 72 : state === 1 ? 50 : 38) : (state === 0 ? 124 : state === 1 ? 84 : 60)
+    const baseX = isThumb ? 34 : 86 + (index - 1) * 26
+    const baseY = isThumb ? 148 : 28 + (124 - height)
+    const rotate = isThumb ? (state === 2 ? -42 : state === 1 ? -30 : -18) : -10 + (index - 1) * 2
+    const originX = baseX + (isThumb ? 18 : 9)
     const originY = baseY + height
 
     return {
       key: `finger-${index}`,
       x: baseX,
       y: baseY,
-      width: isThumb ? 24 : 18,
+      width: isThumb ? 28 : 20,
       height,
-      rx: 10,
+      rx: 14,
       transform: `rotate(${rotate} ${originX} ${originY})`
     }
   })
 })
 
 const leftHandSvgTransform = computed(() => {
-  return `translate(0 ${currentPose.value.left.y}) rotate(${currentPose.value.left.rot} 138 150)`
+  return `translate(0 ${currentPose.value.left.y}) rotate(${currentPose.value.left.rot} 176 160)`
 })
 
 const rightHandSvgTransform = computed(() => {
@@ -737,16 +746,21 @@ onBeforeUnmount(() => {
 
   .hand-stage {
     width: 100%;
-    min-height: 220px;
+    min-height: 240px;
     display: flex;
     justify-content: center;
     align-items: center;
     padding: 14px 14px 0;
+    background: radial-gradient(circle at 50% 10%, rgba(255, 255, 255, 0.72), transparent 35%), linear-gradient(180deg, #eef7ff 0%, #dfe9ff 100%);
+    border-radius: 30px;
   }
 
   .hand-stage .hand-graphic {
     max-width: 100%;
-    height: 220px;
+    width: 100%;
+    height: 260px;
+    border-radius: 32px;
+    box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.8), 0 24px 60px rgba(15, 23, 42, 0.08);
   }
 
   .hand-graphic {
@@ -760,17 +774,30 @@ onBeforeUnmount(() => {
     transition: opacity 0.22s ease, transform 0.22s ease;
   }
 
+  .wrist-shape {
+    fill: #d7b08a;
+    opacity: 0.92;
+  }
+
   .palm-shape {
     fill: url(#palmGradient);
-    stroke: #cda16a;
+    stroke: #c29866;
     stroke-width: 3;
+    filter: url(#fingerShadow);
+  }
+
+  .palm-highlight {
+    fill: url(#highlightGradient);
+    opacity: 0.85;
   }
 
   .finger-shape {
     fill: url(#fingerGradient);
-    stroke: #cda16a;
+    stroke: #c29866;
     stroke-width: 2;
-    filter: drop-shadow(0 8px 15px rgba(0, 0, 0, 0.08));
+    filter: url(#fingerShadow);
+    stroke-linecap: round;
+    stroke-linejoin: round;
   }
 
   .letter-strip {
