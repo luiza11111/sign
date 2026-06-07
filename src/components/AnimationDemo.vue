@@ -2,17 +2,17 @@
   <div class="animation-demo-card">
     <div class="animation-demo-header">
       <div>
-        <h3>{{ mode === 'dactyl' ? 'Dactyl режимі' : 'Lottie және видео анимациясы' }}</h3>
+        <h3>{{ cardTitle }}</h3>
         <p>{{ subtitle }}</p>
       </div>
       <div class="animation-actions">
         <button class="action-btn" @click="reloadAnimation">
           <RefreshCw :size="16" />
-          Қайта жүктеу
+          {{ reloadLabel }}
         </button>
         <button class="action-btn primary" @click="playAnimation">
           <Play :size="16" />
-          Ойнату
+          {{ playLabel }}
         </button>
       </div>
     </div>
@@ -22,7 +22,7 @@
         <div v-if="mode === 'dactyl'" class="hand-pose-panel">
           <div class="pose-board">
             <div class="board-header">
-              <div class="board-title">Dactyl</div>
+              <div class="board-title">{{ dactylLabel }}</div>
               <div class="board-badges">
                 <span class="badge-dot"></span>
                 <span class="badge-dot"></span>
@@ -98,38 +98,13 @@
             <div class="pose-letter">{{ currentLetter || ' ' }}</div>
             <div class="handshape-label">
               <span class="handshape-name">{{ handShapeLabel }}</span>
-              <span class="handshape-subtitle">Қол пішіні</span>
+              <span class="handshape-subtitle">{{ handshapeTitle }}</span>
             </div>
           </div>
         </div>
         <div v-else ref="animationContainer" class="animation-container"></div>
         <div class="animation-caption">
-          {{ mode === 'dactyl' ? 'Персонаж ым тілін имитациялайтын позаларды көрсетеді.' : 'Lottie анимациясы мен бейне бірге көрсетіледі.' }}
-        </div>
-      </div>
-
-      <div class="demo-info">
-        <div class="demo-section" v-if="mode === 'dactyl'">
-          <div class="demo-label">Қолданылатын мәтін:</div>
-          <div class="letter-grid" v-if="letters.length">
-            <span 
-              class="letter-chip" 
-              :class="{ active: index === currentLetterIndex.value }"
-              v-for="(letter, index) in letters" 
-              :key="index"
-            >{{ letter }}</span>
-          </div>
-          <div class="empty-notice" v-else>Мәтінді енгізіңіз немесе аударма жасаңыз.</div>
-        </div>
-
-        <div class="demo-section" v-else>
-          <div class="demo-label">Видео көрсеткіш</div>
-          <div class="video-preview" v-if="videoUrl">
-            <video controls muted autoplay loop playsinline :src="videoUrl"></video>
-          </div>
-          <div class="empty-notice" v-else>
-            Видео табылмады. Алдымен аударма жасап, видеоларды іздеңіз.
-          </div>
+          {{ captionText }}
         </div>
       </div>
     </div>
@@ -140,10 +115,12 @@
 import { ref, computed, watch, onMounted, onBeforeUnmount } from 'vue'
 import lottie from 'lottie-web'
 import { Play, RefreshCw } from 'lucide-vue-next'
+import { t } from '../i18n'
 
 const props = defineProps({
   mode: { type: String, default: 'video' },
   text: { type: String, default: '' },
+  phrase: { type: String, default: '' },
   videoUrl: { type: String, default: '' }
 })
 
@@ -151,6 +128,14 @@ const animationContainer = ref(null)
 let animation = null
 let letterTimer = null
 const currentLetterIndex = ref(0)
+
+const normalizeLottieFileName = (value) => {
+  return (value || '')
+    .trim()
+    .toLowerCase()
+    .replace(/[^A-Za-zА-Яа-яӘәҒғҚқҢңӨөҰұҮүҺһІі0-9\s]/g, '')
+    .replace(/\s+/g, '_')
+}
 
 const letters = computed(() => {
   if (!props.text) return []
@@ -261,13 +246,31 @@ const rightHandSvgTransform = computed(() => {
   return `translate(520 0) scale(-1 1) translate(0 ${currentPose.value.right.y}) rotate(${-currentPose.value.right.rot} 138 150)`
 })
 
-const subtitle = computed(() => {
+const cardTitle = computed(() => {
   return props.mode === 'dactyl'
-    ? 'Әр әріптің нақты дактиль ымын көрсететін қол пішіндері.'
-    : 'Lottie анимациясы мен бейне демонстрациясы бірге көрсетіледі.'
+    ? t('dactyl_mode_card')
+    : t('lottie_video_animation_card')
 })
 
-const fallbackFilePath = '/lottie/fallback.json'
+const subtitle = computed(() => {
+  return props.mode === 'dactyl'
+    ? t('dactyl_mode_description')
+    : t('lottie_video_description')
+})
+
+const captionText = computed(() => {
+  return props.mode === 'dactyl'
+    ? t('dactyl_caption')
+    : t('lottie_video_caption')
+})
+
+const reloadLabel = computed(() => t('reload'))
+const playLabel = computed(() => t('play'))
+const handshapeTitle = computed(() => t('handshape'))
+const dactylLabel = computed(() => t('dactyl_label'))
+
+const lottieBasePath = '/lottie'
+const fallbackFilePath = `${lottieBasePath}/fallback.json`
 
 const animationData = {
   v: '5.5.7',
@@ -341,12 +344,46 @@ const loadAnimationJson = async (path) => {
 
 const loadLetterAnimation = async (letter) => {
   const encodedLetter = encodeURIComponent(letter)
-  const filePath = `/lottie/${encodedLetter}.json`
+  const filePath = `${lottieBasePath}/${encodedLetter}.json`
 
   try {
     const jsonData = await loadAnimationJson(filePath)
     loadAnimationData(jsonData)
+    return
   } catch (err) {
+    // try fallback if specific letter JSON is missing
+  }
+
+  try {
+    const fallbackData = await loadAnimationJson(fallbackFilePath)
+    loadAnimationData(fallbackData)
+  } catch (fallbackErr) {
+    loadAnimationData(animationData)
+  }
+}
+
+const loadPhraseAnimation = async (phrase) => {
+  const trimmed = (phrase || '').trim()
+  if (!trimmed) {
+    loadAnimationData(animationData)
+    return
+  }
+
+  const cleanedFileName = normalizeLottieFileName(trimmed)
+  const filePath = `${lottieBasePath}/${encodeURIComponent(cleanedFileName)}.json`
+
+  try {
+    const jsonData = await loadAnimationJson(filePath)
+    loadAnimationData(jsonData)
+    return
+  } catch (err) {
+    // fallback to first letter if phrase Lottie is not available
+  }
+
+  const firstLetter = letters.value[0]
+  if (firstLetter) {
+    await loadLetterAnimation(firstLetter)
+  } else {
     try {
       const fallbackData = await loadAnimationJson(fallbackFilePath)
       loadAnimationData(fallbackData)
@@ -368,7 +405,16 @@ const initAnimation = async () => {
     animation = null
   }
 
-  loadAnimationData(animationData)
+  if (props.phrase) {
+    await loadPhraseAnimation(props.phrase)
+  } else {
+    const firstLetter = letters.value[0]
+    if (firstLetter) {
+      await loadLetterAnimation(firstLetter)
+    } else {
+      loadAnimationData(animationData)
+    }
+  }
 }
 
 const startLetterSequence = () => {
@@ -427,6 +473,14 @@ watch(() => props.text, async () => {
     currentLetterIndex.value = 0
     startLetterSequence()
     await initAnimation()
+  } else {
+    await initAnimation()
+  }
+})
+
+watch(() => props.phrase, async () => {
+  if (props.mode !== 'dactyl') {
+    await initAnimation()
   }
 })
 
@@ -445,22 +499,26 @@ onBeforeUnmount(() => {
 
 <style scoped>
 .animation-demo-card {
-  background: white;
-  border-radius: 28px;
-  border: 1px solid #eef2f6;
+  background: var(--card-bg);
+  color: var(--text-primary);
+  border-radius: 20px;
+  border: 1px solid var(--border-color);
   overflow: hidden;
-  padding: 24px;
+  padding: 14px;
   display: flex;
   flex-direction: column;
-  gap: 18px;
-  box-shadow: 0 10px 30px rgba(15, 23, 42, 0.05);
+  gap: 12px;
+  box-shadow: 0 12px 24px rgba(15, 23, 42, 0.08);
+  width: 100%;
+  max-width: 720px;
+  margin: 0 auto;
 }
 
 .animation-demo-header {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  gap: 16px;
+  gap: 14px;
   flex-wrap: wrap;
 }
 
@@ -468,12 +526,12 @@ onBeforeUnmount(() => {
   margin: 0;
   font-size: 18px;
   font-weight: 700;
-  color: #111827;
+  color: var(--text-primary);
 }
 
 .animation-demo-header p {
   margin: 6px 0 0;
-  color: #64748b;
+  color: var(--text-secondary);
   font-size: 13px;
 }
 
@@ -487,14 +545,14 @@ onBeforeUnmount(() => {
   display: inline-flex;
   align-items: center;
   gap: 8px;
-  padding: 10px 16px;
+  padding: 8px 12px;
   border-radius: 999px;
-  border: 1px solid #cbd5e1;
-  background: white;
-  color: #334155;
+  border: 1px solid var(--border-color);
+  background: var(--bg-secondary);
+  color: var(--text-primary);
   font-size: 13px;
   cursor: pointer;
-  transition: all 0.2s ease;
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
 }
 
 .action-btn.primary {
@@ -505,451 +563,208 @@ onBeforeUnmount(() => {
 
 .action-btn:hover {
   transform: translateY(-1px);
-  box-shadow: 0 8px 20px rgba(99, 102, 241, 0.15);
+  box-shadow: 0 10px 24px rgba(99, 102, 241, 0.14);
 }
 
 .animation-body {
   display: grid;
-  grid-template-columns: 1.2fr 1fr;
-  gap: 18px;
+  grid-template-columns: 1fr;
+  gap: 14px;
 }
 
 .lottie-panel {
   position: relative;
-  border-radius: 24px;
-  background: #f8fafc;
-  padding: 18px;
+  border-radius: 20px;
+  background: var(--bg-secondary);
+  padding: 14px;
   display: flex;
   flex-direction: column;
-  gap: 12px;
-  min-height: 320px;
+  gap: 10px;
+  min-height: 260px;
+  max-height: 380px;
 }
 
 .animation-container {
   flex: 1;
-  min-height: 260px;
+  min-height: 160px;
+  max-height: 240px;
   display: flex;
   align-items: center;
   justify-content: center;
 }
 
 .animation-caption {
-  font-size: 13px;
-  color: #475569;
+  font-size: 12px;
+  color: var(--text-secondary);
+  max-width: 520px;
+  text-align: center;
+  margin: 0 auto;
 }
 
 .hand-pose-panel {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    min-height: 420px;
-    gap: 20px;
-  }
-
-  .pose-board {
-    width: 100%;
-    max-width: 560px;
-    background: linear-gradient(180deg, #eef4ff 0%, #ffffff 100%);
-    border: 1px solid #dbeafe;
-    border-radius: 34px;
-    padding: 24px 24px 20px;
-    box-shadow: 0 24px 70px rgba(15, 23, 42, 0.08);
-    position: relative;
-    overflow: hidden;
-  }
-
-  .board-header {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    margin-bottom: 12px;
-  }
-
-  .board-title {
-    font-size: 11px;
-    font-weight: 700;
-    color: #0f172a;
-    letter-spacing: 0.2em;
-    text-transform: uppercase;
-  }
-
-  .board-badges {
-    display: flex;
-    gap: 10px;
-  }
-
-  .badge-dot {
-    width: 10px;
-    height: 10px;
-    background: #c7d2fe;
-    border-radius: 50%;
-    box-shadow: 0 0 0 4px rgba(99, 102, 241, 0.12);
-  }
-
-  .avatar-frame {
-    position: relative;
-    width: 174px;
-    height: 156px;
-    margin: 0 auto 10px;
-  }
-
-  .avatar-head {
-    position: absolute;
-    top: 0;
-    left: 50%;
-    width: 98px;
-    height: 98px;
-    transform: translateX(-50%);
-    border-radius: 50%;
-    background: linear-gradient(180deg, #fde8c3 0%, #f7d9ad 100%);
-    border: 4px solid #d8b38f;
-    box-shadow: inset 0 14px 0 rgba(255, 255, 255, 0.75);
-  }
-
-  .avatar-neck {
-    position: absolute;
-    top: 92px;
-    left: 50%;
-    width: 42px;
-    height: 30px;
-    transform: translateX(-50%);
-    background: #fde8c3;
-    border-radius: 0 0 18px 18px;
-  }
-
-  .avatar-shoulders {
-    position: absolute;
-    top: 118px;
-    left: 50%;
-    width: 180px;
-    height: 80px;
-    transform: translateX(-50%);
-    background: #eff4ff;
-    border-radius: 80px 80px 30px 30px;
-    box-shadow: inset 0 12px 0 rgba(255, 255, 255, 0.9);
-  }
-
-  .hand-scene {
-    position: relative;
-    width: 100%;
-    min-height: 320px;
-    display: flex;
-    justify-content: center;
-    align-items: flex-start;
-    padding: 10px 16px 0;
-  }
-
-  .board-graphic {
-    display: grid;
-    grid-template-columns: 1.08fr 0.9fr;
-    gap: 18px;
-    width: 100%;
-    align-items: start;
-    margin-bottom: 18px;
-  }
-
-  .board-wall {
-    position: absolute;
-    inset: 0;
-    background: radial-gradient(circle at top left, rgba(99, 102, 241, 0.08), transparent 28%),
-      radial-gradient(circle at bottom right, rgba(59, 130, 246, 0.08), transparent 24%),
-      linear-gradient(180deg, rgba(255, 255, 255, 0.95), #eef6ff);
-    border-radius: 28px;
-    box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.75);
-  }
-
-  .board-graphic > * {
-    position: relative;
-    z-index: 1;
-  }
-
-  .board-person {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    gap: 8px;
-    padding: 16px 12px 12px;
-    min-height: 240px;
-  }
-
-  .person-head {
-    width: 94px;
-    height: 94px;
-    border-radius: 50%;
-    background: linear-gradient(180deg, #f9ddaf 0%, #f2c68b 100%);
-    border: 4px solid #d7b484;
-    box-shadow: inset 0 10px 0 rgba(255, 255, 255, 0.7);
-  }
-
-  .person-neck {
-    width: 30px;
-    height: 24px;
-    border-radius: 0 0 14px 14px;
-    background: #f9ddaf;
-  }
-
-  .person-body {
-    width: 140px;
-    height: 100px;
-    border-radius: 28px 28px 30px 30px;
-    background: linear-gradient(180deg, #9ec1df 0%, #6b8eb6 100%);
-    box-shadow: inset 0 10px 0 rgba(255, 255, 255, 0.3);
-  }
-
-  .person-arm {
-    width: 122px;
-    height: 22px;
-    border-radius: 999px;
-    background: linear-gradient(180deg, #9ec1df 0%, #6b8eb6 100%);
-    transform: translateX(12px) rotate(18deg);
-  }
-
-  .pinned-cards {
-    display: grid;
-    gap: 14px;
-    padding: 18px 12px 12px;
-  }
-
-  .pinned-card {
-    position: relative;
-    width: 100%;
-    height: 80px;
-    border-radius: 18px;
-    background: rgba(255, 255, 255, 0.9);
-    border: 1px solid #dbe7ff;
-    box-shadow: 0 12px 24px rgba(15, 23, 42, 0.06);
-  }
-
-  .pin-dot {
-    position: absolute;
-    top: 12px;
-    left: 50%;
-    width: 12px;
-    height: 12px;
-    background: #c7d2fe;
-    border-radius: 50%;
-    transform: translateX(-50%);
-    box-shadow: 0 0 0 4px rgba(99, 102, 241, 0.12);
-  }
-
-  .card-illustration {
-    position: absolute;
-    top: 28px;
-    left: 50%;
-    width: 46px;
-    height: 46px;
-    transform: translateX(-50%);
-    background: linear-gradient(180deg, #eef6ff 0%, #dbeafe 100%);
-    border-radius: 14px;
-    border: 1px solid #cbd5e1;
-  }
-
-  .hand-stage {
-    width: 100%;
-    min-height: 240px;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    padding: 14px 14px 0;
-    background: radial-gradient(circle at 50% 10%, rgba(255, 255, 255, 0.72), transparent 35%), linear-gradient(180deg, #eef7ff 0%, #dfe9ff 100%);
-    border-radius: 30px;
-  }
-
-  .hand-stage .hand-graphic {
-    max-width: 100%;
-    width: 100%;
-    height: 260px;
-    border-radius: 32px;
-    box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.8), 0 24px 60px rgba(15, 23, 42, 0.08);
-  }
-
-  .hand-graphic {
-    width: 100%;
-    height: auto;
-    overflow: visible;
-  }
-
-  .hand-layer {
-    opacity: 1;
-    transition: opacity 0.22s ease, transform 0.22s ease;
-  }
-
-  .wrist-shape {
-    fill: #d7b08a;
-    opacity: 0.92;
-  }
-
-  .palm-shape {
-    fill: url(#palmGradient);
-    stroke: #c29866;
-    stroke-width: 3;
-    filter: url(#fingerShadow);
-  }
-
-  .palm-highlight {
-    fill: url(#highlightGradient);
-    opacity: 0.85;
-  }
-
-  .finger-shape {
-    fill: url(#fingerGradient);
-    stroke: #c29866;
-    stroke-width: 2;
-    filter: url(#fingerShadow);
-    stroke-linecap: round;
-    stroke-linejoin: round;
-  }
-
-  .letter-strip {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 10px;
-    justify-content: center;
-    padding: 0 10px 10px;
-  }
-
-  .strip-chip {
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
-    min-width: 34px;
-    min-height: 34px;
-    padding: 0 12px;
-    border-radius: 14px;
-    background: #f1f5ff;
-    color: #1d4ed8;
-    font-weight: 700;
-    border: 1px solid transparent;
-  }
-
-  .strip-chip.active {
-    background: #4f46e5;
-    color: #fff;
-    border-color: #4338ca;
-  }
-
-  .pose-footer {
-    display: grid;
-    gap: 8px;
-    align-items: center;
-    justify-items: center;
-  }
-
-  .pose-letter {
-    font-size: 72px;
-    font-weight: 900;
-    color: #102a43;
-    line-height: 1;
-  }
-
-  .handshape-label {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    gap: 4px;
-  }
-
-  .handshape-name {
-    color: #0f172a;
-    font-size: 14px;
-    font-weight: 700;
-  }
-
-  .handshape-subtitle {
-    color: #475569;
-    font-size: 12px;
-    text-transform: uppercase;
-    letter-spacing: 0.08em;
-  }
-
-  .animation-caption {
-    font-size: 13px;
-    color: #475569;
-    max-width: 520px;
-    text-align: center;
-    margin: 0 auto;
-  }
-
-.animation-container {
-  flex: 1;
-  min-height: 260px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-}
-
-.letter-grid {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 10px;
-}
-
-.letter-chip {
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  min-width: 40px;
-  min-height: 40px;
-  border-radius: 999px;
-  background: #f8fafc;
-  color: #334155;
-  font-weight: 700;
-  border: 1px solid #e2e8f0;
-}
-
-.letter-chip.active {
-  background: #6366f1;
-  color: #ffffff;
-  border-color: #4f46e5;
-}
-
-.demo-info {
   display: flex;
   flex-direction: column;
+  align-items: center;
+  min-height: 320px;
   gap: 16px;
 }
 
-.demo-section {
-  background: #ffffff;
-  border-radius: 24px;
-  border: 1px solid #eef2f6;
-  padding: 18px;
-  min-height: 160px;
+.pose-board {
+  width: 100%;
+  max-width: 560px;
+  background: linear-gradient(180deg, #eef4ff 0%, #ffffff 100%);
+  border: 1px solid #dbeafe;
+  border-radius: 32px;
+  padding: 22px 22px 18px;
+  box-shadow: 0 24px 70px rgba(15, 23, 42, 0.08);
+  position: relative;
+  overflow: hidden;
 }
 
-.demo-label {
-  display: block;
-  font-size: 13px;
-  font-weight: 700;
-  margin-bottom: 14px;
-  color: #1e293b;
-}
-
-.letter-grid {
+.board-header {
   display: flex;
-  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 12px;
+}
+
+.board-title {
+  font-size: 11px;
+  font-weight: 700;
+  color: #0f172a;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+}
+
+.board-badges {
+  display: flex;
   gap: 10px;
 }
 
-.letter-chip {
-  padding: 10px 12px;
-  border-radius: 16px;
-  background: #eff6ff;
+.badge-dot {
+  width: 10px;
+  height: 10px;
+  background: #c7d2fe;
+  border-radius: 50%;
+  box-shadow: 0 0 0 4px rgba(99, 102, 241, 0.12);
+}
+
+.hand-stage {
+  width: 100%;
+  min-height: 150px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 10px 10px 0;
+  background: radial-gradient(circle at 50% 10%, rgba(255, 255, 255, 0.72), transparent 35%), linear-gradient(180deg, #eef7ff 0%, #dfe9ff 100%);
+  border-radius: 24px;
+}
+
+.hand-stage .hand-graphic {
+  max-width: 100%;
+  width: 100%;
+  height: 220px;
+  border-radius: 28px;
+  box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.8), 0 20px 48px rgba(15, 23, 42, 0.08);
+}
+
+.hand-graphic {
+  width: 100%;
+  height: auto;
+  overflow: visible;
+}
+
+.hand-layer {
+  opacity: 1;
+  transition: opacity 0.22s ease, transform 0.22s ease;
+}
+
+.wrist-shape {
+  fill: #d7b08a;
+  opacity: 0.92;
+}
+
+.palm-shape {
+  fill: url(#palmGradient);
+  stroke: #c29866;
+  stroke-width: 3;
+  filter: url(#fingerShadow);
+}
+
+.palm-highlight {
+  fill: url(#highlightGradient);
+  opacity: 0.85;
+}
+
+.finger-shape {
+  fill: url(#fingerGradient);
+  stroke: #c29866;
+  stroke-width: 2;
+  filter: url(#fingerShadow);
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+
+.letter-strip {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  justify-content: center;
+  padding: 0 10px 10px;
+}
+
+.strip-chip {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 34px;
+  min-height: 34px;
+  padding: 0 12px;
+  border-radius: 14px;
+  background: #f1f5ff;
   color: #1d4ed8;
   font-weight: 700;
-  border: 1px solid #dbeafe;
+  border: 1px solid transparent;
 }
 
-.video-preview video {
-  width: 100%;
-  border-radius: 18px;
-  max-height: 240px;
+.strip-chip.active {
+  background: #4f46e5;
+  color: #fff;
+  border-color: #4338ca;
 }
 
-.empty-notice {
-  font-size: 13px;
-  color: #64748b;
-  line-height: 1.6;
+.pose-footer {
+  display: grid;
+  gap: 8px;
+  align-items: center;
+  justify-items: center;
+}
+
+.pose-letter {
+  font-size: 62px;
+  font-weight: 900;
+  color: var(--text-primary);
+  line-height: 1;
+}
+
+.handshape-label {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 4px;
+}
+
+.handshape-name {
+  color: var(--text-primary);
+  font-size: 14px;
+  font-weight: 700;
+}
+
+.handshape-subtitle {
+  color: var(--text-secondary);
+  font-size: 12px;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
 }
 
 @media (max-width: 960px) {

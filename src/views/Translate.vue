@@ -106,13 +106,9 @@
           <div class="animation-toggle-row">
             <label class="toggle-label">
               <input type="checkbox" v-model="dactylMode" />
-              <span>Дактиль режимі</span>
+              <span>{{ t('dactyl_toggle_label') }}</span>
             </label>
-            <span class="toggle-description">{{ dactylMode ? 'Дактиль және Lottie анимациясы' : 'Видео және Lottie анимациясы' }}</span>
-          </div>
-
-          <div class="animation-module">
-            <AnimationDemo :mode="animationMode" :text="inputText" :video-url="getVideoUrl(currentVideoEntry)" />
+            <span class="toggle-description">{{ dactylMode ? t('dactyl_toggle_description') : t('video_toggle_description') }}</span>
           </div>
 
           <div class="action-buttons" v-if="showActions">
@@ -131,6 +127,15 @@
           </div>
         </div>
       </div>
+    </div>
+
+    <div class="animation-module">
+      <AnimationDemo
+        :mode="animationMode"
+        :text="inputText"
+        :phrase="currentVideoEntry?.kazakh || currentVideoEntry?.text || inputText"
+        :video-url="getVideoUrl(currentVideoEntry)"
+      />
     </div>
 
     <!-- Ұсынылатын сөздер -->
@@ -563,7 +568,10 @@ watch(inputText, (newValue) => {
 }
 
 .animation-module {
-  margin-top: 24px;
+  margin: 18px auto 24px;
+  max-width: 980px;
+  display: flex;
+  justify-content: center;
 }
 
 .animation-toggle-row {
@@ -596,9 +604,6 @@ watch(inputText, (newValue) => {
   font-size: 13px;
 }
 
-.animation-module {
-  margin-top: 24px;
-}
 .page-header {
   display: flex;
   justify-content: space-between;
