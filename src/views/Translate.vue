@@ -91,7 +91,6 @@
                     <span v-if="currentVideoEntry?.russian && currentVideoEntry?.kazakh" class="video-subtitle">({{ currentVideoEntry?.russian }})</span>
                   </p>
                   <video
-                    ref="videoPlayer"
                     :src="getVideoUrl(currentVideoEntry)"
                     controls
                     playsinline
@@ -234,7 +233,6 @@ const recentTranslations = ref([])
 const todayCount = ref(24)
 const videoEntries = ref([])
 const currentVideoIndex = ref(0)
-const videoPlayer = ref(null)
 const dactylMode = ref(false)
 const dictionaryStore = useDictionaryStore()
 const currentVideoEntry = computed(() => videoEntries.value[currentVideoIndex.value] || null)
@@ -346,14 +344,6 @@ watch(videoEntries, () => {
   currentVideoIndex.value = 0
 })
 
-// Автозапуск видео при смене текущего видео
-watch(currentVideoEntry, async () => {
-  await nextTick()
-  if (videoPlayer.value) {
-    videoPlayer.value.play().catch(() => {})
-  }
-})
-
 // Текстті қысқарту
 const truncateText = (text, length) => {
   if (text.length <= length) return text
@@ -385,8 +375,7 @@ const translateText = async () => {
   }
   
   const authStore = useAuthStore()
-  const translation = `🧏‍♂️ "${inputText.value}" - ${t('translated')}`
-  translatedText.value = translation
+  translatedText.value = ''
   
   // Search in local dictionary first
   videoEntries.value = findMatchingDictionaryEntries(inputText.value)
@@ -414,19 +403,16 @@ const translateText = async () => {
   
   await nextTick()
 
-  // If we found videos, hide the textual translation and try to autoplay the first one
+  // If we found videos, keep the translation text and show the matched video preview
   if (videoEntries.value && videoEntries.value.length > 0) {
-    translatedText.value = ''
-    if (videoPlayer.value) {
-      videoPlayer.value.play().catch(() => {})
-    }
+    // keep translatedText.value intact so translation remains visible
   }
   
   if (authStore.isLoggedIn) {
     try {
       await apiClient.post('/api/history', {
         text: inputText.value,
-        translation: translation
+        translation: inputText.value
       })
       
       const response = await apiClient.get('/api/history')
@@ -450,7 +436,7 @@ const saveToLocalStorage = () => {
   const history = JSON.parse(localStorage.getItem('translationHistory') || '[]')
   history.unshift({
     text: inputText.value,
-    translation: `🧏‍♂️ "${inputText.value}" - ${t('translated')}`,
+    translation: inputText.value,
     date: new Date().toLocaleString()
   })
   localStorage.setItem('translationHistory', JSON.stringify(history.slice(0, 50)))

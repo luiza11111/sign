@@ -102,7 +102,28 @@
             </div>
           </div>
         </div>
-        <div v-else ref="animationContainer" class="animation-container"></div>
+        <div v-else>
+          <div v-if="props.videoUrl" class="animation-container">
+            <video
+              ref="videoPlayer"
+              class="video-player"
+              :src="props.videoUrl"
+              autoplay
+              loop
+              muted
+              playsinline
+              controls
+            ></video>
+          </div>
+
+          <div v-else class="animation-container under-development-container">
+            <div class="under-development-message">
+              <div class="under-dev-icon">🔧</div>
+              <p class="under-dev-text">{{ t('under_development') }}</p>
+              <small class="under-dev-hint">{{ t('video_not_found') }}</small>
+            </div>
+          </div>
+        </div>
         <div class="animation-caption">
           {{ captionText }}
         </div>
@@ -125,6 +146,7 @@ const props = defineProps({
 })
 
 const animationContainer = ref(null)
+const videoPlayer = ref(null)
 let animation = null
 let letterTimer = null
 const currentLetterIndex = ref(0)
@@ -334,6 +356,25 @@ const loadAnimationData = (data) => {
   })
 }
 
+const loadVideo = async () => {
+  // stop any Lottie animation
+  if (animation) {
+    animation.destroy()
+    animation = null
+  }
+
+  if (!videoPlayer.value) return
+
+  try {
+    // ensure src is up to date and play
+    videoPlayer.value.src = props.videoUrl || ''
+    // Safari/Chrome may require play() to be called programmatically
+    await videoPlayer.value.play().catch(() => {})
+  } catch (err) {
+    // ignore play errors (autoplay policies)
+  }
+}
+
 const loadAnimationJson = async (path) => {
   const response = await fetch(path)
   if (!response.ok) {
@@ -398,6 +439,13 @@ const initAnimation = async () => {
     return
   }
 
+  // If video URL provided, prefer video playback
+  if (props.videoUrl) {
+    await loadVideo()
+    return
+  }
+
+  // Otherwise use Lottie
   if (!animationContainer.value) return
 
   if (animation) {
@@ -484,6 +532,12 @@ watch(() => props.phrase, async () => {
   }
 })
 
+watch(() => props.videoUrl, async () => {
+  if (props.mode !== 'dactyl') {
+    await initAnimation()
+  }
+})
+
 onMounted(async () => {
   await initAnimation()
   if (props.mode === 'dactyl') {
@@ -494,6 +548,12 @@ onMounted(async () => {
 onBeforeUnmount(() => {
   if (animation) animation.destroy()
   stopLetterSequence()
+  if (videoPlayer.value) {
+    try {
+      videoPlayer.value.pause()
+      videoPlayer.value.src = ''
+    } catch (e) {}
+  }
 })
 </script>
 
@@ -591,6 +651,14 @@ onBeforeUnmount(() => {
   display: flex;
   align-items: center;
   justify-content: center;
+}
+
+.video-player {
+  width: 100%;
+  height: auto;
+  max-height: 240px;
+  background: black;
+  border-radius: 12px;
 }
 
 .animation-caption {

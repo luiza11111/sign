@@ -105,6 +105,8 @@ const translations = {
     'clear_recent': 'Тазалау',
     'no_result': 'Мәтін енгізіп, аударыңыз',
     'translated': 'Қазақ ым тіліне сәтті аударылды',
+    'under_development': 'Әлі ресімде',
+    'video_not_found': 'Видео табылмады',
 
     // === HISTORY (ТАРИХ БЕТІ) ===
     'history_title': 'Тарих',
@@ -322,6 +324,8 @@ const translations = {
     'clear_recent': 'Очистить',
     'no_result': 'Введите текст для перевода',
     'translated': 'Успешно переведено на казахский язык жестов',
+    'under_development': 'Ещё в разработке',
+    'video_not_found': 'Видео не найдено',
 
     'history_title': 'История',
     'history_subtitle': 'История всех ваших переводов',
@@ -530,6 +534,8 @@ const translations = {
     'clear_recent': 'Clear',
     'no_result': 'Enter text to translate',
     'translated': 'Successfully translated to Kazakh Sign Language',
+    'under_development': 'Under development',
+    'video_not_found': 'Video not found',
 
     'history_title': 'History',
     'history_subtitle': 'History of all your translations',
