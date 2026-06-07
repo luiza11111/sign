@@ -103,26 +103,19 @@
           </div>
         </div>
         <div v-else>
-          <div v-if="props.videoUrl" class="animation-container">
-            <video
-              ref="videoPlayer"
-              class="video-player"
-              :src="props.videoUrl"
-              autoplay
-              loop
-              muted
-              playsinline
-              controls
-            ></video>
-          </div>
+          <video
+            v-if="props.videoUrl"
+            ref="videoPlayer"
+            class="animation-container video-player"
+            :src="props.videoUrl"
+            autoplay
+            loop
+            muted
+            playsinline
+            controls
+          ></video>
 
-          <div v-else class="animation-container under-development-container">
-            <div class="under-development-message">
-              <div class="under-dev-icon">🔧</div>
-              <p class="under-dev-text">{{ t('under_development') }}</p>
-              <small class="under-dev-hint">{{ t('video_not_found') }}</small>
-            </div>
-          </div>
+          <div v-else ref="animationContainer" class="animation-container"></div>
         </div>
         <div class="animation-caption">
           {{ captionText }}
