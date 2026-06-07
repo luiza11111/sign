@@ -40,7 +40,8 @@ export const useAuthStore = defineStore('auth', () => {
 
       return { success: true, message: 'Тіркелу сәтті! Енді жүйеге кіріңіз.' }
     } catch (error) {
-      return { success: false, message: error.response?.data?.error || 'Қате орын алды' }
+      console.error('Register error:', error.response || error.message || error)
+      return { success: false, message: error.response?.data?.error || error.message || 'Қате орын алды' }
     }
   }
 
@@ -62,7 +63,8 @@ export const useAuthStore = defineStore('auth', () => {
 
       return { success: true, message: 'Кіру сәтті!', role: response.data.user.role }
     } catch (error) {
-      return { success: false, message: error.response?.data?.error || 'Қате орын алды' }
+      console.error('Login error:', error.response || error.message || error)
+      return { success: false, message: error.response?.data?.error || error.message || 'Қате орын алды' }
     }
   }
 

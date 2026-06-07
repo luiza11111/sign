@@ -6,7 +6,7 @@
         <p>{{ subtitle }}</p>
       </div>
       <div class="animation-actions">
-        <button class="action-btn" @click="reloadAnimation">
+        <button class="action-btn" @click="mode === 'dactyl' ? stopDactyl() : reloadAnimation()">
           <RefreshCw :size="16" />
           {{ reloadLabel }}
         </button>

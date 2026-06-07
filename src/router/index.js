@@ -109,23 +109,21 @@ router.beforeEach((to, from, next) => {
 
   // Егер бет авторизация қажет етсе және қолданушы кірмеген болса
   if (to.meta.requiresAuth && !isLoggedIn) {
-    next('/login')
-  } 
-  // Егер бет тек қонақтар үшін болса (login/register) және қолданушы кірген болса
-  else if (to.meta.guestOnly && isLoggedIn) {
-    next('/')
+    return next('/login')
   }
-  // Егер бет админ құқығын қажет етсе және қолданушы админ болмаса
-  else if (to.meta.requiresAdmin && !isAdminUser) {
-    next('/') // Админ емес адам /admin бетіне кірсе — Home-ға қайтарады
-  } 
-  // Құртынды жағдай: қолданушы / бетіне өндеген болса және авторизация қажет болса
-  else if (to.path === '/' && !isLoggedIn && from.path === '/') {
-    next('/login')
+
+  // Если маршрут только для гостей (login/register) и пользователь уже залогинен — перенаправляем на Home
+  if (to.meta.guestOnly && isLoggedIn) {
+    return next('/')
   }
-  else {
-    next()
+
+  // Если нужен админ, но пользователь не админ — редирект на Home
+  if (to.meta.requiresAdmin && !isAdminUser) {
+    return next('/')
   }
+
+  // По умолчанию продолжаем навигацию
+  return next()
 })
 
 export default router

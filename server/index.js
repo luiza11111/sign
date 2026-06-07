@@ -1,12 +1,31 @@
-require('dotenv').config();
+const path = require('path');
+const dotenv = require('dotenv');
 const express = require('express');
 const cors = require('cors');
 const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
 const { Pool } = require('pg');
 const fs = require('fs');
-const path = require('path');
 const axios = require('axios');
+
+const envPath = path.resolve(__dirname, '.env');
+const envExamplePath = path.resolve(__dirname, '.env.example');
+const envResult = dotenv.config({ path: envPath });
+
+if (envResult.error) {
+    if (fs.existsSync(envExamplePath)) {
+        const exampleResult = dotenv.config({ path: envExamplePath });
+        if (!exampleResult.error) {
+            console.log(`✅ Loaded .env.example from ${envExamplePath}`);
+        } else {
+            console.warn(`⚠️ Failed to load .env.example from ${envExamplePath}: ${exampleResult.error.message}`);
+        }
+    } else {
+        console.warn(`⚠️ Failed to load .env from ${envPath}: ${envResult.error.message}`);
+    }
+} else {
+    console.log(`✅ Loaded .env from ${envPath}`);
+}
 
 const app = express();
 const port = process.env.PORT || 4000;
@@ -209,6 +228,7 @@ app.post('/api/login', async (req, res) => {
         const result = await db.query('SELECT * FROM users WHERE email = $1', [email]);
 
         if (result.rows.length === 0) {
+            console.warn(`Login failed: user not found for email=${email}`);
             return res.status(401).json({ error: 'Қолданушы табылмады' });
         }
 
@@ -216,6 +236,7 @@ app.post('/api/login', async (req, res) => {
         const validPassword = await bcrypt.compare(password, user.password_hash);
 
         if (!validPassword) {
+            console.warn(`Login failed: invalid password for user id=${user.id} email=${email}`);
             return res.status(401).json({ error: 'Қате пароль' });
         }
 
@@ -398,7 +419,7 @@ app.put('/api/users/me', authenticateToken, async (req, res) => {
     }
 });
 
-// ========== БЕЛГІ ВИДЕОЛАРЫН АЛУ (барлығына ортақ) ==========
+// ========== БЕЛГІ ВИДЕОЛАРЫН АЛУ (барлығына ортақ - аутентификация қажет емес) ==========
 app.get('/api/sign-videos', (req, res) => {
     try {
         const videoFile = path.join(__dirname, 'video_links.json');
@@ -437,7 +458,14 @@ app.get('/api/sign-videos/:word', (req, res) => {
             return res.status(404).json({ error: 'Сөз табылмады' });
         }
         
-        res.json(found);
+        // Нормализовать видео URL
+        const result = {
+            ...found,
+            video_url: found.video_url || (found.links && found.links[0]) || null,
+            text: found.kazakh || found.text
+        };
+        
+        res.json(result);
     } catch (err) {
         res.status(500).json({ error: err.message });
     }

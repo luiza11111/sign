@@ -19,8 +19,20 @@
 
     <div class="alphabet-grid">
       <div class="alphabet-card" v-for="letter in alphabet" :key="letter.letter">
-        <div class="letter-symbol">{{ letter.letter }}</div>
-        <div>
+        <div class="letter-container">
+          <div class="letter-symbol">{{ letter.letter }}</div>
+          <img 
+            v-if="letter.image" 
+            :src="letter.image" 
+            :alt="`Дактиль әрібі ${letter.letter}`"
+            class="dactyl-image"
+            loading="lazy"
+          />
+          <div v-else class="dactyl-placeholder">
+            <span>📷</span>
+          </div>
+        </div>
+        <div class="letter-info">
           <h3>{{ letter.name }}</h3>
           <p>{{ letter.description }}</p>
         </div>
@@ -38,30 +50,31 @@
 import { ref } from 'vue'
 
 const alphabet = ref([
-  { letter: 'А', name: 'А', description: 'Қол ашық, саусақтар бірге. Қимыл жылдам және оқшауланған.' },
-  { letter: 'Ә', name: 'Ә', description: 'Ұқсас, бірақ саусақтардың ұшы ашық болып қалады.' },
-  { letter: 'Б', name: 'Б', description: 'Бас бармақ жоғары, қалған саусақтар жабыңыз.' },
-  { letter: 'В', name: 'В', description: 'Екі саусақ көрсеткіші мен орташа бірге көтерілген.' },
-  { letter: 'Г', name: 'Г', description: 'Қол мен саусақтың қалыпты бұрылуы бар.' },
-  { letter: 'Д', name: 'Д', description: 'Барлық саусақтар бір-біріне жанасады, алақан ашық.' },
-  { letter: 'Е', name: 'Е', description: 'Қол жеңіл бүгіліп, саусақтар алшақ.' },
-  { letter: 'Ж', name: 'Ж', description: 'Қол саусақтары қайшыласып, орташа қалыпта болады.' },
-  { letter: 'З', name: 'З', description: 'Саусақтар аздап бүгіліп, кішігірім қозғалыс бар.' },
-  { letter: 'И', name: 'И', description: 'Қолдың көрсеткіші байлаулы, қалған саусақтар сабында.' },
-  { letter: 'К', name: 'К', description: 'Көрсеткіш және орташа саусақтар кеңірек ашық.' },
-  { letter: 'Қ', name: 'Қ', description: 'Қолдың артқы жағы көтеріледі, сөз дәлме-дәл.' },
+  { letter: 'А', name: 'А', description: 'Қол ашық, саусақтар бірге. Қимыл жылдам және оқшауланған.', image: '/images/dactyl/a.jpg' },
+  { letter: 'Ә', name: 'Ә', description: 'Ұқсас, бірақ саусақтардың ұшы ашық болып қалады.', image: '/images/dactyl/ae.jpg' },
+  { letter: 'Б', name: 'Б', description: 'Бас бармақ жоғары, қалған саусақтар жабыңыз.', image: '/images/dactyl/b.jpg' },
+  { letter: 'В', name: 'В', description: 'Екі саусақ көрсеткіші мен орташа бірге көтерілген.', image: '/images/dactyl/v.jpg' },
+  { letter: 'Г', name: 'Г', description: 'Қол мен саусақтың қалыпты бұрылуы бар.', image: '/images/dactyl/g.jpg' },
+  { letter: 'Ғ', name: 'Ғ', description: 'Барлық саусақтар бір-біріне жанасады, алақан ашық.', image: '/images/dactyl/gh.jpg' },
+  { letter: 'Д', name: 'Д', description: 'Барлық саусақтар бір-біріне жанасады, алақан ашық.', image: '/images/dactyl/d.jpg' },
+  { letter: 'Е', name: 'Е', description: 'Қол жеңіл бүгіліп, саусақтар алшақ.', image: '/images/dactyl/e.jpg' },
+  { letter: 'Ж', name: 'Ж', description: 'Қол саусақтары қайшыласып, орташа қалыпта болады.', image: '/images/dactyl/zh.jpg' },
+  { letter: 'З', name: 'З', description: 'Саусақтар аздап бүгіліп, кішігірім қозғалыс бар.', image: '/images/dactyl/z.jpg' },
+  { letter: 'И', name: 'И', description: 'Қолдың көрсеткіші байлаулы, қалған саусақтар сабында.', image: '/images/dactyl/i.jpg' },
+  { letter: 'К', name: 'К', description: 'Көрсеткіш және орташа саусақтар кеңірек ашық.', image: '/images/dactyl/k.jpg' },
+  { letter: 'Қ', name: 'Қ', description: 'Қолдың артқы жағы көтеріледі, сөз дәлме-дәл.', image: '/images/dactyl/q.jpg' },
   { letter: 'Л', name: 'Л', description: 'Көрсеткіш пен орташа саусақ бірге, қалғандары бүгіледі.' },
-  { letter: 'М', name: 'М', description: 'Барлық саусақтар біріктірілген, алақан қысқа қимылда.' },
-  { letter: 'Н', name: 'Н', description: 'Орташа қалпында, жұқа қозғалыстармен.' },
-  { letter: 'Ң', name: 'Ң', description: 'Н-ға ұқсас, бірақ бас бармақ арнайы бағытталады.' },
-  { letter: 'О', name: 'О', description: 'Қол дөңгелек пішінде, барлық саусақтар бірге.' },
-  { letter: 'Ө', name: 'Ө', description: 'О-ға ұқсас, бірақ саусақтар арасында кішкене ашықтық бар.' },
-  { letter: 'П', name: 'П', description: 'Қол алдыңғыға қарай бағытталған, қатты белгі.' },
-  { letter: 'Р', name: 'Р', description: 'Көрсеткіш саусақ алға, қалғандары қысқа бұрылады.' },
-  { letter: 'С', name: 'С', description: 'Алақан кең ашық, жұмсақ қуатпен.' },
-  { letter: 'Т', name: 'Т', description: 'Қол сағасына параллель, терең емес.*' },
-  { letter: 'У', name: 'У', description: 'У-ға тән қол конфигурациясы мен бағыт.' },
-  { letter: 'Ұ', name: 'Ұ', description: 'У-ға ұқсас, бірақ саусақтар бағыты өзгеше.' },
+  { letter: 'М', name: 'М', description: 'Барлық саусақтар біріктірілген, алақан қысқа қимылда.', image: '/images/dactyl/m.jpg' },
+  { letter: 'Н', name: 'Н', description: 'Орташа қалпында, жұқа қозғалыстармен.', image: '/images/dactyl/n.jpg' },
+  { letter: 'Ң', name: 'Ң', description: 'Н-ға ұқсас, бірақ бас бармақ арнайы бағытталады.', image: '/images/dactyl/ng.jpg' },
+  { letter: 'О', name: 'О', description: 'Қол дөңгелек пішінде, барлық саусақтар бірге.', image: '/images/dactyl/o.jpg' },
+  { letter: 'Ө', name: 'Ө', description: 'О-ға ұқсас, бірақ саусақтар арасында кішкене ашықтық бар.', image: '/images/dactyl/oe.jpg' },
+  { letter: 'П', name: 'П', description: 'Қол алдыңғыға қарай бағытталған, қатты белгі.', image: '/images/dactyl/p.jpg' },
+  { letter: 'Р', name: 'Р', description: 'Көрсеткіш саусақ алға, қалғандары қысқа бұрылады.', image: '/images/dactyl/r.jpg' },
+  { letter: 'С', name: 'С', description: 'Алақан кең ашық, жұмсақ қуатпен.', image: '/images/dactyl/s.jpg' },
+  { letter: 'Т', name: 'Т', description: 'Қол сағасына параллель, терең емес.', image: '/images/dactyl/t.jpg' },
+  { letter: 'У', name: 'У', description: 'У-ға тән қол конфигурациясы мен бағыт.', image: '/images/dactyl/u.jpg' },
+  { letter: 'Ұ', name: 'Ұ', description: 'У-ға ұқсас, бірақ саусақтар бағыты өзгеше.', image: '/images/dactyl/uu.jpg' },
   { letter: 'Ү', name: 'Ү', description: 'Ашық саусақтар, жоғары қарай бағытталған.' },
   { letter: 'Ф', name: 'Ф', description: 'Алақан мен саусақтар шеңбер құрайды.' },
   { letter: 'Х', name: 'Х', description: 'Қол салмақты, саусақтар біршама ашық.' },
@@ -126,6 +139,13 @@ const alphabet = ref([
   box-shadow: 0 16px 32px rgba(14, 30, 60, 0.06);
 }
 
+.letter-container {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  margin-bottom: 12px;
+}
+
 .letter-symbol {
   width: 60px;
   height: 60px;
@@ -136,7 +156,30 @@ const alphabet = ref([
   justify-content: center;
   font-size: 1.8rem;
   font-weight: 700;
-  margin-bottom: 12px;
+}
+
+.dactyl-image {
+  width: 100%;
+  height: auto;
+  border-radius: 12px;
+  object-fit: cover;
+  max-height: 200px;
+}
+
+.dactyl-placeholder {
+  width: 100%;
+  min-height: 120px;
+  background: #f0f4f8;
+  border-radius: 12px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 2rem;
+  color: #cbd5e1;
+}
+
+.letter-info {
+  flex: 1;
 }
 
 .alphabet-card h3 {

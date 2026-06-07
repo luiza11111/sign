@@ -49,6 +49,13 @@
             ></textarea>
           </div>
 
+          <div class="translate-action-row">
+            <button class="translate-btn" @click="translateText">
+              <Languages :size="16" />
+              <span data-i18n="translate_btn">Аудару</span>
+            </button>
+          </div>
+
           <div class="voice-section">
             <button class="voice-btn" @click="startVoiceInput">
               <Mic :size="16" />
@@ -380,8 +387,31 @@ const translateText = async () => {
   const authStore = useAuthStore()
   const translation = `🧏‍♂️ "${inputText.value}" - ${t('translated')}`
   translatedText.value = translation
+  
+  // Search in local dictionary first
   videoEntries.value = findMatchingDictionaryEntries(inputText.value)
   currentVideoIndex.value = 0
+  
+  // If no local videos found, try API
+  if (!videoEntries.value || videoEntries.value.length === 0) {
+    try {
+      const words = normalizeText(inputText.value).split(' ').filter(Boolean)
+      for (const word of words) {
+        try {
+          const response = await apiClient.get(`/api/sign-videos/${encodeURIComponent(word)}`)
+          if (response.data) {
+            videoEntries.value.push(response.data)
+          }
+        } catch (error) {
+          // Word not found in API, continue to next word
+          console.log(`No video found for word: ${word}`)
+        }
+      }
+    } catch (error) {
+      console.error('Error fetching from API:', error)
+    }
+  }
+  
   await nextTick()
 
   // If we found videos, hide the textual translation and try to autoplay the first one
@@ -738,6 +768,17 @@ watch(inputText, (newValue) => {
 .translate-btn:hover {
   transform: scale(1.02);
   box-shadow: 0 4px 12px rgba(99, 102, 241, 0.3);
+}
+
+.translate-action-row {
+  margin-bottom: 20px;
+  display: flex;
+  justify-content: flex-start;
+}
+
+.translate-action-row .translate-btn {
+  width: 100%;
+  justify-content: center;
 }
 
 /* ========== AI БЕЙДЖИ ========== */
