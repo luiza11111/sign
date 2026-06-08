@@ -869,15 +869,11 @@ onBeforeUnmount(() => {
 
 .dactyl-video-player {
   width: 100%;
-  max-width: 100%;
-  height: auto;
-  min-height: 320px;
-  max-height: 420px;
+  max-width: 420px;
+  max-height: 260px;
   border-radius: 22px;
-  object-fit: cover;
-  object-position: center;
+  object-fit: contain;
   box-shadow: 0 18px 40px rgba(15, 23, 42, 0.12);
-  background: #000;
 }
 
 .dactyl-image-missing {
