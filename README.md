@@ -45,6 +45,46 @@ npm run dev
 
 Use `DATABASE_URL` when deploying to Render, or set `DB_USER`, `DB_PASSWORD`, `DB_HOST`, `DB_PORT`, and `DB_NAME` for local Postgres.
 
+### Connecting to a remote PostgreSQL instance (options)
+
+1) Direct `DATABASE_URL` (recommended)
+
+ - On the machine where you run the server, create `server/.env` from the example and set:
+
+```env
+DATABASE_URL=postgres://user:password@db-host.example.com:5432/sign
+JWT_SECRET=your_jwt_secret
+PORT=3002
+```
+
+Then start the server:
+
+```bash
+cd server
+npm install
+npm start
+```
+
+2) SSH tunnel (if the DB host is not directly reachable)
+
+ - From the server machine, open an SSH tunnel to the remote DB host (replace `user@remote-host`):
+
+```bash
+ssh -L 5432:localhost:5432 user@remote-host
+# keep the tunnel open in that terminal, then in another terminal run the server
+cd server
+cp .env.example .env
+# set DB_HOST=localhost, DB_PORT=5432 (or use DATABASE_URL pointing to localhost)
+npm install
+npm start
+```
+
+3) Notes
+
+ - If you use `DATABASE_URL`, the server will prefer it over individual DB_* variables.
+ - The server will still serve `/api/proxy` and `/api/scrape-sign` even if the DB is unreachable; only routes that read/write DB (history, dictionary, users) require DB access.
+
+
 ### Compile and Minify for Production
 
 ```sh

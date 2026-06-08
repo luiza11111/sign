@@ -396,23 +396,45 @@ const translateText = async () => {
   videoEntries.value = findMatchingDictionaryEntries(inputText.value)
   currentVideoIndex.value = 0
   
-  // If no local videos found, try API
+  // If no local videos found, try API or server-side scraper
   if (!videoEntries.value || videoEntries.value.length === 0) {
     try {
       const words = normalizeText(inputText.value).split(' ').filter(Boolean)
       for (const word of words) {
+        let pushed = false
+        // First try the existing sign-videos endpoint (cached / static data)
         try {
           const response = await apiClient.get(`/api/sign-videos/${encodeURIComponent(word)}`)
           if (response.data) {
             videoEntries.value.push(response.data)
+            pushed = true
           }
-        } catch (error) {
-          // Word not found in API, continue to next word
-          console.log(`No video found for word: ${word}`)
+        } catch (err) {
+          // ignore
+        }
+
+        // If not found, use server-side scraper which returns structured JSON
+        if (!pushed) {
+          try {
+            const resp = await apiClient.get('/api/scrape-sign', { params: { q: word } })
+            if (resp.data && Array.isArray(resp.data.videos) && resp.data.videos.length) {
+              for (const v of resp.data.videos) {
+                videoEntries.value.push({
+                  video_url: v.video_url,
+                  title: v.title || word,
+                  text: word,
+                  russian: word,
+                  source: v.source || 'SpreadTheSign'
+                })
+              }
+            }
+          } catch (err) {
+            console.log(`No video found (scrape) for word: ${word}`)
+          }
         }
       }
     } catch (error) {
-      console.error('Error fetching from API:', error)
+      console.error('Error fetching from API/scraper:', error)
     }
   }
   

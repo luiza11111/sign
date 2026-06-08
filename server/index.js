@@ -7,6 +7,7 @@ const jwt = require('jsonwebtoken');
 const { Pool } = require('pg');
 const fs = require('fs');
 const axios = require('axios');
+const cheerio = require('cheerio');
 
 const envPath = path.resolve(__dirname, '.env');
 const envExamplePath = path.resolve(__dirname, '.env.example');
@@ -28,7 +29,7 @@ if (envResult.error) {
 }
 
 const app = express();
-const port = process.env.PORT || 4000;
+const port = process.env.PORT || 3002;
 
 // Middleware
 app.use(cors());
@@ -536,4 +537,77 @@ server.on('error', (err) => {
         process.exit(1);
     }
     throw err;
+});
+
+// ========== ПРОКСИ: сыртқы беттерді сервер арқылы алу (CORS мәселелерін шешу үшін) ==========
+app.get('/api/proxy', async (req, res) => {
+    const url = req.query.url
+    if (!url) return res.status(400).json({ error: 'url required' })
+
+    try {
+        const r = await axios.get(url, {
+            headers: { 'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64)' },
+            responseType: 'text'
+        })
+        res.set('Content-Type', 'text/html')
+        return res.send(r.data)
+    } catch (err) {
+        return res.status(500).json({ error: err.message })
+    }
+})
+
+// ========== SCRAPE: іздеу және дайын JSON-ды қайтару ==========
+app.get('/api/scrape-sign', async (req, res) => {
+    const q = req.query.q;
+    if (!q) return res.status(400).json({ error: 'q parameter required' });
+
+    try {
+        const searchUrl = `https://spreadthesign.com/ru.ru/search/?cls=2&q=${encodeURIComponent(q)}`;
+        const searchResp = await axios.get(searchUrl, { headers: { 'User-Agent': 'Mozilla/5.0' } });
+        const $ = cheerio.load(searchResp.data);
+
+        // Collect links to sign pages
+        const anchors = new Set();
+        $('a[href*="/ru.ru/sign/"]').each((i, el) => {
+            const href = $(el).attr('href');
+            if (href) anchors.add(href.startsWith('http') ? href : `https://spreadthesign.com${href}`);
+        });
+
+        const signLinks = Array.from(anchors).slice(0, 6);
+        const videos = [];
+
+        for (const signUrl of signLinks) {
+            try {
+                const signResp = await axios.get(signUrl, { headers: { 'User-Agent': 'Mozilla/5.0' } });
+                const $$ = cheerio.load(signResp.data);
+
+                // Try video tags and sources
+                let videoUrl = $$('video source[type="video/mp4"]').attr('src') || $$('video').attr('src') || $$('video source').attr('data-src');
+
+                // Fallback: find .mp4 in HTML
+                if (!videoUrl) {
+                    const m = signResp.data.match(/https?:\\/\\/[^"'<>\s]+\.mp4/g);
+                    if (m && m.length) videoUrl = m[0];
+                }
+
+                if (videoUrl) {
+                    const full = videoUrl.startsWith('http') ? videoUrl : `https://spreadthesign.com${videoUrl}`;
+                    videos.push({
+                        video_url: full,
+                        title: $$('h1').first().text().trim() || q,
+                        russianWord: q,
+                        signPage: signUrl,
+                        source: 'SpreadTheSign'
+                    });
+                }
+            } catch (e) {
+                console.warn('Failed to fetch sign page', signUrl, e.message);
+            }
+        }
+
+        return res.json({ query: q, count: videos.length, videos });
+    } catch (err) {
+        console.error('scrape-sign error:', err.message);
+        return res.status(500).json({ error: err.message });
+    }
 });
