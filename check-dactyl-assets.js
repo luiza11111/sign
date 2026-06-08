@@ -1,0 +1,12 @@
+﻿const fs = require('fs');
+const path = require('path');
+const dir = path.join(process.cwd(), 'public', 'images', 'dactyl');
+const files = fs.readdirSync(dir).filter(f => !f.startsWith('.'));
+const letters = ['А','Ә','Б','В','Г','Ғ','Д','Е','Ж','З','И','Й','К','Л','М','Н','Ң','О','Ө','П','Р','С','Т','У','Ұ','Ү','Ф','Х','Ц','Ч','Ш','Щ','Ъ','Ы','Ь','Э','Ю','Я','Һ','Қ'];
+const norm = files.map(f => f.toUpperCase());
+const exp = letters.map(l => `${l}.MP4`);
+const missing = exp.filter(e => !norm.includes(e));
+const extra = norm.filter(f => !exp.includes(f));
+console.log('files:', files.length);
+console.log('missing count:', missing.length, missing);
+console.log('extra count:', extra.length, extra.slice(0,50));

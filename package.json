@@ -6,7 +6,8 @@
   "scripts": {
     "dev": "vite --port 5173 --open",
     "build": "vite build",
-    "preview": "vite preview"
+    "preview": "vite preview",
+    "check:assets": "node ./scripts/check-site-assets.js"
   },
   "dependencies": {
     "@tresjs/cientos": "^5.7.0",

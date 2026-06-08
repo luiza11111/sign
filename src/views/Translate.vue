@@ -140,7 +140,9 @@
         :mode="animationMode"
         :text="inputText"
         :phrase="currentVideoEntry?.kazakh || currentVideoEntry?.text || inputText"
-        :video-url="getVideoUrl(currentVideoEntry)"
+        :video-url="currentLocalMediaAsset?.type === 'video' ? currentLocalMediaAsset.url : getVideoUrl(currentVideoEntry)"
+        :media-asset="currentLocalMediaAsset"
+        :show-placeholder="!currentLocalMediaAsset && !getVideoUrl(currentVideoEntry) && !!inputText"
       />
     </div>
 
@@ -217,6 +219,7 @@ import { useAuthStore } from '../stores/auth'
 import { useDictionaryStore } from '../stores/dictionary'
 import { t, loadLanguage, translatePage, currentLanguage } from '../i18n'
 import AnimationDemo from '../components/AnimationDemo.vue'
+import { resolveLocalMediaAsset } from '../utils/localMediaAssets'
 
 // Lucide иконкаларын импорттау
 import { 
@@ -236,6 +239,18 @@ const currentVideoIndex = ref(0)
 const dactylMode = ref(false)
 const dictionaryStore = useDictionaryStore()
 const currentVideoEntry = computed(() => videoEntries.value[currentVideoIndex.value] || null)
+const currentLocalMediaAsset = computed(() => {
+  const entry = currentVideoEntry.value
+  const candidates = [entry?.kazakh, entry?.russian, entry?.text, inputText.value]
+
+  for (const candidate of candidates) {
+    if (!candidate) continue
+    const asset = resolveLocalMediaAsset(candidate)
+    if (asset) return asset
+  }
+
+  return null
+})
 const animationMode = computed(() => dactylMode.value ? 'dactyl' : 'video')
 
 // Ұсынылатын сөздер
