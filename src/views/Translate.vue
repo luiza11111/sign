@@ -87,8 +87,7 @@
               <div class="video-results" v-if="videoEntries.length">
                 <div class="video-card">
                   <p class="video-label">
-                    {{ currentVideoEntry?.kazakh || currentVideoEntry?.text || currentVideoEntry?.russian }}
-                    <span v-if="currentVideoEntry?.russian && currentVideoEntry?.kazakh" class="video-subtitle">({{ currentVideoEntry?.russian }})</span>
+                    {{ currentVideoEntry?.word || currentVideoEntry?.original_word }}
                   </p>
                   <video
                     :src="getVideoUrl(currentVideoEntry)"
@@ -139,7 +138,7 @@
       <AnimationDemo
         :mode="animationMode"
         :text="inputText"
-        :phrase="currentVideoEntry?.kazakh || currentVideoEntry?.text || inputText"
+        :phrase="currentVideoEntry?.word || currentVideoEntry?.original_word || inputText"
         :video-url="currentLocalMediaAsset?.type === 'video' ? currentLocalMediaAsset.url : getVideoUrl(currentVideoEntry)"
         :media-asset="currentLocalMediaAsset"
         :show-placeholder="!currentLocalMediaAsset && !getVideoUrl(currentVideoEntry) && !!inputText"
@@ -214,7 +213,7 @@
 <script setup>
 import { ref, computed, onMounted, watch, nextTick } from 'vue'
 import axios from 'axios'
-import apiClient from '../api'
+import apiClient, { pythonApi } from '../api'
 import { useAuthStore } from '../stores/auth'
 import { useDictionaryStore } from '../stores/dictionary'
 import { t, loadLanguage, translatePage, currentLanguage } from '../i18n'
@@ -241,7 +240,7 @@ const dictionaryStore = useDictionaryStore()
 const currentVideoEntry = computed(() => videoEntries.value[currentVideoIndex.value] || null)
 const currentLocalMediaAsset = computed(() => {
   const entry = currentVideoEntry.value
-  const candidates = [entry?.kazakh, entry?.russian, entry?.text, inputText.value]
+  const candidates = [entry?.word, entry?.original_word, entry?.kazakh, entry?.russian, entry?.text, inputText.value]
 
   for (const candidate of candidates) {
     if (!candidate) continue
@@ -339,9 +338,7 @@ const findMatchingDictionaryEntries = (text) => {
   return results
 }
 
-const getVideoUrl = (entry) => {
-  return entry?.video_url || entry?.video || entry?.links?.[0] || ''
-}
+const getVideoUrl = (entry) => entry?.video_url || ''
 
 const nextVideo = () => {
   if (currentVideoIndex.value < videoEntries.value.length - 1) {
@@ -394,15 +391,18 @@ const scrapeSignsForWord = async (word) => {
   }
 }
 
-// Аудару через API + краулинг
+// Аудару через API (fetch to Python backend)
 const translateText2 = async () => {
   if (!inputText.value.trim()) {
     translatedText.value = `
-      <div class="empty-state">
-        <div class="empty-icon">📭</div>
-        <p>${t('enter_text')}</p>
-        <small>${t('or_type')}</small>
-      </div>
+      
+        📭
+
+        ${t('enter_text')}
+
+        ${t('or_type')}
+      
+
     `
     showActions.value = false
     videoEntries.value = []
@@ -410,42 +410,87 @@ const translateText2 = async () => {
   }
 
   translatedText.value = `
-    <div class="empty-state">
-      <div class="empty-icon">🔄</div>
-      <p>${t('translate_btn')}...</p>
-    </div>
+    
+      🔄
+
+      ${t('translate_btn')}...
+
+    
+
   `
   showActions.value = false
   videoEntries.value = []
 
-  const tokens = normalizeText(inputText.value).split(' ').filter(Boolean)
-  const translationPairs = []
+  try {
+    // API-ға сұрау жіберу (Vite proxy арқылы /api -> http://localhost:5000)
+    const response = await fetch(`/api/process`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ text: inputText.value })
+    })
 
-  for (const token of tokens) {
-    const russianToken = await translateToRussian(token)
-    translationPairs.push({ source: token, russian: russianToken })
-
-    const videos = await scrapeSignsForWord(russianToken)
-    if (videos.length) {
-      videoEntries.value.push(...videos.map((video) => ({
-        ...video,
-        text: token,
-        russian: russianToken,
-        kazakh: token
-      })))
+    if (!response.ok) {
+      let errorData = {}
+      try { errorData = await response.json() } catch (e) {}
+      throw new Error(errorData.error || 'API қатесі')
     }
-  }
 
-  if (translationPairs.length > 0) {
-    translatedText.value = translationPairs
-      .map(pair => `<div class="translation-pair"><strong>${pair.source}</strong> → ${pair.russian}</div>`)
-      .join('')
-  } else {
-    translatedText.value = `<div class="empty-state"><p>${t('no_result')}</p></div>`
-  }
+    const data = await response.json()
+    const { job_id, results = {}, words = [], successful_downloads, total_words } = data
 
-  currentVideoIndex.value = 0
-  showActions.value = true
+    // Видео жазбаларын дайындау (шаблонға сай)
+    const entries = []
+    const orderedWords = Array.isArray(words) && words.length ? words : Object.keys(results)
+
+    for (const word of orderedWords) {
+      const info = results[word]
+      if (info && info.status === 'success') {
+        entries.push({
+          word,
+          original_word: word,
+          kazakh: word,
+          russian: word,
+          text: word,
+          video_url: `/api/download/${job_id}/${encodeURIComponent(word)}`
+        })
+      }
+    }
+
+    videoEntries.value = entries
+    currentVideoIndex.value = 0
+
+    // Нәтижені көрсету (жария мәтінді алып тастаймыз)
+    if (successful_downloads > 0) {
+      translatedText.value = ''
+    } else {
+      translatedText.value = `
+        
+          😞
+
+          Ешбір сөзге видео табылмады
+
+          Басқа сөздерді немесе қысқа мәтінді қолданыңыз
+        
+
+      `
+    }
+
+    showActions.value = true
+  } catch (error) {
+    console.error('API қатесі:', error)
+    translatedText.value = `
+      
+        ⚠️
+
+        Қате орын алды: ${error.message}
+
+        Сервер іске қосылғанын тексеріңіз (python app.py)
+      
+
+    `
+    videoEntries.value = []
+    showActions.value = false
+  }
 }
 
 // Аудару
@@ -982,7 +1027,7 @@ watch(inputText, (newValue) => {
 .video-player {
   width: 100%;
   aspect-ratio: 16 / 9;
-  max-height: 240px;
+  max-height: 320px;
   object-fit: cover;
   border-radius: 16px;
   background: #000;
@@ -1361,6 +1406,8 @@ watch(inputText, (newValue) => {
 
 .video-player {
   width: 100%;
+  aspect-ratio: 16 / 9;
+  max-height: 320px;
   border-radius: 14px;
   background: #000;
 }
