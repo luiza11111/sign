@@ -556,6 +556,30 @@ app.get('/api/proxy', async (req, res) => {
     }
 })
 
+// ========== TRANSLATE: қазақтан орысшаға аудару (API прокси) ==========
+app.get('/api/translate-ru', async (req, res) => {
+    const q = req.query.q
+    if (!q) return res.status(400).json({ error: 'q parameter required' })
+
+    try {
+        const resp = await axios.get('https://api.mymemory.translated.net/get', {
+            params: {
+                q,
+                langpair: 'kk|ru'
+            },
+            headers: {
+                'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64)'
+            }
+        })
+
+        const translated = resp.data?.responseData?.translatedText || q
+        return res.json({ source: q, target: translated, raw: resp.data })
+    } catch (err) {
+        console.error('translate-ru error:', err.message)
+        return res.status(500).json({ error: err.message })
+    }
+})
+
 // ========== SCRAPE: іздеу және дайын JSON-ды қайтару ==========
 app.get('/api/scrape-sign', async (req, res) => {
     const q = req.query.q;
@@ -586,7 +610,7 @@ app.get('/api/scrape-sign', async (req, res) => {
 
                 // Fallback: find .mp4 in HTML
                 if (!videoUrl) {
-                    const m = signResp.data.match(/https?:\\/\\/[^"'<>\s]+\.mp4/g);
+                    const m = signResp.data.match(/https?:\/\/[^"'<>\s]+\.mp4/g);
                     if (m && m.length) videoUrl = m[0];
                 }
 

@@ -34,7 +34,7 @@
               <FileText :size="20" />
               <h3 data-i18n="enter_text">Мәтін енгізіңіз</h3>
             </div>
-            <button class="translate-btn" @click="translateText">
+            <button class="translate-btn" @click="translateText2">
               <Languages :size="16" />
               <span data-i18n="translate_btn">Аудару</span>
             </button>
@@ -50,7 +50,7 @@
           </div>
 
           <div class="translate-action-row">
-            <button class="translate-btn" @click="translateText">
+            <button class="translate-btn" @click="translateText2">
               <Languages :size="16" />
               <span data-i18n="translate_btn">Аудару</span>
             </button>
@@ -374,6 +374,80 @@ const addWord = (word) => {
   }
 }
 
+const translateToRussian = async (text) => {
+  try {
+    const response = await apiClient.get('/api/translate-ru', { params: { q: text } })
+    return response.data?.target?.trim() || text
+  } catch (err) {
+    console.error('translateToRussian error:', err)
+    return text
+  }
+}
+
+const scrapeSignsForWord = async (word) => {
+  try {
+    const response = await apiClient.get('/api/scrape-sign', { params: { q: word } })
+    return Array.isArray(response.data?.videos) ? response.data.videos : []
+  } catch (err) {
+    console.error('scrapeSignsForWord error:', err)
+    return []
+  }
+}
+
+// Аудару через API + краулинг
+const translateText2 = async () => {
+  if (!inputText.value.trim()) {
+    translatedText.value = `
+      <div class="empty-state">
+        <div class="empty-icon">📭</div>
+        <p>${t('enter_text')}</p>
+        <small>${t('or_type')}</small>
+      </div>
+    `
+    showActions.value = false
+    videoEntries.value = []
+    return
+  }
+
+  translatedText.value = `
+    <div class="empty-state">
+      <div class="empty-icon">🔄</div>
+      <p>${t('translate_btn')}...</p>
+    </div>
+  `
+  showActions.value = false
+  videoEntries.value = []
+
+  const tokens = normalizeText(inputText.value).split(' ').filter(Boolean)
+  const translationPairs = []
+
+  for (const token of tokens) {
+    const russianToken = await translateToRussian(token)
+    translationPairs.push({ source: token, russian: russianToken })
+
+    const videos = await scrapeSignsForWord(russianToken)
+    if (videos.length) {
+      videoEntries.value.push(...videos.map((video) => ({
+        ...video,
+        text: token,
+        russian: russianToken,
+        kazakh: token
+      })))
+    }
+  }
+
+  if (translationPairs.length > 0) {
+    translatedText.value = translationPairs
+      .map(pair => `<div class="translation-pair"><strong>${pair.source}</strong> → ${pair.russian}</div>`)
+      .join('')
+  } else {
+    translatedText.value = `<div class="empty-state"><p>${t('no_result')}</p></div>`
+  }
+
+  currentVideoIndex.value = 0
+  showActions.value = true
+}
+
 // Аудару
 const translateText = async () => {
   if (!inputText.value.trim()) {
@@ -539,7 +613,7 @@ const refreshSuggestions = () => {
 // Соңғы аударманы жүктеу
 const loadRecentText = (text) => {
   inputText.value = text
-  translateText()
+  translateText2()
 }
 
 // Соңғы аудармаларды тазалау
@@ -574,6 +648,7 @@ onMounted(async () => {
   loadRecent()
   loadLanguage()
   translatePage()
+  translateText2()
   
   window.addEventListener('languageChanged', () => {
     translatePage()

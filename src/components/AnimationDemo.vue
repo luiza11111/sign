@@ -701,13 +701,13 @@ onBeforeUnmount(() => {
   flex-direction: column;
   gap: 10px;
   min-height: 260px;
-  max-height: 380px;
+  max-height: none;
 }
 
 .animation-container {
   flex: 1;
   min-height: 160px;
-  max-height: 240px;
+  max-height: none;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -760,12 +760,20 @@ onBeforeUnmount(() => {
   width: 100%;
   max-width: 560px;
   background: linear-gradient(180deg, #eef4ff 0%, #ffffff 100%);
-  border: 1px solid #dbeafe;
+  border: none;
   border-radius: 32px;
   padding: 22px 22px 18px;
-  box-shadow: 0 24px 70px rgba(15, 23, 42, 0.08);
+  box-shadow: none;
   position: relative;
   overflow: hidden;
+}
+
+.dactyl-video-panel {
+  display: flex;
+  justify-content: center;
+  width: 100%;
+  margin-top: 12px;
+  align-items: stretch;
 }
 
 .board-header {
@@ -869,11 +877,13 @@ onBeforeUnmount(() => {
 
 .dactyl-video-player {
   width: 100%;
-  max-width: 420px;
-  max-height: 260px;
+  max-width: 100%;
+  height: auto;
   border-radius: 22px;
   object-fit: contain;
-  box-shadow: 0 18px 40px rgba(15, 23, 42, 0.12);
+  box-shadow: none;
+  border: none;
+  background: transparent;
 }
 
 .dactyl-image-missing {
